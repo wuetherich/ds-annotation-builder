@@ -1,0 +1,1 @@
+R:\software\jdk\jdk16\bin\xjc.exe -b bindings.xml -p com.wuetherich.osgi.ds.annotations.xml scr-1_1_0.xsd

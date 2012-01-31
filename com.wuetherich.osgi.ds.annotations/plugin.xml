@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension 
+   	id="dsAnnotationNature" 
+   	name="dsAnnotationNature" 
+   	point="org.eclipse.core.resources.natures"> 
+      <runtime> 
+         <run class="com.wuetherich.osgi.ds.annotations.DsAnnotationNature"/> 
+      </runtime> 
+      <builder id="com.wuetherich.osgi.ds.annotations.dsAnnotationBuilder"/> 
+   </extension>
+
+   <extension id="dsAnnotationBuilder" name="dsAnnotationBuilder"
+      point="org.eclipse.core.resources.builders">
+      <builder hasNature="true">
+         <run class="com.wuetherich.osgi.ds.annotations.builder.DsAnnotationBuilder"/>
+      </builder>
+   </extension>
+   
+   <extension id="dsAnnotationProblem" point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <persistent value="true"/>
+   </extension>
+   
+   <extension point="org.eclipse.ui.popupMenus">
+
+      <objectContribution id="enableNatureAction"
+                          objectClass="org.eclipse.core.resources.IProject"
+                          adaptable="true">
+         <action id="com.wuetherich.osgi.ds.annotations.enableNatureAction"
+                 class="com.wuetherich.osgi.ds.annotations.internal.actions.EnableNatureAction"
+                 label="Enable DS Annotations"
+                 style="push"
+	             menubarPath="org.eclipse.ui.projectConfigure/additions"
+                 enablesFor="+"/>
+         <visibility>
+           <and>
+             <objectState name="open" value="true"/>
+             <not>
+               <objectState name="nature" value="com.wuetherich.osgi.ds.annotations.dsAnnotationNature"/>
+             </not>
+           </and>
+         </visibility>
+      </objectContribution>
+   </extension>
+   
+      <extension point="org.eclipse.ui.popupMenus">
+
+      <objectContribution id="disableNatureAction"
+                          objectClass="org.eclipse.core.resources.IProject"
+                          adaptable="true">
+         <action id="com.wuetherich.osgi.ds.annotations.disableNatureAction"
+                 class="com.wuetherich.osgi.ds.annotations.internal.actions.DisableNatureAction"
+                 label="Disable DS Annotations"
+                 style="push"
+	             menubarPath="org.eclipse.ui.projectConfigure/additions"
+                 enablesFor="+"/>
+         <visibility>
+           <and>
+             <objectState name="open" value="true"/>
+             <objectState name="nature" value="com.wuetherich.osgi.ds.annotations.dsAnnotationNature"/>
+           </and>
+         </visibility>
+      </objectContribution>
+   </extension>
+   
+</plugin>
