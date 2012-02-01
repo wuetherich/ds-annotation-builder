@@ -22,13 +22,13 @@
 		<echo>Deploy to '${deploy-dir}'</echo>
 
 		<!-- step 1: export bundlemaker -->
-		<delete dir="${deploy-dir}/ds.apt" quiet="true" />
-		<mkdir dir="${deploy-dir}/ds.apt" />
+		<delete dir="${deploy-dir}/ds.builder" quiet="true" />
+		<mkdir dir="${deploy-dir}/ds.builder" />
 
 		<buildFeature workspaceId="workspace"
 					  projectName="com.wuetherich.osgi.ds.annotations.feature"
 		              targetPlatformId="target.platform"
-		              destination="${deploy-dir}/ds.apt"
+		              destination="${deploy-dir}/ds.builder"
 		              clearDestination="true"
 		              defaultCompilerOptionsFile="${basedir}/org.eclipse.jdt.core.preferences"
 		              debug="true" />

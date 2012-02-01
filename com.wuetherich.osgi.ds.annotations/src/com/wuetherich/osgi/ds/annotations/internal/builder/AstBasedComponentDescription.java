@@ -1,4 +1,14 @@
-package com.wuetherich.osgi.ds.annotations.builder;
+/*******************************************************************************
+ * Copyright (c) 2012 Gerd Wuetherich (gerd@gerd-wuetherich.de).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Gerd Wuetherich (gerd@gerd-wuetherich.de) - initial API and implementation
+ ******************************************************************************/
+package com.wuetherich.osgi.ds.annotations.internal.builder;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -8,7 +18,7 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
-import com.wuetherich.osgi.ds.annotations.AbstractComponentDescription;
+import com.wuetherich.osgi.ds.annotations.internal.AbstractComponentDescription;
 
 /**
  * <p>

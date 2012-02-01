@@ -1,4 +1,14 @@
-package com.wuetherich.osgi.ds.annotations.builder;
+/*******************************************************************************
+ * Copyright (c) 2012 Gerd Wuetherich (gerd@gerd-wuetherich.de).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Gerd Wuetherich (gerd@gerd-wuetherich.de) - initial API and implementation
+ ******************************************************************************/
+package com.wuetherich.osgi.ds.annotations.internal.builder;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,9 +33,9 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
-import com.wuetherich.osgi.ds.annotations.AbstractComponentDescription;
-import com.wuetherich.osgi.ds.annotations.DsAnnotationException;
-import com.wuetherich.osgi.ds.annotations.DsAnnotationProblem;
+import com.wuetherich.osgi.ds.annotations.internal.AbstractComponentDescription;
+import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
+import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
 
 /**
  * <p>
@@ -250,8 +260,8 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
       }
 
       getCurrentComponentDescription().getProblems().add(
-          new DsAnnotationProblem(e.getMessage() != null ? e.getMessage() : "Fehler ss", astNode.getStartPosition(),
-              astNode.getStartPosition() + astNode.getLength()));
+          new DsAnnotationProblem(e.getMessage() != null ? e.getMessage() : "Unknown error in annotation", astNode
+              .getStartPosition(), astNode.getStartPosition() + astNode.getLength()));
     }
   }
 
@@ -279,11 +289,13 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
       String valueName = pair.getName().toString();
 
       if ("name".equals(valueName)) {
-        name = pair.getValue().toString();
+        name = pair.resolveMemberValuePairBinding().getValue().toString();
       }
       //
       else if ("cardinality".equals(valueName)) {
-        cardinality = pair.resolveMemberValuePairBinding().toString();
+        
+        IVariableBinding variableBinding = (IVariableBinding) pair.resolveMemberValuePairBinding().getValue();
+        cardinality = variableBinding.getName().toLowerCase();
       }
       //
       else if ("policy".equals(valueName)) {

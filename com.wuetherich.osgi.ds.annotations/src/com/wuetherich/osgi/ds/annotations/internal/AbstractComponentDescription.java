@@ -1,4 +1,14 @@
-package com.wuetherich.osgi.ds.annotations;
+/*******************************************************************************
+ * Copyright (c) 2012 Gerd Wuetherich (gerd@gerd-wuetherich.de).
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Gerd Wuetherich (gerd@gerd-wuetherich.de) - initial API and implementation
+ ******************************************************************************/
+package com.wuetherich.osgi.ds.annotations.internal;
 
 import java.io.StringWriter;
 import java.util.LinkedList;
@@ -261,7 +271,15 @@ public abstract class AbstractComponentDescription {
     }
 
     if (isNotEmpty(cardinality)) {
-      reference.setCardinality(cardinality);
+      if ("at_least_one".equalsIgnoreCase(cardinality)) {
+        reference.setCardinality("1..n");
+      } else if ("optional".equalsIgnoreCase(cardinality)) {
+        reference.setCardinality("0..1");
+      } else if ("mandatory".equalsIgnoreCase(cardinality)) {
+        reference.setCardinality("1..1");
+      } else if ("multiple".equalsIgnoreCase(cardinality)) {
+        reference.setCardinality("0..n");
+      }
     }
 
     if (isNotEmpty(policy)) {
