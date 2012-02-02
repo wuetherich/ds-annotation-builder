@@ -212,21 +212,50 @@ public class GeneratedComponentDescriptionsStore {
 
         //
         List<IPath> genFiles = getGeneratedFiles(project);
-        StringBuilder stringBuilder = new StringBuilder();
-        for (Iterator<IPath> iterator = genFiles.iterator(); iterator.hasNext();) {
 
+        if (genFiles.size() > 0) {
+          StringBuilder stringBuilder = new StringBuilder();
+          for (Iterator<IPath> iterator = genFiles.iterator(); iterator.hasNext();) {
+            IPath iPath = (IPath) iterator.next();
+            stringBuilder.append(iPath.makeRelativeTo(project.getFullPath()).toPortableString());
+            if (iterator.hasNext()) {
+              stringBuilder.append(",\n ");
+            }
+          }
           //
-          IPath iPath = (IPath) iterator.next();
-          stringBuilder.append(iPath.makeRelativeTo(project.getFullPath()).toPortableString());
+          bundleProjectDescription.setHeader(Constants.BUNDLE_HEADER_SERVICE_COMPONENT, stringBuilder.toString());
+        } else {
+          bundleProjectDescription.setHeader(Constants.BUNDLE_HEADER_SERVICE_COMPONENT, null);
+        }
 
-          //
-          if (iterator.hasNext()) {
-            stringBuilder.append(",\n ");
+        //
+        IPath componentDescriptionFolder = new Path(Constants.COMPONENT_DESCRIPTION_FOLDER + "/");
+
+        //
+        IPath[] binIncludePaths = bundleProjectDescription.getBinIncludes();
+        if (!contains(binIncludePaths, componentDescriptionFolder) && genFiles.size() > 0) {
+          if (binIncludePaths != null) {
+            IPath[] newPaths = new IPath[binIncludePaths.length + 1];
+            System.arraycopy(binIncludePaths, 0, newPaths, 0, binIncludePaths.length);
+            newPaths[binIncludePaths.length] = componentDescriptionFolder;
+            binIncludePaths = newPaths;
+          } else {
+            binIncludePaths = new IPath[] { componentDescriptionFolder };
           }
         }
 
         //
-        bundleProjectDescription.setHeader(Constants.BUNDLE_HEADER_SERVICE_COMPONENT, stringBuilder.toString());
+        else if (contains(binIncludePaths, componentDescriptionFolder) && genFiles.size() == 0) {
+          List<IPath> newPathList = new LinkedList<IPath>();
+          for (IPath binIncludePath : binIncludePaths) {
+            if (!binIncludePath.equals(componentDescriptionFolder)) {
+              newPathList.add(binIncludePath);
+            }
+          }
+          binIncludePaths = newPathList.toArray(new IPath[0]);
+        }
+        bundleProjectDescription.setBinIncludes(binIncludePaths);
+
         bundleProjectDescription.apply(null);
         // *** Stop: Set BUNDLE_HEADER_SERVICE_COMPONENT ***//
       }
@@ -239,6 +268,35 @@ public class GeneratedComponentDescriptionsStore {
   }
 
   /**
+   * <p>
+   * </p>
+   * 
+   * @param paths
+   * @param path
+   * @return
+   */
+  private static boolean contains(IPath[] paths, IPath path) {
+
+    //
+    if (paths == null) {
+      return false;
+    }
+
+    //
+    for (IPath iPath : paths) {
+      if (iPath.equals(path)) {
+        return true;
+      }
+    }
+
+    //
+    return false;
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
    * @param project
    * @return
    * @throws IOException

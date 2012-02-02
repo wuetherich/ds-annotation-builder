@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -103,6 +104,17 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
       return;
     }
 
+    //
+    IJavaElement element = JavaCore.create(resource);
+    IJavaProject javaProject = JavaCore.create(resource.getProject());
+    if (!javaProject.isOnClasspath(element) || !element.isStructureKnown()) {
+      return;
+    }
+
+    if (JavaCore.create(resource) == null) {
+      return;
+    }
+
     try {
       resource.deleteMarkers(Constants.DS_ANNOTATION_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
     } catch (CoreException e1) {
@@ -133,7 +145,7 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
     result.accept(myAstVisitor);
 
     IProject iProject = resource.getProject();
-    IFolder folder = iProject.getFolder("OSGI-INF");
+    IFolder folder = iProject.getFolder(Constants.COMPONENT_DESCRIPTION_FOLDER);
     if (!folder.exists()) {
       folder.create(true, true, null);
     }

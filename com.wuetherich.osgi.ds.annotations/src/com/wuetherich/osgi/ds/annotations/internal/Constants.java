@@ -25,5 +25,8 @@ public interface Constants {
   String BUNDLE_HEADER_SERVICE_COMPONENT = "Service-Component";
 
   /** - */
+  String COMPONENT_DESCRIPTION_FOLDER    = "OSGI-INF";
+
+  /** - */
   String DS_ANNOTATION_PROBLEM_MARKER    = "com.wuetherich.osgi.ds.annotations.dsAnnotationProblem";
 }
