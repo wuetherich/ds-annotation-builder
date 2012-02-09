@@ -259,9 +259,12 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
         }
       }
 
-      getCurrentComponentDescription().getProblems().add(
-          new DsAnnotationProblem(e.getMessage() != null ? e.getMessage() : "Unknown error in annotation", astNode
-              .getStartPosition(), astNode.getStartPosition() + astNode.getLength()));
+      //
+      if (getCurrentComponentDescription() != null) {
+        getCurrentComponentDescription().getProblems().add(
+            new DsAnnotationProblem(e.getMessage() != null ? e.getMessage() : "Unknown error in annotation", astNode
+                .getStartPosition(), astNode.getStartPosition() + astNode.getLength()));
+      }
     }
   }
 
@@ -293,7 +296,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
       }
       //
       else if ("cardinality".equals(valueName)) {
-        
+
         IVariableBinding variableBinding = (IVariableBinding) pair.resolveMemberValuePairBinding().getValue();
         cardinality = variableBinding.getName().toLowerCase();
       }
@@ -394,7 +397,16 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
    * @return <code>true</code> if the specified annotation is a DS annotation, <code>false</code> otherwise.
    */
   private boolean isDsAnnotation(Annotation annotation) {
-    return Component.class.getPackage().getName().equals(annotation.resolveTypeBinding().getPackage().getName());
+
+    //
+    ITypeBinding typeBinding = annotation.resolveTypeBinding();
+
+    //
+    if (typeBinding != null) {
+      return Component.class.getPackage().getName().equals(annotation.resolveTypeBinding().getPackage().getName());
+    } else {
+      return false;
+    }
   }
 
   /**

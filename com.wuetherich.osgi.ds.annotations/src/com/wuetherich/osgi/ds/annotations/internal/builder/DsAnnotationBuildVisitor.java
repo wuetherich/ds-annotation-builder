@@ -124,7 +124,7 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
     //
     IJavaElement compilationUnit = JavaCore.create(resource);
 
-    if (compilationUnit != null) {
+    if (compilationUnit != null && compilationUnit.isStructureKnown()) {
       parse((ICompilationUnit) compilationUnit, resource);
     }
   }
