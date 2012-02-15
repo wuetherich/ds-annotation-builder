@@ -15,6 +15,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -197,6 +200,14 @@ public class GeneratedComponentDescriptionsStore {
     }
 
     //
+    Collections.sort(result, new Comparator<IPath>() {
+      @Override
+      public int compare(IPath o1, IPath o2) {
+        return o1.toString().compareTo(o2.toString());
+      }
+    });
+
+    //
     return result;
   }
 
@@ -231,6 +242,8 @@ public class GeneratedComponentDescriptionsStore {
 
       // TODO Move
       // *** Start: Set BUNDLE_HEADER_SERVICE_COMPONENT ***//
+      boolean shouldApply = false;
+
       IBundleProjectDescription bundleProjectDescription = Activator.getBundleProjectDescription(project);
       if (bundleProjectDescription != null) {
 
@@ -246,9 +259,18 @@ public class GeneratedComponentDescriptionsStore {
               stringBuilder.append(",\n ");
             }
           }
+
+          //
+          String newHeader = stringBuilder.toString();
+          newHeader = newHeader.replace(",\n ", ",");
+          shouldApply = !newHeader.equals(bundleProjectDescription.getHeader(Constants.BUNDLE_HEADER_SERVICE_COMPONENT));
+
           //
           bundleProjectDescription.setHeader(Constants.BUNDLE_HEADER_SERVICE_COMPONENT, stringBuilder.toString());
         } else {
+
+          //
+          shouldApply = bundleProjectDescription.getHeader(Constants.BUNDLE_HEADER_SERVICE_COMPONENT) == null;
           bundleProjectDescription.setHeader(Constants.BUNDLE_HEADER_SERVICE_COMPONENT, null);
         }
 
@@ -278,9 +300,13 @@ public class GeneratedComponentDescriptionsStore {
           }
           binIncludePaths = newPathList.toArray(new IPath[0]);
         }
+
+        shouldApply = shouldApply || !Arrays.deepEquals(bundleProjectDescription.getBinIncludes(), binIncludePaths);
         bundleProjectDescription.setBinIncludes(binIncludePaths);
 
-        bundleProjectDescription.apply(null);
+        if (shouldApply) {
+          bundleProjectDescription.apply(null);
+        }
         // *** Stop: Set BUNDLE_HEADER_SERVICE_COMPONENT ***//
       }
 
