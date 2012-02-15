@@ -10,13 +10,16 @@
  ******************************************************************************/
 package com.wuetherich.osgi.ds.annotations.internal;
 
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.eclipse.core.runtime.Assert;
 import org.osgi.framework.FrameworkUtil;
@@ -163,6 +166,7 @@ public abstract class AbstractComponentDescription {
     _tcomponent.getPropertyOrProperties().add(tproperty);
     tproperty.setPropertyName(strings[0]);
     tproperty.setPropertyValue(strings[1]);
+    tproperty.setValue("");
   }
 
   public void setService(String[] services) {
@@ -304,10 +308,7 @@ public abstract class AbstractComponentDescription {
 
     try {
 
-      // the JAXBContext
-      JAXBContext jaxbContext = JAXBContext.newInstance(Tcomponent.class, TconfigurationPolicy.class,
-          Timplementation.class, TjavaTypes.class, Tpolicy.class, Tproperties.class, Tproperty.class, Treference.class,
-          Tservice.class);
+      JAXBContext jaxbContext = createJAXBContext();
 
       // create the marshaller
       Marshaller marshaller = jaxbContext.createMarshaller();
@@ -336,8 +337,28 @@ public abstract class AbstractComponentDescription {
    * <p>
    * </p>
    * 
-   * @param component
+   * @throws JAXBException
    */
+  public boolean equals(InputStream inputStream) throws JAXBException {
+
+    JAXBContext jaxbContext = createJAXBContext();
+
+    // create the marshaller
+    Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+    //
+    JAXBElement<Tcomponent> jaxbElement = (JAXBElement<Tcomponent>) unmarshaller.unmarshal(inputStream);
+    Tcomponent tcomponent = jaxbElement.getValue();
+
+    if (!tcomponent.equals(_tcomponent)) {
+      System.out.println(tcomponent);
+      System.out.println(_tcomponent);
+    }
+
+    //
+    return tcomponent.equals(_tcomponent);
+  }
+
   /**
    * <p>
    * </p>
@@ -397,5 +418,19 @@ public abstract class AbstractComponentDescription {
    */
   public String getName() {
     return _tcomponent.getImplementation().getClazz();
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @return
+   * @throws JAXBException
+   */
+  private JAXBContext createJAXBContext() throws JAXBException {
+
+    // the JAXBContext
+    return JAXBContext.newInstance(Tcomponent.class, TconfigurationPolicy.class, Timplementation.class,
+        TjavaTypes.class, Tpolicy.class, Tproperties.class, Tproperty.class, Treference.class, Tservice.class);
   }
 }

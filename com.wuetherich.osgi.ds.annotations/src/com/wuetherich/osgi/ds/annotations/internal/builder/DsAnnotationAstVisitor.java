@@ -310,7 +310,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
       }
       //
       else if ("unbind".equals(valueName)) {
-        unbind = pair.resolveMemberValuePairBinding().toString();
+        unbind = pair.resolveMemberValuePairBinding().getValue().toString();
       }
       //
       else if ("target".equals(valueName)) {

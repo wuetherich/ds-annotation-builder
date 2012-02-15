@@ -149,6 +149,30 @@ public class GeneratedComponentDescriptionsStore {
     return result;
   }
 
+  public static List<IPath> getOriginFiles(IProject project) throws CoreException {
+
+    //
+    List<IPath> result = new LinkedList<IPath>();
+
+    //
+    Properties properties = loadProperties(project);
+
+    //
+    for (Entry<Object, Object> entry : properties.entrySet()) {
+
+      //
+      IPath iPath = new Path((String) entry.getKey());
+
+      //
+      if (!result.contains(iPath)) {
+        result.add(iPath);
+      }
+    }
+
+    //
+    return result;
+  }
+
   /**
    * <p>
    * </p>

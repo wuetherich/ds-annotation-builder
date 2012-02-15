@@ -11,22 +11,18 @@
 package com.wuetherich.osgi.ds.annotations.internal.builder;
 
 import java.io.StringBufferInputStream;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
+
+import javax.xml.bind.JAXBException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -138,21 +134,20 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
    */
   private void parse(ICompilationUnit icompilationUnit, IResource resource) throws CoreException {
 
-    //
+    // create the AST
     CompilationUnit result = createAst(icompilationUnit);
 
+    // visit the AST
     DsAnnotationAstVisitor myAstVisitor = new DsAnnotationAstVisitor();
     result.accept(myAstVisitor);
 
-    IProject iProject = resource.getProject();
-    IFolder folder = iProject.getFolder(Constants.COMPONENT_DESCRIPTION_FOLDER);
+    // create the output folder if necessary
+    IFolder folder = resource.getProject().getFolder(Constants.COMPONENT_DESCRIPTION_FOLDER);
     if (!folder.exists()) {
       folder.create(true, true, null);
     }
 
-    // delete
-    GeneratedComponentDescriptionsStore.deleteGeneratedFiles(iProject, resource.getFullPath());
-
+    // iterate over the component descriptions
     for (AbstractComponentDescription description : myAstVisitor.getComponentDescriptions()) {
 
       if (description.hasProblems()) {
@@ -160,7 +155,6 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
         try {
 
           for (DsAnnotationProblem problem : description.getProblems()) {
-
             IMarker marker = resource.createMarker(Constants.DS_ANNOTATION_PROBLEM_MARKER);
             marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
             marker.setAttribute(IMarker.CHAR_START, problem.getCharStart());
@@ -169,29 +163,54 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
           }
 
         } catch (CoreException e) {
-          // TODO Auto-generated catch block
+
+          // delete
+          GeneratedComponentDescriptionsStore.deleteGeneratedFiles(resource.getProject(), resource.getFullPath());
+
+          // TODO
           e.printStackTrace();
         }
 
       } else {
-        //
+
+        // get the output file
         IFile file = folder.getFile(description.getName() + ".xml");
 
-        //
+        // check if the component description has changed
+        try {
+          if (file.exists() && description.equals(file.getContents(true))) {
+            System.out.println(String.format("No changes for file '%s'.", file.getFullPath()));
+            continue;
+          }
+        } catch (JAXBException e) {
+          // simply ignore exceptions
+        }
+
+        // delete the existing file
         if (file.exists()) {
           file.delete(true, null);
         }
 
-        //
+        // write the new component description to disc
         file.create(new StringBufferInputStream(description.toXml()), true, null);
 
-        GeneratedComponentDescriptionsStore.addGeneratedFile(iProject, file.getFullPath(), resource.getFullPath());
+        // add generated file to the GeneratedComponentDescriptionsStore
+        GeneratedComponentDescriptionsStore.addGeneratedFile(resource.getProject(), file.getFullPath(),
+            resource.getFullPath());
       }
     }
 
+    // finally we have to refresh the local folder
     folder.refreshLocal(IResource.DEPTH_INFINITE, null);
   }
 
+  /**
+   * <p>
+   * </p>
+   *
+   * @param icompilationUnit
+   * @return
+   */
   private CompilationUnit createAst(ICompilationUnit icompilationUnit) {
     ASTParser parser = ASTParser.newParser(AST.JLS3); // handles JDK 1.0,
     // 1.1, 1.2, 1.3,

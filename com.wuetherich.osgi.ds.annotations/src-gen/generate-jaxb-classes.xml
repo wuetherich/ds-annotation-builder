@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<project name="generate-jaxb-classes" default="generate" basedir="..">
+	
+	<target name="clean">
+		<delete dir="${basedir}/src-gen/com/wuetherich/osgi/ds/annotations/xml" quiet="true"/>
+	</target>
+	
+	<target name="generate" depends="clean">
+		
+		<taskdef name="xjc" classname="org.jvnet.jaxb2_commons.xjc.XJC2Task">
+			<!-- XJC2 Task classpath -->
+			<classpath>
+				<fileset dir="${basedir}/libs-xjc">
+					<include name="activation-*.jar" />
+					<include name="jaxb-api-*.jar" />
+					<include name="jaxb-impl-*.jar" />
+					<include name="jsr173_api-*.jar" />
+					<include name="stax-api-*.jar" />
+					<include name="jaxb2-basics-jaxb-xjc-*.jar" />
+					<include name="jaxb-xjc-*.jar" />
+					<include name="jaxb2-basics-ant-*.jar" />
+
+				</fileset>
+			</classpath>
+		</taskdef>
+		
+		<mkdir dir="${basedir}/src-gen/com/wuetherich/osgi/ds/annotations/xml" />
+		
+		<xjc extension="true" package="com.wuetherich.osgi.ds.annotations.xml">
+			<arg line="
+				-Xequals
+				-XhashCode
+				-Xinheritance
+				-XtoString
+				-Xcopyable" />
+			<binding dir="${basedir}/src-gen">
+				<include name="**/*.xjb" />
+				<include name="bindings.xml" />
+			</binding>
+			<schema dir="${basedir}/src-gen">
+				<include name="**/scr-1_1_0.xsd" />
+			</schema>
+			<!-- Plugins -->
+			<classpath>
+				<fileset dir="${basedir}/libs-xjc">
+					<!-- JAXB2 Basics library -->
+					<include name="jaxb2-basics-*.jar" />
+					<!-- JAXB2 Basics library dependencies -->
+					<include name="jaxb2-basics-runtime-*.jar" />
+					<include name="jaxb2-basics-tools-*.jar" />
+					<include name="commons-beanutils-*.jar" />
+					<include name="commons-lang-*.jar" />
+					<include name="commons-logging-*.jar" />
+				</fileset>
+			</classpath>
+		</xjc>
+	</target>
+</project>

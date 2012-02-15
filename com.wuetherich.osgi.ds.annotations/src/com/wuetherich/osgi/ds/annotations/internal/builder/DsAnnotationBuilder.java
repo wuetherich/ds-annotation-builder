@@ -27,60 +27,62 @@ import com.wuetherich.osgi.ds.annotations.internal.Constants;
 
 public class DsAnnotationBuilder extends IncrementalProjectBuilder {
 
-	@Override
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
-			throws CoreException {
+  @Override
+  protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 
-		if (kind == IncrementalProjectBuilder.FULL_BUILD) {
-			fullBuild(monitor);
-		} else {
-			IResourceDelta delta = getDelta(getProject());
-			if (delta == null) {
-				fullBuild(monitor);
-			} else {
-				incrementalBuild(delta, monitor);
-			}
-		}
-		return null;
-	}
+    if (kind == IncrementalProjectBuilder.FULL_BUILD) {
+      fullBuild(monitor);
+    } else {
+      IResourceDelta delta = getDelta(getProject());
+      if (delta == null) {
+        fullBuild(monitor);
+      } else {
+        incrementalBuild(delta, monitor);
+      }
+    }
+    return null;
+  }
 
-	private void fullBuild(IProgressMonitor monitor) {
-		try {
-			getProject().accept(new DsAnnotationBuildVisitor());
-		} catch (CoreException e) {
-		}
-	}
+  private void fullBuild(IProgressMonitor monitor) {
+    try {
+      getProject().accept(new DsAnnotationBuildVisitor());
+    } catch (CoreException e) {
+    }
+  }
 
-	protected void incrementalBuild(IResourceDelta delta,
-			IProgressMonitor monitor) throws CoreException {
-		delta.accept(new DsAnnotationBuildVisitor());
-	}
+  protected void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor) throws CoreException {
+    delta.accept(new DsAnnotationBuildVisitor());
+  }
 
-	@Override
-	protected void clean(IProgressMonitor monitor) throws CoreException {
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void clean(IProgressMonitor monitor) throws CoreException {
 
-		// getProject().deleteMarkers("com.xyz.myproblems",
-		// true, IResource.DEPTH_INFINITE);
+    // delete all the markers
+    getProject().deleteMarkers(Constants.DS_ANNOTATION_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 
-		getProject().deleteMarkers(Constants.DS_ANNOTATION_PROBLEM_MARKER,
-				true, IResource.DEPTH_ZERO);
+    //
+    List<IPath> originFiles = GeneratedComponentDescriptionsStore.getOriginFiles(getProject());
 
-		//
-		List<IPath> result = GeneratedComponentDescriptionsStore
-				.getGeneratedFiles(getProject());
+    //
+    for (IPath origin : originFiles) {
 
-		//
-		for (IPath path : result) {
+      try {
 
-			try {
-				IFile file = ResourcesPlugin.getWorkspace().getRoot()
-						.getFile(path);
-				file.delete(true, null);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+        //
+        IFile originFile = ResourcesPlugin.getWorkspace().getRoot().getFile(origin);
 
-		super.clean(monitor);
-	}
+        //
+        if (!originFile.exists()) {
+          GeneratedComponentDescriptionsStore.deleteGeneratedFiles(getProject(), origin);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
+    super.clean(monitor);
+  }
 }

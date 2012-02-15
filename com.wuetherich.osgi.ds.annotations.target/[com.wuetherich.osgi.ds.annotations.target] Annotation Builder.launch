@@ -11,7 +11,7 @@
 <booleanAttribute key="clearwslog" value="false"/>
 <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/[com.wuetherich.osgi.ds.annotations.target] Annotation Builder"/>
 <booleanAttribute key="default" value="false"/>
-<stringAttribute key="deselected_workspace_plugins" value="Test,org.javakontor.osgi.ds.apt"/>
+<stringAttribute key="deselected_workspace_plugins" value="Test,com.wuetherich.org.apache.aries.spifly.dynamic.bundle,com.wuetherich.osgi.sample.spi.consumer,de.tk.org.apache.aries.spifly.dynamic.bundle,org.javakontor.osgi.ds.apt"/>
 <booleanAttribute key="includeOptional" value="true"/>
 <stringAttribute key="location" value="${workspace_loc}/../runtime-AnnotationProcessor"/>
 <listAttribute key="org.eclipse.debug.ui.favoriteGroups">
