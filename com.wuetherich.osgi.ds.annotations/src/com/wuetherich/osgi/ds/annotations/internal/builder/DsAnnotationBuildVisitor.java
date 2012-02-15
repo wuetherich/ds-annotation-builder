@@ -188,11 +188,11 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
 
         // delete the existing file
         if (file.exists()) {
-          file.delete(true, null);
+          file.setContents(new StringBufferInputStream(description.toXml()), IFile.FORCE, null);
+        } else {
+          // write the new component description to disc
+          file.create(new StringBufferInputStream(description.toXml()), true, null);
         }
-
-        // write the new component description to disc
-        file.create(new StringBufferInputStream(description.toXml()), true, null);
 
         // add generated file to the GeneratedComponentDescriptionsStore
         GeneratedComponentDescriptionsStore.addGeneratedFile(resource.getProject(), file.getFullPath(),
