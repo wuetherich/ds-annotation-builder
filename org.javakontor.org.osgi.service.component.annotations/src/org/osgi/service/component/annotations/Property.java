@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * must be used on static final String fields
  */
-@Retention(value = RetentionPolicy.RUNTIME)
+@Retention(value = RetentionPolicy.CLASS)
 @Target(value = ElementType.FIELD)
 public @interface Property {
 
