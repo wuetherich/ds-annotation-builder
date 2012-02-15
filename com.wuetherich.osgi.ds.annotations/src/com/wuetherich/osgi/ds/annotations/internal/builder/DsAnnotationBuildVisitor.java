@@ -34,6 +34,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import com.wuetherich.osgi.ds.annotations.internal.AbstractComponentDescription;
 import com.wuetherich.osgi.ds.annotations.internal.Constants;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
+import com.wuetherich.osgi.ds.annotations.internal.builder.store.GeneratedComponentDescriptionsStore;
 
 /**
  * <p>
