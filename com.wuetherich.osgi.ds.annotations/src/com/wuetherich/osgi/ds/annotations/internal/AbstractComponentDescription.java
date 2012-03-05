@@ -29,7 +29,6 @@ import com.wuetherich.osgi.ds.annotations.xml.ObjectFactory;
 import com.wuetherich.osgi.ds.annotations.xml.Tcomponent;
 import com.wuetherich.osgi.ds.annotations.xml.TconfigurationPolicy;
 import com.wuetherich.osgi.ds.annotations.xml.Timplementation;
-import com.wuetherich.osgi.ds.annotations.xml.TjavaTypes;
 import com.wuetherich.osgi.ds.annotations.xml.Tpolicy;
 import com.wuetherich.osgi.ds.annotations.xml.Tproperties;
 import com.wuetherich.osgi.ds.annotations.xml.Tproperty;
@@ -45,30 +44,73 @@ import com.wuetherich.osgi.ds.annotations.xml.Tservice;
  */
 public abstract class AbstractComponentDescription {
 
-  private static final String       REFERENCE_TARGET  = "target";
+  private static final String              REFERENCE_TARGET  = "target";
 
-  private static final String       COMPONENT_SERVICE = "service";
+  private static final String              COMPONENT_SERVICE = "service";
 
-  private static final String       NO_SUPERTYPE_S    = "NO SUPERTYPE '%s'.";
+  private static final String              NO_SUPERTYPE_S    = "NO SUPERTYPE '%s'.";
 
-  private static final String       INVALID_FILTER    = "Invalid filter '%s'.";
-
-  /** - */
-  private Tcomponent                _tcomponent;
+  private static final String              INVALID_FILTER    = "Invalid filter '%s'.";
 
   /** - */
-  private List<DsAnnotationProblem> _problems;
+  private Tcomponent                       _tcomponent;
 
-  private String                    _xmlname;
+  /** - */
+  private List<DsAnnotationProblem>        _problems;
+
+  private String                           _xmlname;
+
+  private static ThreadLocal<Marshaller>   marshaller;
+
+  private static ThreadLocal<Unmarshaller> unmarshaller;
+
+  static {
+    // the JAXBContext can be used by multiple concurrent Threads ...
+    final JAXBContext jaxbContext;
+    try {
+      jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
+    } catch (JAXBException e1) {
+      // Should never happen!
+      throw new AssertionError("Oooooppps!? Creating of the marshaller failed!");
+    }
+    // .. the marshaller is not! We wrap it here in a thread local to reduce the burdon
+    // of creating multiple instances even if running from same thread.
+    marshaller = new ThreadLocal<Marshaller>() {
+      @Override
+      protected Marshaller initialValue() {
+        try {
+          Marshaller marshaller = jaxbContext.createMarshaller();
+          // set formatted output
+          marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+          return marshaller;
+        } catch (JAXBException e) {
+          // Should never happen!
+          throw new AssertionError("Oooooppps!? Creating of the marshaller failed!");
+        }
+      }
+    };
+    // .. same goes for unmarshaller here...
+    unmarshaller = new ThreadLocal<Unmarshaller>() {
+      @Override
+      protected Unmarshaller initialValue() {
+        try {
+          return jaxbContext.createUnmarshaller();
+        } catch (JAXBException e) {
+          // Should never happen!
+          throw new AssertionError("Oooooppps!? creating of the unmarshaller failed");
+        }
+      }
+    };
+  }
 
   /**
    * <p>
    * Creates a new instance of type {@link AbstractComponentDescription}.
    * </p>
+   * 
+   * @throws JAXBException
    */
   public AbstractComponentDescription() {
-
-    //
     _tcomponent = new Tcomponent();
     _problems = new LinkedList<DsAnnotationProblem>();
   }
@@ -152,7 +194,7 @@ public abstract class AbstractComponentDescription {
   public void setFactory(String value) {
     _tcomponent.setFactory(value);
   }
-  
+
   public void setXMLName(String _xmlname) {
     this._xmlname = _xmlname;
   }
@@ -314,13 +356,6 @@ public abstract class AbstractComponentDescription {
 
     try {
 
-      JAXBContext jaxbContext = createJAXBContext();
-
-      // create the marshaller
-      Marshaller marshaller = jaxbContext.createMarshaller();
-
-      // set formatted output
-      marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
       // marshaller.setProperty("com.sun.xml.internal.bind.marshaller.namespacePrefixMapper",
       // new MyNameSpacePrefixMapper());
 
@@ -328,7 +363,7 @@ public abstract class AbstractComponentDescription {
       StringWriter result = new StringWriter();
 
       //
-      marshaller.marshal(new ObjectFactory().createComponent(_tcomponent), result);
+      marshaller.get().marshal(new ObjectFactory().createComponent(_tcomponent), result);
 
       //
       return result.toString();
@@ -340,29 +375,29 @@ public abstract class AbstractComponentDescription {
   }
 
   /**
-   * <p>
-   * </p>
+   * Check if this object is equal to the one in represented by this {@link InputStream}
    * 
    * @throws JAXBException
    */
   public boolean equals(InputStream inputStream) throws JAXBException {
-
-    JAXBContext jaxbContext = createJAXBContext();
-
-    // create the marshaller
-    Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-
-    //
-    JAXBElement<Tcomponent> jaxbElement = (JAXBElement<Tcomponent>) unmarshaller.unmarshal(inputStream);
-    Tcomponent tcomponent = jaxbElement.getValue();
-
-    if (!tcomponent.equals(_tcomponent)) {
-      System.out.println(tcomponent);
-      System.out.println(_tcomponent);
+    Object unmarshaledObject = unmarshaller.get().unmarshal(inputStream);
+    if (unmarshaledObject instanceof JAXBElement<?>) {
+      JAXBElement<?> jaxbElement = (JAXBElement<?>) unmarshaledObject;
+      unmarshaledObject = jaxbElement.getValue();
     }
-
-    //
-    return tcomponent.equals(_tcomponent);
+    if (unmarshaledObject instanceof Tcomponent) {
+      Tcomponent tcomponent = (Tcomponent) unmarshaledObject;
+      boolean equals = tcomponent.equals(_tcomponent);
+      if (!equals) {
+        System.out.println(tcomponent);
+        System.out.println(_tcomponent);
+      }
+      return equals;
+    } else {
+      System.err.println("Unmarshalled object is not a Tcomponent but a "
+          + (unmarshaledObject != null ? unmarshaledObject.getClass() : "<null>"));
+      return false;
+    }
   }
 
   /**
@@ -424,22 +459,9 @@ public abstract class AbstractComponentDescription {
    */
   public String getName() {
     if (_xmlname != null) {
-        return _xmlname;
+      return _xmlname;
     }
     return _tcomponent.getImplementation().getClazz();
   }
 
-  /**
-   * <p>
-   * </p>
-   * 
-   * @return
-   * @throws JAXBException
-   */
-  private JAXBContext createJAXBContext() throws JAXBException {
-
-    // the JAXBContext
-    return JAXBContext.newInstance(Tcomponent.class, TconfigurationPolicy.class, Timplementation.class,
-        TjavaTypes.class, Tpolicy.class, Tproperties.class, Tproperty.class, Treference.class, Tservice.class);
-  }
 }
