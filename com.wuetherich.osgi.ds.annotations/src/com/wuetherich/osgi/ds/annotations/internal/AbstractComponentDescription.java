@@ -59,6 +59,8 @@ public abstract class AbstractComponentDescription {
   /** - */
   private List<DsAnnotationProblem> _problems;
 
+  private String                    _xmlname;
+
   /**
    * <p>
    * Creates a new instance of type {@link AbstractComponentDescription}.
@@ -149,6 +151,10 @@ public abstract class AbstractComponentDescription {
 
   public void setFactory(String value) {
     _tcomponent.setFactory(value);
+  }
+  
+  public void setXMLName(String _xmlname) {
+    this._xmlname = _xmlname;
   }
 
   public void addProperties(String value) {
@@ -417,6 +423,9 @@ public abstract class AbstractComponentDescription {
    * @return
    */
   public String getName() {
+    if (_xmlname != null) {
+        return _xmlname;
+    }
     return _tcomponent.getImplementation().getClazz();
   }
 
