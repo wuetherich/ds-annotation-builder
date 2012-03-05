@@ -10,7 +10,8 @@
  ******************************************************************************/
 package com.wuetherich.osgi.ds.annotations.internal.builder;
 
-import java.io.StringBufferInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -186,13 +187,19 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
         } catch (JAXBException e) {
           // simply ignore exceptions
         }
-
+        byte[] bytes;
+        try {
+          bytes = description.toXml().getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+          //Should never happen!
+          throw new RuntimeException("This platform does not support UTF-8", e);
+        }
         // delete the existing file
         if (file.exists()) {
-          file.setContents(new StringBufferInputStream(description.toXml()), IFile.FORCE, null);
+          file.setContents(new ByteArrayInputStream(bytes), IFile.FORCE, null);
         } else {
           // write the new component description to disc
-          file.create(new StringBufferInputStream(description.toXml()), true, null);
+          file.create(new ByteArrayInputStream(bytes), true, null);
         }
 
         // add generated file to the GeneratedComponentDescriptionsStore
@@ -220,7 +227,7 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
 
     // In order to parse 1.5 code, some compiler options need to be set to
     // 1.5
-    Map options = JavaCore.getOptions();
+    Map<?,?> options = JavaCore.getOptions();
     JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, options);
     parser.setCompilerOptions(options);
     parser.setResolveBindings(true);

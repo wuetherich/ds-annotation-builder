@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
@@ -32,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.extensions.XMLFileName;
 
 import com.wuetherich.osgi.ds.annotations.internal.AbstractComponentDescription;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
@@ -44,6 +46,14 @@ import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
  * @author Gerd W&uuml;therich (gerd@gerd-wuetherich.de)
  */
 public class DsAnnotationAstVisitor extends ASTVisitor {
+
+  private static final String                                DS_ANNOTATION_PACKAGE_NAME           = Component.class
+                                                                                                      .getPackage()
+                                                                                                      .getName();
+
+  private static final String                                DS_ANNOTATION_EXTENSION_PACKAGE_NAME = XMLFileName.class
+                                                                                                      .getPackage()
+                                                                                                      .getName();
 
   /** the current type declaration */
   private TypeDeclaration                                    _currentTypeDeclaration;
@@ -185,6 +195,13 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
           }
         }
 
+        if (node.resolveTypeBinding().getQualifiedName().equals(XMLFileName.class.getName())) {
+          if (node instanceof SingleMemberAnnotation) {
+            Expression value = ((SingleMemberAnnotation) node).getValue();
+            getCurrentComponentDescription().setXMLName(value.resolveConstantExpressionValue().toString());
+          }
+        }
+
         if (_currentMethodDeclaration != null) {
 
           //
@@ -192,7 +209,6 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
             getCurrentComponentDescription().setActivateMethod(
                 _currentMethodDeclaration.getName().getFullyQualifiedName());
           }
-
           //
           else if (node.resolveTypeBinding().getQualifiedName().equals(Deactivate.class.getName())) {
             getCurrentComponentDescription().setDeactivateMethod(
@@ -403,7 +419,8 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
 
     //
     if (typeBinding != null) {
-      return Component.class.getPackage().getName().equals(annotation.resolveTypeBinding().getPackage().getName());
+      String name = annotation.resolveTypeBinding().getPackage().getName();
+      return DS_ANNOTATION_PACKAGE_NAME.equals(name) || DS_ANNOTATION_EXTENSION_PACKAGE_NAME.equals(name);
     } else {
       return false;
     }
