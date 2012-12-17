@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/com.wuetherich.osgi.ds.annotations.feature_1.0.0.qualifier.jar" id="com.wuetherich.osgi.ds.annotations.feature" version="1.0.0.qualifier">
+   <feature url="features/com.wuetherich.osgi.ds.annotations.feature_1.0.1.qualifier.jar" id="com.wuetherich.osgi.ds.annotations.feature" version="1.0.1.qualifier">
       <category name="Service Component Annotation Builder"/>
    </feature>
    <category-def name="Service Component Annotation Builder" label="Service Component Annotation Builder">

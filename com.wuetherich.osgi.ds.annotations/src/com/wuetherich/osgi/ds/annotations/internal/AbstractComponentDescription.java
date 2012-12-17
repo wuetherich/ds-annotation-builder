@@ -164,8 +164,18 @@ public abstract class AbstractComponentDescription {
     //
     Tproperty tproperty = new Tproperty();
     _tcomponent.getPropertyOrProperties().add(tproperty);
-    tproperty.setPropertyName(strings[0]);
+    String[] nameTypePair = strings[0].split(":");
+    if (nameTypePair.length > 1) {
+      tproperty.setPropertyName(nameTypePair[0]);
+      tproperty.setPropertyType(TjavaTypes.fromValue(nameTypePair[1]));
+    } else {
+      tproperty.setPropertyValue(strings[0]);
+    }
+    
+    //
     tproperty.setPropertyValue(strings[1]);
+
+    //
     tproperty.setValue("");
   }
 
