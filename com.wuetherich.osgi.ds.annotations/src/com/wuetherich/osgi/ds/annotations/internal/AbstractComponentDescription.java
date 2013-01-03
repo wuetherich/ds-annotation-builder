@@ -169,14 +169,11 @@ public abstract class AbstractComponentDescription {
       tproperty.setPropertyName(nameTypePair[0]);
       tproperty.setPropertyType(TjavaTypes.fromValue(nameTypePair[1]));
     } else {
-      tproperty.setPropertyValue(strings[0]);
+      tproperty.setPropertyName(strings[0]);
     }
     
     //
     tproperty.setPropertyValue(strings[1]);
-
-    //
-    tproperty.setValue("");
   }
 
   public void setService(String[] services) {
