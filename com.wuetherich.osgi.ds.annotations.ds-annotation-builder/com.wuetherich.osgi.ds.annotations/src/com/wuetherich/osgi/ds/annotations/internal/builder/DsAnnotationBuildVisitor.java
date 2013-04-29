@@ -189,10 +189,14 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
 
         // delete the existing file
         if (file.exists()) {
+          if (!file.isDerived()) {
+            file.setDerived(true, null);
+          }
           file.setContents(new StringBufferInputStream(description.toXml()), IFile.FORCE, null);
         } else {
           // write the new component description to disc
           file.create(new StringBufferInputStream(description.toXml()), true, null);
+          file.setDerived(true, null);
         }
 
         // add generated file to the GeneratedComponentDescriptionsStore
@@ -208,7 +212,7 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
   /**
    * <p>
    * </p>
-   *
+   * 
    * @param icompilationUnit
    * @return
    */
