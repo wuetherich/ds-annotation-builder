@@ -201,10 +201,6 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
           file.create(new StringBufferInputStream(description.toXml()), true, null);
           file.setDerived(true, null);
         }
-
-        // add generated file to the GeneratedComponentDescriptionsStore
-        GeneratedComponentDescriptionsStore.addGeneratedFile(resource.getProject(), file.getFullPath(),
-            resource.getFullPath());
       }
     }
 

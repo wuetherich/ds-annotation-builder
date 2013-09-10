@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -15,10 +14,9 @@ import org.eclipse.pde.core.project.IBundleProjectDescription;
 import com.wuetherich.osgi.ds.annotations.internal.Activator;
 import com.wuetherich.osgi.ds.annotations.internal.Constants;
 
-public class UpdateManifestAndBuildPropertiesSaveParticipant implements GeneratedComponentDescriptionsSaveParticipant {
+public class UpdateManifestAndBuildPropertiesSaveParticipant {
 
-  @Override
-  public void propertiesSaved(IProject project, Properties properties) throws CoreException {
+  public void propertiesSaved(IProject project) throws CoreException {
 
     boolean shouldApply = false;
 

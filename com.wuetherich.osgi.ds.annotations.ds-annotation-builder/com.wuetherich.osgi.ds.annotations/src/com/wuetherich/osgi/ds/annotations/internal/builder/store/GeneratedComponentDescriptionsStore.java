@@ -13,7 +13,6 @@ package com.wuetherich.osgi.ds.annotations.internal.builder.store;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,6 +20,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -42,60 +49,7 @@ import com.wuetherich.osgi.ds.annotations.internal.Constants;
 public class GeneratedComponentDescriptionsStore {
 
   /** - */
-  private static GeneratedComponentDescriptionsSaveParticipant _saveParticipant = new UpdateManifestAndBuildPropertiesSaveParticipant();
-
-  /**
-   * <p>
-   * </p>
-   * 
-   * @param project
-   * @return
-   * @throws CoreException
-   */
-  public static final void addGeneratedFile(IProject project, IPath componentDescription, IPath resourcePath)
-      throws CoreException {
-
-    try {
-
-      //
-      Properties properties = loadProperties(project);
-
-      //
-      properties.setProperty(componentDescription.toOSString(), resourcePath.toOSString());
-
-      //
-      saveProperties(project, properties);
-
-    } catch (Exception e) {
-      throw new CoreException(new Status(IStatus.ERROR, Constants.BUNDLE_ID, e.getMessage(), e));
-    }
-  }
-
-  /**
-   * <p>
-   * </p>
-   * 
-   * @param project
-   * @param componentDescription
-   * @throws CoreException
-   */
-  public static final void removeGeneratedFile(IProject project, IPath componentDescription) throws CoreException {
-
-    try {
-
-      //
-      Properties properties = loadProperties(project);
-
-      //
-      properties.remove(componentDescription.toOSString());
-
-      //
-      saveProperties(project, properties);
-
-    } catch (Exception e) {
-      throw new CoreException(new Status(IStatus.ERROR, Constants.BUNDLE_ID, e.getMessage(), e));
-    }
-  }
+  private static UpdateManifestAndBuildPropertiesSaveParticipant _saveParticipant = new UpdateManifestAndBuildPropertiesSaveParticipant();
 
   /**
    * <p>
@@ -113,7 +67,6 @@ public class GeneratedComponentDescriptionsStore {
       try {
         IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
         file.delete(true, null);
-        removeGeneratedFile(project, path);
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -215,35 +168,13 @@ public class GeneratedComponentDescriptionsStore {
    * @return
    * @throws CoreException
    */
+  // TODO: REPLACE
   private static Properties loadProperties(IProject project) throws CoreException {
     try {
       File file = getFile(project);
       Properties properties = new Properties();
       properties.load(new FileInputStream(file));
       return properties;
-    } catch (FileNotFoundException e) {
-      throw new CoreException(new Status(IStatus.ERROR, Constants.BUNDLE_ID, e.getMessage(), e));
-    } catch (IOException e) {
-      throw new CoreException(new Status(IStatus.ERROR, Constants.BUNDLE_ID, e.getMessage(), e));
-    }
-  }
-
-  /**
-   * @param project
-   * @param properties
-   * @throws CoreException
-   */
-  private static void saveProperties(IProject project, Properties properties) throws CoreException {
-
-    try {
-      File file = getFile(project);
-      properties.store(new FileOutputStream(file), null);
-
-      //
-      if (_saveParticipant != null) {
-        _saveParticipant.propertiesSaved(project, properties);
-      }
-
     } catch (FileNotFoundException e) {
       throw new CoreException(new Status(IStatus.ERROR, Constants.BUNDLE_ID, e.getMessage(), e));
     } catch (IOException e) {
@@ -259,6 +190,7 @@ public class GeneratedComponentDescriptionsStore {
    * @return
    * @throws IOException
    */
+  // TODO: REPLACE
   private static File getFile(IProject project) throws IOException {
 
     IPath path = project.getWorkingLocation(Constants.BUNDLE_ID);
@@ -269,5 +201,27 @@ public class GeneratedComponentDescriptionsStore {
     }
 
     return file;
+  }
+  
+  public static void main(String[] args) throws FileNotFoundException, XMLStreamException, FactoryConfigurationError {
+    
+    //
+    XMLStreamReader xr = XMLInputFactory.newInstance().createXMLStreamReader(
+        new FileInputStream("C:\\workspaces\\junit-workspace\\DEFAULT-JDT-TEST-PROJECT\\OSGI-INF\\de.test.Test.xml"));
+    
+    
+    Pattern p = Pattern.compile(Constants.DS_ANNOTATION_BUILDER_GENERATED_REGEXP);
+    
+    //
+    while (xr.hasNext()) {
+      if (xr.next() == XMLStreamConstants.COMMENT) {
+        String comment = xr.getText();
+        System.out.println(comment);
+        Matcher m = p.matcher(comment);
+        if (m.matches()) {
+          System.out.println(m.group(2));
+        }
+      }
+    }
   }
 }
