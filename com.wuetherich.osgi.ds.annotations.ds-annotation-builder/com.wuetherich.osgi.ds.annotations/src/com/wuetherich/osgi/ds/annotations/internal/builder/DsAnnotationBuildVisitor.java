@@ -174,6 +174,9 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
 
       } else {
 
+        //
+        description.setSourceFile(resource.getProjectRelativePath().toPortableString());
+        
         // get the output file
         IFile file = folder.getFile(description.getName() + ".xml");
 

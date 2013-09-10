@@ -19,6 +19,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 
 import org.eclipse.core.runtime.Assert;
@@ -58,6 +59,9 @@ public abstract class AbstractComponentDescription {
 
   /** - */
   private List<DsAnnotationProblem> _problems;
+
+  /** - */
+  private String                    _sourceFile;
 
   /**
    * <p>
@@ -116,6 +120,10 @@ public abstract class AbstractComponentDescription {
     return _problems;
   }
 
+  public void setSourceFile(String sourceFile) {
+    this._sourceFile = sourceFile;
+  }
+
   public void setName(String value) {
     _tcomponent.setName(value);
   }
@@ -171,7 +179,7 @@ public abstract class AbstractComponentDescription {
     } else {
       tproperty.setPropertyName(strings[0]);
     }
-    
+
     //
     tproperty.setPropertyValue(strings[1]);
   }
@@ -322,9 +330,15 @@ public abstract class AbstractComponentDescription {
 
       // set formatted output
       marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-      // marshaller.setProperty("com.sun.xml.internal.bind.marshaller.namespacePrefixMapper",
-      // new MyNameSpacePrefixMapper());
-
+      if (_sourceFile != null) {
+        try {
+          marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders",
+              String.format(Constants.DS_ANNOTATION_BUILDER_GENERATED_COMMENT, _sourceFile));
+        } catch (PropertyException ex) {
+          marshaller.setProperty("com.sun.xml.bind.xmlHeaders",
+              String.format(Constants.DS_ANNOTATION_BUILDER_GENERATED_COMMENT, _sourceFile));
+        }
+      }
       //
       StringWriter result = new StringWriter();
 
@@ -356,11 +370,6 @@ public abstract class AbstractComponentDescription {
     //
     JAXBElement<Tcomponent> jaxbElement = (JAXBElement<Tcomponent>) unmarshaller.unmarshal(inputStream);
     Tcomponent tcomponent = jaxbElement.getValue();
-
-    if (!tcomponent.equals(_tcomponent)) {
-      System.out.println(tcomponent);
-      System.out.println(_tcomponent);
-    }
 
     //
     return tcomponent.equals(_tcomponent);
