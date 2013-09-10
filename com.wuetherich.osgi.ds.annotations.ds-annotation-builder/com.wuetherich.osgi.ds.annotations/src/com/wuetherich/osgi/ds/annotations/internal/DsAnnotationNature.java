@@ -20,81 +20,138 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.project.IBundleProjectDescription;
 
+/**
+ * <p>
+ * </p>
+ *
+ * @author Gerd W&uuml;therich (gerd@gerd-wuetherich.de)
+ */
 public class DsAnnotationNature implements IProjectNature {
 
-	/** the associated bundle maker project */
-	private IProject _project;
+  /** the associated bundle maker project */
+  private IProject _project;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public IProject getProject() {
-		return _project;
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public IProject getProject() {
+    return _project;
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setProject(IProject value) {
-		_project = value;
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setProject(IProject value) {
+    _project = value;
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void configure() throws CoreException {
+  /**
+   * {@inheritDoc}
+   */
+  public void configure() throws CoreException {
 
-		IProjectDescription desc = _project.getDescription();
-		ICommand[] commands = desc.getBuildSpec();
-		boolean found = false;
+    IProjectDescription desc = _project.getDescription();
+    ICommand[] commands = desc.getBuildSpec();
+    boolean found = false;
 
-		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(Constants.BUILDER_ID)) {
-				found = true;
-				break;
-			}
-		}
+    for (int i = 0; i < commands.length; ++i) {
+      if (commands[i].getBuilderName().equals(Constants.BUILDER_ID)) {
+        found = true;
+        break;
+      }
+    }
 
-		if (!found) {
-			// add builder to project
-			ICommand command = desc.newCommand();
-			command.setBuilderName(Constants.BUILDER_ID);
-			ICommand[] newCommands = new ICommand[commands.length + 1];
+    if (!found) {
 
-			// Add it before other builders.
-			System.arraycopy(commands, 0, newCommands, 1, commands.length);
-			newCommands[0] = command;
-			desc.setBuildSpec(newCommands);
-			_project.setDescription(desc, null);
-		}
-	}
+      // add builder to project
+      ICommand command = desc.newCommand();
+      command.setBuilderName(Constants.BUILDER_ID);
+      ICommand[] newCommands = new ICommand[commands.length + 1];
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void deconfigure() throws CoreException {
+      // Add it before other builders.
+      System.arraycopy(commands, 0, newCommands, 1, commands.length);
+      newCommands[0] = command;
+      desc.setBuildSpec(newCommands);
+      _project.setDescription(desc, null);
 
-		//
-		IProjectDescription desc = _project.getDescription();
-		List<ICommand> iCommands = new LinkedList<ICommand>(Arrays.asList(desc
-				.getBuildSpec()));
+      // configure default import
+      configureDefaultImport();
+    }
+  }
 
-		//
-		for (Iterator<ICommand> iterator = iCommands.iterator(); iterator
-				.hasNext();) {
-			if (iterator.next().getBuilderName().equals(Constants.BUILDER_ID)) {
-				iterator.remove();
-				break;
-			}
-		}
+  /**
+   * {@inheritDoc}
+   */
+  public void deconfigure() throws CoreException {
 
-		//
-		desc.setBuildSpec(iCommands.toArray(new ICommand[0]));
+    //
+    IProjectDescription desc = _project.getDescription();
+    List<ICommand> iCommands = new LinkedList<ICommand>(Arrays.asList(desc.getBuildSpec()));
 
-		//
-		_project.setDescription(desc, null);
-	}
+    //
+    for (Iterator<ICommand> iterator = iCommands.iterator(); iterator.hasNext();) {
+      if (iterator.next().getBuilderName().equals(Constants.BUILDER_ID)) {
+        iterator.remove();
+        break;
+      }
+    }
+
+    //
+    desc.setBuildSpec(iCommands.toArray(new ICommand[0]));
+
+    //
+    _project.setDescription(desc, null);
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @throws CoreException
+   */
+  private void configureDefaultImport() throws CoreException {
+
+    //
+    IBundleProjectDescription bundleProjectDescription = Activator.getBundleProjectDescription(_project);
+
+    //
+    if (bundleProjectDescription != null) {
+
+      String importPackage = bundleProjectDescription.getHeader(org.osgi.framework.Constants.IMPORT_PACKAGE);
+
+      //
+      if (importPackage != null) {
+
+        String[] imports = importPackage.split(",");
+
+        //
+        for (String imp : imports) {
+          String[] strings = imp.split(";");
+          if (strings[0].equals(Constants.DS_ANNOTATION_PACKAGE)) {
+            return;
+          }
+        }
+
+        //
+        bundleProjectDescription.setHeader(org.osgi.framework.Constants.IMPORT_PACKAGE, importPackage + ", "
+            + Constants.DS_ANNOTATION_PACKAGE);
+        bundleProjectDescription.apply(null);
+      }
+
+      //
+      else {
+
+        //
+        bundleProjectDescription
+            .setHeader(org.osgi.framework.Constants.IMPORT_PACKAGE, Constants.DS_ANNOTATION_PACKAGE);
+
+        //
+        bundleProjectDescription.apply(null);
+      }
+    }
+  }
 }

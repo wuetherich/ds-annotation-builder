@@ -10,6 +10,8 @@
  ******************************************************************************/
 package com.wuetherich.osgi.ds.annotations.internal;
 
+import org.osgi.service.component.annotations.Component;
+
 public interface Constants {
 
   /** - */
@@ -29,4 +31,7 @@ public interface Constants {
 
   /** - */
   String DS_ANNOTATION_PROBLEM_MARKER    = "com.wuetherich.osgi.ds.annotations.dsAnnotationProblem";
+
+  /** - */
+  String DS_ANNOTATION_PACKAGE           = Component.class.getPackage().getName();
 }

@@ -53,7 +53,7 @@ public class EnableNatureAction implements IObjectActionDelegate {
 		}
 	}
 
-	private void enableNature(IProject project, boolean b) throws CoreException {
+	public static void enableNature(IProject project, boolean b) throws CoreException {
 		IProjectDescription description = project.getDescription();
 		String[] natures = description.getNatureIds();
 		String[] newNatures = new String[natures.length + 1];
