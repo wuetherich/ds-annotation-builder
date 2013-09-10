@@ -446,7 +446,7 @@ public abstract class AbstractDsAnnotationsTest {
 			try {
 				project.delete(true, true, null);
 			} catch (Exception e) {
-				// e.printStackTrace();
+				e.printStackTrace();
 			}
 		}
 	}
