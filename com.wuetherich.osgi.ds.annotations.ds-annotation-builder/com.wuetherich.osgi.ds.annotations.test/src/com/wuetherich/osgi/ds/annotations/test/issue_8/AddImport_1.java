@@ -1,4 +1,4 @@
-package com.wuetherich.osgi.ds.annotations.test.addimport;
+package com.wuetherich.osgi.ds.annotations.test.issue_8;
 
 import org.eclipse.core.runtime.CoreException;
 import org.junit.Test;

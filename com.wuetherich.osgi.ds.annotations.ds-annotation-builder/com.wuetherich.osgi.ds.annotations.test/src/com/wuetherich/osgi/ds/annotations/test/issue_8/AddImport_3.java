@@ -1,4 +1,4 @@
-package com.wuetherich.osgi.ds.annotations.test.addimport;
+package com.wuetherich.osgi.ds.annotations.test.issue_8;
 
 import org.eclipse.core.runtime.CoreException;
 import org.junit.Test;
@@ -6,7 +6,7 @@ import org.junit.Test;
 import com.wuetherich.osgi.ds.annotations.internal.Constants;
 import com.wuetherich.osgi.ds.annotations.test.util.AbstractDsAnnotationsTest;
 
-public class AddImport_2 extends AbstractDsAnnotationsTest {
+public class AddImport_3 extends AbstractDsAnnotationsTest {
 
 	@Test
 	public void test() throws CoreException {
@@ -25,6 +25,6 @@ public class AddImport_2 extends AbstractDsAnnotationsTest {
 
 	@Override
 	protected String[] getImportedPackages() {
-		return new String[] { "org.osgi.framework" };
+		return new String[] { "org.osgi.service.component.annotations" };
 	}
 }
