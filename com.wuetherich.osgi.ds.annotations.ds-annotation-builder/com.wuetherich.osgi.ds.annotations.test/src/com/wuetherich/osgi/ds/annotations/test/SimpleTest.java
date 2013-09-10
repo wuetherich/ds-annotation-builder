@@ -1,4 +1,4 @@
-package com.wuetherich.osgi.ds.annotations.itest;
+package com.wuetherich.osgi.ds.annotations.test;
 
 import org.junit.Test;
 
