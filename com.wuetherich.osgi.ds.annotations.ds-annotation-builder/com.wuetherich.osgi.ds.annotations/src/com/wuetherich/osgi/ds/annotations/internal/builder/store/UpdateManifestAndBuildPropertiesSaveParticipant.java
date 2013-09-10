@@ -83,6 +83,7 @@ public class UpdateManifestAndBuildPropertiesSaveParticipant implements Generate
       bundleProjectDescription.setBinIncludes(binIncludePaths);
 
       if (shouldApply) {
+        // bundleProjectDescription.setHeader("Meta-Persistence", "");
         bundleProjectDescription.apply(null);
       }
     }
