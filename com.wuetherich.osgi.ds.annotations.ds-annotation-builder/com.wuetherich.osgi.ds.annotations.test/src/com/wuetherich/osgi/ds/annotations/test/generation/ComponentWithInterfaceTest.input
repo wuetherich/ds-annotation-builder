@@ -1,0 +1,8 @@
+package de.test; 
+
+import org.osgi.service.component.annotations.Component; 
+import java.io.Serializable; 
+
+@Component 
+public class Test implements Serializable {
+}

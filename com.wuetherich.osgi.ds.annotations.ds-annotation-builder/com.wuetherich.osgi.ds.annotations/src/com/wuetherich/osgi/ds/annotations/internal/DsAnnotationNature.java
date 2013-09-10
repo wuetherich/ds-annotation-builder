@@ -22,6 +22,8 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 
+import com.wuetherich.osgi.ds.annotations.Constants;
+
 /**
  * <p>
  * </p>

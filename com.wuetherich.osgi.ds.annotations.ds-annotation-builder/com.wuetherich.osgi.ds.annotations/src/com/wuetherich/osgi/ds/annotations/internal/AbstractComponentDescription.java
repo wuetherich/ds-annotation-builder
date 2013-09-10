@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Assert;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 
+import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.xml.ObjectFactory;
 import com.wuetherich.osgi.ds.annotations.xml.Tcomponent;
 import com.wuetherich.osgi.ds.annotations.xml.TconfigurationPolicy;
@@ -443,7 +444,7 @@ public abstract class AbstractComponentDescription {
    * @return
    * @throws JAXBException
    */
-  private JAXBContext createJAXBContext() throws JAXBException {
+  public static JAXBContext createJAXBContext() throws JAXBException {
 
     // the JAXBContext
     return JAXBContext.newInstance(Tcomponent.class, TconfigurationPolicy.class, Timplementation.class,

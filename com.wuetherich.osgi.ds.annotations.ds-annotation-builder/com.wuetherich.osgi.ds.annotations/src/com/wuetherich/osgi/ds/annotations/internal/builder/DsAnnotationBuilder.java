@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import com.wuetherich.osgi.ds.annotations.internal.Constants;
+import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.internal.builder.store.GeneratedComponentDescriptionsStore;
 
 public class DsAnnotationBuilder extends IncrementalProjectBuilder {

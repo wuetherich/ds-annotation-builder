@@ -11,8 +11,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 
+import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.internal.Activator;
-import com.wuetherich.osgi.ds.annotations.internal.Constants;
 
 public class UpdateManifestAndBuildPropertiesSaveParticipant {
 

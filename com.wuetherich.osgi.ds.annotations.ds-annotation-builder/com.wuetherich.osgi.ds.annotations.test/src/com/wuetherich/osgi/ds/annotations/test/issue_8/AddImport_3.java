@@ -3,8 +3,9 @@ package com.wuetherich.osgi.ds.annotations.test.issue_8;
 import org.eclipse.core.runtime.CoreException;
 import org.junit.Test;
 
-import com.wuetherich.osgi.ds.annotations.internal.Constants;
+import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.test.util.AbstractDsAnnotationsTest;
+import com.wuetherich.osgi.ds.annotations.test.util.EclipseProjectUtils;
 
 public class AddImport_3 extends AbstractDsAnnotationsTest {
 
@@ -12,7 +13,7 @@ public class AddImport_3 extends AbstractDsAnnotationsTest {
 	public void test() throws CoreException {
 
 		//
-		checkFileExists(Constants.COMPONENT_DESCRIPTION_FOLDER
+		EclipseProjectUtils.checkFileExists(getProject(), Constants.COMPONENT_DESCRIPTION_FOLDER
 				+ "/de.test.Test.xml");
 	}
 

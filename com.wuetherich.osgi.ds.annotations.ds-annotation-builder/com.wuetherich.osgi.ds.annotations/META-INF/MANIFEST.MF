@@ -8,15 +8,13 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
  org.eclipse.core.resources;bundle-version="3.6",
- org.eclipse.ui;bundle-version="3.6.0",
  org.eclipse.jdt.core;bundle-version="3.6.0",
- org.eclipse.ui.ide;bundle-version="3.6.0",
- org.eclipse.pde.core;bundle-version="3.6.0",
- org.eclipse.pde.ui;bundle-version="3.6.0"
+ org.eclipse.pde.core;bundle-version="3.6.0"
 Bundle-Activator: com.wuetherich.osgi.ds.annotations.internal.Activator
 Bundle-ClassPath: libs/commons-lang-2.2.jar,
  libs/jaxb-api-2.1.jar,
  libs/jaxb2-basics-runtime-0.6.3.jar,
  .
 Import-Package: org.osgi.service.component.annotations;version="1.2.0"
+Export-Package: com.wuetherich.osgi.ds.annotations
 

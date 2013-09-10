@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   
+   <extension point="org.eclipse.ui.popupMenus">
+
+      <objectContribution id="enableNatureAction"
+                          objectClass="org.eclipse.core.resources.IProject"
+                          adaptable="true">
+         <action id="com.wuetherich.osgi.ds.annotations.enableNatureAction"
+                 class="com.wuetherich.osgi.ds.annotations.internal.actions.EnableNatureAction"
+                 label="Enable DS Annotations"
+                 style="push"
+	             menubarPath="org.eclipse.ui.projectConfigure/additions"
+                 enablesFor="+"/>
+         <visibility>
+           <and>
+             <objectState name="open" value="true"/>
+             <not>
+               <objectState name="nature" value="com.wuetherich.osgi.ds.annotations.dsAnnotationNature"/>
+             </not>
+           </and>
+         </visibility>
+      </objectContribution>
+   </extension>
+   
+      <extension point="org.eclipse.ui.popupMenus">
+
+      <objectContribution id="disableNatureAction"
+                          objectClass="org.eclipse.core.resources.IProject"
+                          adaptable="true">
+         <action id="com.wuetherich.osgi.ds.annotations.disableNatureAction"
+                 class="com.wuetherich.osgi.ds.annotations.internal.actions.DisableNatureAction"
+                 label="Disable DS Annotations"
+                 style="push"
+	             menubarPath="org.eclipse.ui.projectConfigure/additions"
+                 enablesFor="+"/>
+         <visibility>
+           <and>
+             <objectState name="open" value="true"/>
+             <objectState name="nature" value="com.wuetherich.osgi.ds.annotations.dsAnnotationNature"/>
+           </and>
+         </visibility>
+      </objectContribution>
+   </extension>
+   
+</plugin>

@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import com.wuetherich.osgi.ds.annotations.internal.Constants;
+import com.wuetherich.osgi.ds.annotations.Constants;
 
 public class EnableNatureAction implements IObjectActionDelegate {
 

@@ -38,7 +38,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 
-import com.wuetherich.osgi.ds.annotations.internal.Constants;
+import com.wuetherich.osgi.ds.annotations.Constants;
 
 /**
  * <p>

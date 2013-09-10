@@ -8,7 +8,7 @@
  * Contributors:
  *     Gerd Wuetherich (gerd@gerd-wuetherich.de) - initial API and implementation
  ******************************************************************************/
-package com.wuetherich.osgi.ds.annotations.internal;
+package com.wuetherich.osgi.ds.annotations;
 
 import org.osgi.service.component.annotations.Component;
 
