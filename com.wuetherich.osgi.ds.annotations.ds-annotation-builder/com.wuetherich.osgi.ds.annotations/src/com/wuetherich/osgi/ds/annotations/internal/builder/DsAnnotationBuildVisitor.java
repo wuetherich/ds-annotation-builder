@@ -10,19 +10,15 @@
  ******************************************************************************/
 package com.wuetherich.osgi.ds.annotations.internal.builder;
 
-import java.io.StringBufferInputStream;
 import java.util.Map;
 
-import javax.xml.bind.JAXBException;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -33,7 +29,6 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
-import com.wuetherich.osgi.ds.annotations.internal.builder.store.GeneratedComponentDescriptionsStore;
 
 /**
  * <p>
@@ -74,10 +69,17 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
       return visit(delta.getResource());
 
     } else if (delta.getKind() == IResourceDelta.REMOVED) {
+      
+      // //
+      // if (delta.getResource().getName().endsWith(".xml") && new
+      // Path(Constants.COMPONENT_DESCRIPTION_FOLDER).isPrefixOf(delta.getResource().getProjectRelativePath())) {
+      // ComponentDescriptionWriter.updateSourceFile(delta.getResource().getProject(),
+      // delta.getResource().getProjectRelativePath());
+      // }
 
       //
-      GeneratedComponentDescriptionsStore.deleteGeneratedFiles(delta.getResource().getProject(), delta.getResource()
-          .getFullPath());
+      ComponentDescriptionWriter.deleteGeneratedFiles(delta.getResource().getProject(), delta.getResource()
+          .getProjectRelativePath());
 
     } else if (delta.getKind() == IResourceDelta.CHANGED) {
       return visit(delta.getResource());
@@ -141,12 +143,6 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
     DsAnnotationAstVisitor myAstVisitor = new DsAnnotationAstVisitor();
     result.accept(myAstVisitor);
 
-    // create the output folder if necessary
-    IFolder folder = resource.getProject().getFolder(Constants.COMPONENT_DESCRIPTION_FOLDER);
-    if (!folder.exists()) {
-      folder.create(true, true, null);
-    }
-
     // iterate over the component descriptions
     for (ComponentDescription description : myAstVisitor.getComponentDescriptions()) {
 
@@ -165,7 +161,7 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
         } catch (CoreException e) {
 
           // delete
-          GeneratedComponentDescriptionsStore.deleteGeneratedFiles(resource.getProject(), resource.getFullPath());
+          ComponentDescriptionWriter.deleteGeneratedFiles(resource.getProject(), resource.getFullPath());
 
           // TODO
           e.printStackTrace();
@@ -175,36 +171,11 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
 
         //
         description.setSourceFile(resource.getProjectRelativePath().toPortableString());
-        
-        // get the output file
-        IFile file = folder.getFile(description.getName() + ".xml");
 
-        // check if the component description has changed
-        try {
-          if (file.exists() && description.equals(file.getContents(true))) {
-            System.out.println(String.format("No changes for file '%s'.", file.getFullPath()));
-            continue;
-          }
-        } catch (JAXBException e) {
-          // simply ignore exceptions
-        }
-
-        // delete the existing file
-        if (file.exists()) {
-          if (!file.isDerived()) {
-            file.setDerived(true, null);
-          }
-          file.setContents(new StringBufferInputStream(description.toXml()), IFile.FORCE, null);
-        } else {
-          // write the new component description to disc
-          file.create(new StringBufferInputStream(description.toXml()), true, null);
-          file.setDerived(true, null);
-        }
+        //
+        ComponentDescriptionWriter.writeComponentDescription(resource.getProject(), description);
       }
     }
-
-    // finally we have to refresh the local folder
-    folder.refreshLocal(IResource.DEPTH_INFINITE, null);
   }
 
   /**

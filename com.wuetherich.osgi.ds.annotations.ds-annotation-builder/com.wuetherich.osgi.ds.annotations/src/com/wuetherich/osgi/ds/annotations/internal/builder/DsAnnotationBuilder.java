@@ -10,21 +10,16 @@
  ******************************************************************************/
 package com.wuetherich.osgi.ds.annotations.internal.builder;
 
-import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
-import com.wuetherich.osgi.ds.annotations.internal.builder.store.GeneratedComponentDescriptionsStore;
 
 public class DsAnnotationBuilder extends IncrementalProjectBuilder {
 
@@ -65,25 +60,9 @@ public class DsAnnotationBuilder extends IncrementalProjectBuilder {
     getProject().deleteMarkers(Constants.DS_ANNOTATION_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 
     //
-    List<IPath> originFiles = GeneratedComponentDescriptionsStore.getOriginFiles(getProject());
+    ComponentDescriptionWriter.removeDanglingComponentDescriptions(getProject());
 
     //
-    for (IPath origin : originFiles) {
-
-      try {
-
-        //
-        IFile originFile = ResourcesPlugin.getWorkspace().getRoot().getFile(origin);
-
-        //
-        if (!originFile.exists()) {
-          GeneratedComponentDescriptionsStore.deleteGeneratedFiles(getProject(), origin);
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-
     super.clean(monitor);
   }
 }
