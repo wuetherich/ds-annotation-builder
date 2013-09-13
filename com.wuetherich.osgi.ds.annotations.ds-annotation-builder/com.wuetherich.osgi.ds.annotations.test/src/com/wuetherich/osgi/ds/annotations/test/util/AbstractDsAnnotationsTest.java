@@ -69,6 +69,13 @@ public abstract class AbstractDsAnnotationsTest {
 		//
 		EclipseProjectUtils.enableDsAnnotationNature(_project);
 
+		// TODO: Synchronize
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// noop
+		}
+
 		// refresh and build
 		_project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
 		_project.build(IncrementalProjectBuilder.FULL_BUILD, null);
@@ -194,7 +201,8 @@ public abstract class AbstractDsAnnotationsTest {
 
 	public static String fromStream(InputStream in) {
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+			BufferedReader reader = new BufferedReader(
+					new InputStreamReader(in));
 			StringBuilder out = new StringBuilder();
 			String line;
 			while ((line = reader.readLine()) != null) {

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -46,7 +47,7 @@ import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
 public class DsAnnotationAstVisitor extends ASTVisitor {
 
   /** the current type declaration */
-  private TypeDeclaration                                    _currentTypeDeclaration;
+  private Stack<TypeDeclaration>                             _currentTypeDeclaration;
 
   /** the current method declaration */
   private MethodDeclaration                                  _currentMethodDeclaration;
@@ -63,6 +64,9 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
 
     // create the description map
     _descriptions = new HashMap<TypeDeclaration, AbstractComponentDescription>();
+    
+    //
+    _currentTypeDeclaration = new Stack<TypeDeclaration>();
   }
 
   /**
@@ -81,7 +85,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
    */
   @Override
   public boolean visit(TypeDeclaration node) {
-    _currentTypeDeclaration = node;
+    _currentTypeDeclaration.push(node);
     return true;
   }
 
@@ -90,7 +94,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
    */
   @Override
   public void endVisit(TypeDeclaration node) {
-    _currentTypeDeclaration = null;
+    _currentTypeDeclaration.pop();
   }
 
   /**
@@ -166,13 +170,13 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
     try {
 
       //
-      if (_currentTypeDeclaration != null) {
+      if (!_currentTypeDeclaration.isEmpty()) {
 
         //
         if (node.resolveTypeBinding().getQualifiedName().equals(Component.class.getName())) {
 
           //
-          _descriptions.put(_currentTypeDeclaration, new AstBasedComponentDescription(_currentTypeDeclaration));
+          _descriptions.put(_currentTypeDeclaration.peek(), new AstBasedComponentDescription(_currentTypeDeclaration.peek()));
           getCurrentComponentDescription().setComponentDefaults();
 
           //
@@ -417,6 +421,6 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
    * @return the current {@link AbstractComponentDescription}.
    */
   private AbstractComponentDescription getCurrentComponentDescription() {
-    return _descriptions.get(_currentTypeDeclaration);
+    return _descriptions.get(_currentTypeDeclaration.peek());
   }
 }
