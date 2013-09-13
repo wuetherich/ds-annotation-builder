@@ -8,7 +8,7 @@
  * Contributors:
  *     Gerd Wuetherich (gerd@gerd-wuetherich.de) - initial API and implementation
  ******************************************************************************/
-package com.wuetherich.osgi.ds.annotations.internal;
+package com.wuetherich.osgi.ds.annotations.internal.builder;
 
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -23,10 +23,15 @@ import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
+import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
+import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
 import com.wuetherich.osgi.ds.annotations.xml.ObjectFactory;
 import com.wuetherich.osgi.ds.annotations.xml.Tcomponent;
 import com.wuetherich.osgi.ds.annotations.xml.TconfigurationPolicy;
@@ -45,7 +50,7 @@ import com.wuetherich.osgi.ds.annotations.xml.Tservice;
  * 
  * @author Gerd W&uuml;therich (gerd@gerd-wuetherich.de)
  */
-public abstract class AbstractComponentDescription {
+public class ComponentDescription {
 
   private static final String       REFERENCE_TARGET  = "target";
 
@@ -63,43 +68,24 @@ public abstract class AbstractComponentDescription {
 
   /** - */
   private String                    _sourceFile;
+  
+  /** - */
+  private TypeDeclaration _typeDeclaration;
 
   /**
    * <p>
-   * Creates a new instance of type {@link AbstractComponentDescription}.
+   * Creates a new instance of type {@link ComponentDescription}.
    * </p>
+   *
+   * @param typeDeclaration
    */
-  public AbstractComponentDescription() {
-
-    //
+  public ComponentDescription(TypeDeclaration typeDeclaration) {
+    Assert.isNotNull(typeDeclaration);
+    
+    this._typeDeclaration = typeDeclaration;
     _tcomponent = new Tcomponent();
     _problems = new LinkedList<DsAnnotationProblem>();
   }
-
-  /**
-   * <p>
-   * </p>
-   * 
-   * @return
-   */
-  protected abstract String getImplementationClassName();
-
-  /**
-   * <p>
-   * </p>
-   * 
-   * @return
-   */
-  protected abstract List<String> getAllDirectlyImplementedSuperInterfaces();
-
-  /**
-   * <p>
-   * </p>
-   * 
-   * @param service
-   * @return
-   */
-  protected abstract boolean isInstanceOf(String service);
 
   /**
    * <p>
@@ -449,5 +435,71 @@ public abstract class AbstractComponentDescription {
     // the JAXBContext
     return JAXBContext.newInstance(Tcomponent.class, TconfigurationPolicy.class, Timplementation.class,
         TjavaTypes.class, Tpolicy.class, Tproperties.class, Tproperty.class, Treference.class, Tservice.class);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected String getImplementationClassName() {
+    return _typeDeclaration.resolveBinding().getBinaryName();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected List<String> getAllDirectlyImplementedSuperInterfaces() {
+
+    //
+    List<String> result = new LinkedList<String>();
+
+    for (Object type : _typeDeclaration.superInterfaceTypes()) {
+      result.add(((Type) type).resolveBinding().getBinaryName());
+    }
+
+    //
+    return result;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected boolean isInstanceOf(String service) {
+    return isInstanceOf(service, _typeDeclaration.resolveBinding());
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @param service
+   * @param typeBinding
+   * @return
+   */
+  protected boolean isInstanceOf(String service, ITypeBinding typeBinding) {
+
+    //
+    if (typeBinding == null) {
+      return false;
+    }
+
+    //
+    if (service.equals(typeBinding.getBinaryName())) {
+      return true;
+    }
+
+    //
+    if (isInstanceOf(service, typeBinding.getSuperclass())) {
+      return true;
+    }
+
+    //
+    for (ITypeBinding iface : typeBinding.getInterfaces()) {
+      if (isInstanceOf(service, iface)) {
+        return true;
+      }
+    }
+
+    //
+    return false;
   }
 }

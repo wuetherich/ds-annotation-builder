@@ -34,7 +34,6 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
-import com.wuetherich.osgi.ds.annotations.internal.AbstractComponentDescription;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
 
@@ -53,7 +52,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
   private MethodDeclaration                                  _currentMethodDeclaration;
 
   /** the descriptions */
-  private Map<TypeDeclaration, AbstractComponentDescription> _descriptions;
+  private Map<TypeDeclaration, ComponentDescription> _descriptions;
 
   /**
    * <p>
@@ -63,8 +62,8 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
   public DsAnnotationAstVisitor() {
 
     // create the description map
-    _descriptions = new HashMap<TypeDeclaration, AbstractComponentDescription>();
-    
+    _descriptions = new HashMap<TypeDeclaration, ComponentDescription>();
+
     //
     _currentTypeDeclaration = new Stack<TypeDeclaration>();
   }
@@ -76,7 +75,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
    * 
    * @return all the component descriptions.
    */
-  public Collection<AbstractComponentDescription> getComponentDescriptions() {
+  public Collection<ComponentDescription> getComponentDescriptions() {
     return _descriptions.values();
   }
 
@@ -176,7 +175,8 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
         if (node.resolveTypeBinding().getQualifiedName().equals(Component.class.getName())) {
 
           //
-          _descriptions.put(_currentTypeDeclaration.peek(), new AstBasedComponentDescription(_currentTypeDeclaration.peek()));
+          _descriptions.put(_currentTypeDeclaration.peek(),
+              new ComponentDescription(_currentTypeDeclaration.peek()));
           getCurrentComponentDescription().setComponentDefaults();
 
           //
@@ -420,7 +420,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
    * 
    * @return the current {@link AbstractComponentDescription}.
    */
-  private AbstractComponentDescription getCurrentComponentDescription() {
+  private ComponentDescription getCurrentComponentDescription() {
     return _descriptions.get(_currentTypeDeclaration.peek());
   }
 }

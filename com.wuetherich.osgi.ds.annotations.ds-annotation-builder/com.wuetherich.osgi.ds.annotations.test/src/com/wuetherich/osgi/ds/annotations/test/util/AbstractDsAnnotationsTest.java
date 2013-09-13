@@ -6,9 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringBufferInputStream;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-
 import org.custommonkey.xmlunit.XMLUnit;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -24,8 +21,6 @@ import org.junit.Assert;
 import org.junit.Before;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
-import com.wuetherich.osgi.ds.annotations.internal.AbstractComponentDescription;
-import com.wuetherich.osgi.ds.annotations.xml.Tcomponent;
 
 /**
  * <p>
