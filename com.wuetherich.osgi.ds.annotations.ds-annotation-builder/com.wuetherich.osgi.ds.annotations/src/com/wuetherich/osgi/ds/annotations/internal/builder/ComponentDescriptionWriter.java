@@ -36,26 +36,26 @@ public class ComponentDescriptionWriter {
   /** - */
   private static Pattern REGEXP_PATTERN = Pattern.compile(Constants.DS_ANNOTATION_BUILDER_GENERATED_REGEXP); ;
 
-  /**
-   * <p>
-   * </p>
-   * 
-   * @param project
-   * @param path
-   */
-  public static void updateSourceFile(IProject project, IPath path) {
-
-    //
-    IPath sourceFile = findSourceFileForComponentDescriptionPath(project, path);
-
-    if (sourceFile != null) {
-      try {
-        project.getFile(sourceFile).refreshLocal(IResource.DEPTH_ZERO, null);
-      } catch (CoreException e) {
-        //
-      }
-    }
-  }
+  // /**
+  // * <p>
+  // * </p>
+  // *
+  // * @param project
+  // * @param path
+  // */
+  // public static void updateSourceFile(IProject project, IPath path) {
+  //
+  // //
+  // IPath sourceFile = findSourceFileForComponentDescriptionPath(project, path);
+  //
+  // if (sourceFile != null) {
+  // try {
+  // project.getFile(sourceFile).refreshLocal(IResource.DEPTH_ZERO, null);
+  // } catch (CoreException e) {
+  // //
+  // }
+  // }
+  // }
 
   /**
    * <p>
