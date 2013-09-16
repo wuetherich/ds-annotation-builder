@@ -7,7 +7,7 @@ import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.test.util.AbstractDsAnnotationsTest;
 import com.wuetherich.osgi.ds.annotations.test.util.EclipseProjectUtils;
 
-public class AddImport_2 extends AbstractDsAnnotationsTest {
+public class AddImport_2_Test extends AbstractDsAnnotationsTest {
 
 	@Test
 	public void test() throws CoreException {

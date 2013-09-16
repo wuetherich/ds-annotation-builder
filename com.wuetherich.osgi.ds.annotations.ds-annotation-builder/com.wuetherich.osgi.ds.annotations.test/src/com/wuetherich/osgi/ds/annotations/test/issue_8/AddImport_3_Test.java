@@ -7,7 +7,7 @@ import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.test.util.AbstractDsAnnotationsTest;
 import com.wuetherich.osgi.ds.annotations.test.util.EclipseProjectUtils;
 
-public class AddImport_1 extends AbstractDsAnnotationsTest {
+public class AddImport_3_Test extends AbstractDsAnnotationsTest {
 
 	@Test
 	public void test() throws CoreException {
@@ -22,5 +22,10 @@ public class AddImport_1 extends AbstractDsAnnotationsTest {
 		return new SourceFile.Default(
 				"de/test/Test.java",
 				"package de.test; import org.osgi.service.component.annotations.Component; @Component public class Test {}");
+	}
+
+	@Override
+	protected String[] getImportedPackages() {
+		return new String[] { "org.osgi.service.component.annotations" };
 	}
 }
