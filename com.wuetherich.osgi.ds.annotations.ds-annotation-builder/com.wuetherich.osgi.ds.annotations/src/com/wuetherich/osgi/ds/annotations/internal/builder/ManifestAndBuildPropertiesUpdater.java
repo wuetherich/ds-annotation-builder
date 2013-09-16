@@ -15,7 +15,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.Manifest;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -28,6 +30,7 @@ import com.wuetherich.osgi.ds.annotations.internal.util.PathUtils;
 
 /**
  * <p>
+ * The {@link ManifestAndBuildPropertiesUpdater} is responsible for updating the projects manifest and build properties.
  * </p>
  * 
  * @author Gerd W&uuml;therich (gerd@gerd-wuetherich.de)
@@ -95,6 +98,14 @@ public class ManifestAndBuildPropertiesUpdater {
           || addComponentDescriptionFolderToBinIncludes(map, bundleProjectDescription);
 
       if (projectDescriptionChanged) {
+
+        // Bug-Fix: https://github.com/wuetherich/ds-annotation-builder/issues/6
+        // 'Empty Manifest entries got removed'
+        for (String emtptyHeader : getManifestEmptyHeader(project)) {
+          bundleProjectDescription.setHeader(emtptyHeader, "");
+        }
+
+        // store description
         bundleProjectDescription.apply(null);
       }
     }
@@ -145,5 +156,42 @@ public class ManifestAndBuildPropertiesUpdater {
     bundleProjectDescription.setBinIncludes(binIncludePaths);
 
     return result;
+  }
+
+  /**
+   * <p>
+   * This method is necessary to fix bug [https://github.com/wuetherich/ds-annotation-builder/issues/6]. It resource an
+   * arrays of all empty manifest entries contained in the manifest of the given project. If the project does not
+   * contain a manifest file (or the manifest could not be read), an empty array will be returned instead.
+   * </p>
+   * 
+   * @param project the project
+   * @return the array of empty manifest header (or null)
+   */
+  private static String[] getManifestEmptyHeader(IProject project) {
+
+    //
+    try {
+
+      //
+      IFile file = project.getFile("META-INF/MANIFEST.MF");
+      Manifest manifest = new Manifest(file.getContents());
+
+      //
+      List<String> result = new LinkedList<String>();
+      for (Map.Entry<Object, Object> entries : manifest.getMainAttributes().entrySet()) {
+        if (entries.getValue() == null || entries.getValue().toString().isEmpty()) {
+          result.add(entries.getKey().toString());
+        }
+      }
+
+      //
+      return result.toArray(new String[] {});
+    }
+
+    //
+    catch (Throwable throwable) {
+      return new String[] {};
+    }
   }
 }
