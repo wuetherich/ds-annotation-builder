@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Gerd Wuetherich (gerd@gerd-wuetherich.de).
+ * Copyright (c) 2011-2013 Gerd W&uuml;therich (gerd@gerd-wuetherich.de).
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Gerd Wuetherich (gerd@gerd-wuetherich.de) - initial API and implementation
+ *     Gerd W&uuml;therich (gerd@gerd-wuetherich.de) - initial API and implementation
  ******************************************************************************/
 package com.wuetherich.osgi.ds.annotations.internal;
 
@@ -20,6 +20,7 @@ import org.osgi.framework.ServiceReference;
 
 /**
  * <p>
+ * The {@link BundleActivator} used for this plug-in.
  * </p>
  * 
  * @author Gerd W&uuml;therich (gerd@gerd-wuetherich.de)
@@ -50,7 +51,7 @@ public class Activator implements BundleActivator {
    * Returns the bundle context.
    * </p>
    * 
-   * @return
+   * @return the bundle context.
    */
   public static BundleContext getBundleContext() {
     return bundleContext;
@@ -66,14 +67,17 @@ public class Activator implements BundleActivator {
    */
   public static IBundleProjectDescription getBundleProjectDescription(IProject project) throws CoreException {
 
-    // the service reference
-    ServiceReference ref = bundleContext.getServiceReference(IBundleProjectService.class.getName());
+    // step 1: get the service reference
+    ServiceReference<IBundleProjectService> ref = bundleContext.getServiceReference(IBundleProjectService.class);
 
-    //
     if (ref != null) {
-      IBundleProjectService service = (IBundleProjectService) bundleContext.getService(ref);
+
+      // step 2: get the service
+      IBundleProjectService service = bundleContext.getService(ref);
+
       if (service != null) {
 
+        // get the IBundleProjectDescription
         IBundleProjectDescription result = service.getDescription(project);
 
         bundleContext.ungetService(ref);
@@ -82,7 +86,7 @@ public class Activator implements BundleActivator {
       }
     }
 
-    //
+    // return null if no IBundleProjectService is available
     return null;
   }
 }

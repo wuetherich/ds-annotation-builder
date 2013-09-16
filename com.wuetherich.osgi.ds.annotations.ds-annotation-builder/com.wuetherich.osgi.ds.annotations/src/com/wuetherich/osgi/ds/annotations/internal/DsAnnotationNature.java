@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Gerd Wuetherich (gerd@gerd-wuetherich.de).
+ * Copyright (c) 2011-2013 Gerd W&uuml;therich (gerd@gerd-wuetherich.de).
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Gerd Wuetherich (gerd@gerd-wuetherich.de) - initial API and implementation
+ *     Gerd W&uuml;therich (gerd@gerd-wuetherich.de) - initial API and implementation
  ******************************************************************************/
 package com.wuetherich.osgi.ds.annotations.internal;
 
@@ -23,11 +23,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
+import com.wuetherich.osgi.ds.annotations.internal.builder.DsAnnotationBuilder;
 
 /**
  * <p>
+ * The {@link DsAnnotationNature} indicates that an eclipse project is DS annotation aware. In this case the associated
+ * {@link DsAnnotationBuilder} generates component descriptions for annotated component classes.
  * </p>
- *
+ * 
  * @author Gerd W&uuml;therich (gerd@gerd-wuetherich.de)
  */
 public class DsAnnotationNature implements IProjectNature {
@@ -57,32 +60,28 @@ public class DsAnnotationNature implements IProjectNature {
   public void configure() throws CoreException {
 
     IProjectDescription desc = _project.getDescription();
-    ICommand[] commands = desc.getBuildSpec();
-    boolean found = false;
 
+    // check if the ds annotation builder already is configured
+    ICommand[] commands = desc.getBuildSpec();
     for (int i = 0; i < commands.length; ++i) {
       if (commands[i].getBuilderName().equals(Constants.BUILDER_ID)) {
-        found = true;
-        break;
+        return;
       }
     }
 
-    if (!found) {
+    // add builder to project
+    ICommand command = desc.newCommand();
+    command.setBuilderName(Constants.BUILDER_ID);
+    ICommand[] newCommands = new ICommand[commands.length + 1];
 
-      // add builder to project
-      ICommand command = desc.newCommand();
-      command.setBuilderName(Constants.BUILDER_ID);
-      ICommand[] newCommands = new ICommand[commands.length + 1];
+    // Add it before other builders.
+    System.arraycopy(commands, 0, newCommands, 1, commands.length);
+    newCommands[0] = command;
+    desc.setBuildSpec(newCommands);
+    _project.setDescription(desc, null);
 
-      // Add it before other builders.
-      System.arraycopy(commands, 0, newCommands, 1, commands.length);
-      newCommands[0] = command;
-      desc.setBuildSpec(newCommands);
-      _project.setDescription(desc, null);
-
-      // configure default import
-      configureDefaultImport();
-    }
+    // configure default import
+    configureDefaultImport();
   }
 
   /**
@@ -90,48 +89,46 @@ public class DsAnnotationNature implements IProjectNature {
    */
   public void deconfigure() throws CoreException {
 
-    //
+    // get the description
     IProjectDescription desc = _project.getDescription();
-    List<ICommand> iCommands = new LinkedList<ICommand>(Arrays.asList(desc.getBuildSpec()));
 
-    //
+    // remove the ds annotation builder command
+    List<ICommand> iCommands = new LinkedList<ICommand>(Arrays.asList(desc.getBuildSpec()));
     for (Iterator<ICommand> iterator = iCommands.iterator(); iterator.hasNext();) {
       if (iterator.next().getBuilderName().equals(Constants.BUILDER_ID)) {
         iterator.remove();
         break;
       }
     }
-
-    //
     desc.setBuildSpec(iCommands.toArray(new ICommand[0]));
 
-    //
+    // set the build specification
     _project.setDescription(desc, null);
   }
 
   /**
    * <p>
+   * Adds the package '<code>org.osgi.service.component.annotations</code>' to the list of imported packages.
    * </p>
    * 
    * @throws CoreException
    */
   private void configureDefaultImport() throws CoreException {
 
-    //
+    // get the bundle project description
     IBundleProjectDescription bundleProjectDescription = Activator.getBundleProjectDescription(_project);
 
     //
     if (bundleProjectDescription != null) {
 
+      // check if already a IMPORT-PACKAGE header exists
       String importPackage = bundleProjectDescription.getHeader(org.osgi.framework.Constants.IMPORT_PACKAGE);
 
       //
       if (importPackage != null) {
 
-        String[] imports = importPackage.split(",");
-
-        //
-        for (String imp : imports) {
+        // check if the package 'org.osgi.service.component.annotations' already is imported
+        for (String imp : importPackage.split(",")) {
           String[] strings = imp.split(";");
           if (strings[0].equals(Constants.DS_ANNOTATION_PACKAGE)) {
             return;

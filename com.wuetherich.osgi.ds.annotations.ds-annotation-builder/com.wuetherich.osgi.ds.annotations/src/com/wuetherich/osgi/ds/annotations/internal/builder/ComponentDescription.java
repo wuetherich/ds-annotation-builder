@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Gerd Wuetherich (gerd@gerd-wuetherich.de).
+ * Copyright (c) 2011-2013 Gerd W&uuml;therich (gerd@gerd-wuetherich.de).
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Gerd Wuetherich (gerd@gerd-wuetherich.de) - initial API and implementation
+ *     Gerd W&uuml;therich (gerd@gerd-wuetherich.de) - initial API and implementation
  ******************************************************************************/
 package com.wuetherich.osgi.ds.annotations.internal.builder;
 
@@ -22,7 +22,10 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -52,13 +55,17 @@ import com.wuetherich.osgi.ds.annotations.xml.Tservice;
  */
 public class ComponentDescription {
 
-  private static final String       REFERENCE_TARGET  = "target";
+  /** - */
+  private static final String       FIELD_NAME_TARGET    = "target";
 
-  private static final String       COMPONENT_SERVICE = "service";
+  /** - */
+  private static final String       FIELD_NAME_SERVICE   = "service";
 
-  private static final String       NO_SUPERTYPE_S    = "NO SUPERTYPE '%s'.";
+  /** - */
+  private static final String       MSG_NO_SUPERTYPE_S   = "NO SUPERTYPE '%s'.";
 
-  private static final String       INVALID_FILTER    = "Invalid filter '%s'.";
+  /** - */
+  private static final String       MSG_INVALID_FILTER_S = "Invalid filter '%s'.";
 
   /** - */
   private Tcomponent                _tcomponent;
@@ -67,21 +74,31 @@ public class ComponentDescription {
   private List<DsAnnotationProblem> _problems;
 
   /** - */
-  private String                    _sourceFile;
-  
+  private TypeDeclaration           _typeDeclaration;
+
   /** - */
-  private TypeDeclaration _typeDeclaration;
+  private String                    _sourceFile;
 
   /**
    * <p>
    * Creates a new instance of type {@link ComponentDescription}.
    * </p>
-   *
+   * 
    * @param typeDeclaration
    */
   public ComponentDescription(TypeDeclaration typeDeclaration) {
     Assert.isNotNull(typeDeclaration);
-    
+
+    //
+    try {
+      CompilationUnit compilationUnit = (CompilationUnit) typeDeclaration.getParent();
+      _sourceFile = compilationUnit.getTypeRoot().getCorrespondingResource().getProjectRelativePath()
+          .toPortableString();
+    } catch (JavaModelException e) {
+      //
+      // TODO: LOG
+    }
+
     this._typeDeclaration = typeDeclaration;
     _tcomponent = new Tcomponent();
     _problems = new LinkedList<DsAnnotationProblem>();
@@ -105,10 +122,6 @@ public class ComponentDescription {
    */
   public List<DsAnnotationProblem> getProblems() {
     return _problems;
-  }
-
-  public void setSourceFile(String sourceFile) {
-    this._sourceFile = sourceFile;
   }
 
   public void setName(String value) {
@@ -192,7 +205,7 @@ public class ComponentDescription {
 
         Assert.isNotNull(service);
         if (!isInstanceOf(service)) {
-          throw new DsAnnotationException(String.format(NO_SUPERTYPE_S, service, COMPONENT_SERVICE));
+          throw new DsAnnotationException(String.format(MSG_NO_SUPERTYPE_S, service, FIELD_NAME_SERVICE));
         }
 
         Tprovide tprovide = new Tprovide();
@@ -272,7 +285,7 @@ public class ComponentDescription {
         FrameworkUtil.createFilter(target);
         reference.setTarget(target);
       } catch (InvalidSyntaxException e) {
-        throw new DsAnnotationException(String.format(INVALID_FILTER, target), REFERENCE_TARGET);
+        throw new DsAnnotationException(String.format(MSG_INVALID_FILTER_S, target), FIELD_NAME_TARGET);
       }
     }
 
@@ -355,6 +368,7 @@ public class ComponentDescription {
     Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
     //
+    @SuppressWarnings("unchecked")
     JAXBElement<Tcomponent> jaxbElement = (JAXBElement<Tcomponent>) unmarshaller.unmarshal(inputStream);
     Tcomponent tcomponent = jaxbElement.getValue();
 
@@ -372,13 +386,6 @@ public class ComponentDescription {
 
     //
     _tcomponent.setName(getImplementationClassName());
-
-    if (false) {
-      _tcomponent.setEnabled(true);
-      _tcomponent.setImmediate(false);
-      _tcomponent.setConfigurationPolicy(TconfigurationPolicy.OPTIONAL);
-      _tcomponent.setFactory(null);
-    }
 
     Timplementation timplementation = new Timplementation();
     timplementation.setClazz(getImplementationClassName());
