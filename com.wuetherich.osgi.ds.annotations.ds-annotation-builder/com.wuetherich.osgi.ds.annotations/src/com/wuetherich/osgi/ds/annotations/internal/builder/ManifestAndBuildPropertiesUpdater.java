@@ -93,9 +93,9 @@ public class ManifestAndBuildPropertiesUpdater {
         bundleProjectDescription.setHeader(Constants.BUNDLE_HEADER_SERVICE_COMPONENT, null);
       }
 
-      //
-      projectDescriptionChanged = projectDescriptionChanged
-          || addComponentDescriptionFolderToBinIncludes(map, bundleProjectDescription);
+      // Bug-Fix: https://github.com/wuetherich/ds-annotation-builder/issues/12
+      boolean changedBuildProperties = addComponentDescriptionFolderToBinIncludes(map, bundleProjectDescription);
+      projectDescriptionChanged = projectDescriptionChanged || changedBuildProperties;
 
       if (projectDescriptionChanged) {
 
@@ -165,7 +165,8 @@ public class ManifestAndBuildPropertiesUpdater {
    * contain a manifest file (or the manifest could not be read), an empty array will be returned instead.
    * </p>
    * 
-   * @param project the project
+   * @param project
+   *          the project
    * @return the array of empty manifest header (or null)
    */
   private static String[] getManifestEmptyHeader(IProject project) {
