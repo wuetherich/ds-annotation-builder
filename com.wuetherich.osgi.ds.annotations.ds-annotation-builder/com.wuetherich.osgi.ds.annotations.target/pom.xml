@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>com.wuetherich.osgi.ds</groupId>
 		<artifactId>com.wuetherich.osgi.ds.annotations.ds-annotation-builder</artifactId>
-		<version>1.1.2-SNAPSHOT</version>
+		<version>1.1.3</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 

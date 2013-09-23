@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: com.wuetherich.osgi.ds.annotations
 Bundle-SymbolicName: com.wuetherich.osgi.ds.annotations;singleton:=true
-Bundle-Version: 1.1.2.qualifier
+Bundle-Version: 1.1.3
 Bundle-Vendor: Gerd Wuetherich (gerd@gerd-wuetherich.de)
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
