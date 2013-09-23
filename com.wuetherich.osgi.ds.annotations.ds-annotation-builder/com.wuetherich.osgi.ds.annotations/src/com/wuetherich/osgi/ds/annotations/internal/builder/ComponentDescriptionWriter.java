@@ -46,26 +46,9 @@ public class ComponentDescriptionWriter {
   /** - */
   private static Pattern REGEXP_PATTERN = Pattern.compile(Constants.DS_ANNOTATION_BUILDER_GENERATED_REGEXP); ;
 
-  // /**
-  // * <p>
-  // * </p>
-  // *
-  // * @param project
-  // * @param path
-  // */
-  // public static void updateSourceFile(IProject project, IPath path) {
-  //
-  // //
-  // IPath sourceFile = findSourceFileForComponentDescriptionPath(project, path);
-  //
-  // if (sourceFile != null) {
-  // try {
-  // project.getFile(sourceFile).refreshLocal(IResource.DEPTH_ZERO, null);
-  // } catch (CoreException e) {
-  // //
-  // }
-  // }
-  // }
+  /** - */
+  private static final boolean MARK_GENERATED_COMPONENT_DESCRIPTIONS_AS_DERIVED = false;
+  
 
   /**
    * <p>
@@ -138,14 +121,18 @@ public class ComponentDescriptionWriter {
 
     //
     if (file.exists()) {
-      if (!file.isDerived()) {
-        file.setDerived(true, null);
+      if (MARK_GENERATED_COMPONENT_DESCRIPTIONS_AS_DERIVED) {
+        if (!file.isDerived()) {
+          file.setDerived(true, null);
+        }
       }
       file.setContents(new StringBufferInputStream(description.toXml()), IFile.FORCE, null);
     } else {
       // write the new component description to disc
       file.create(new StringBufferInputStream(description.toXml()), true, null);
-      file.setDerived(true, null);
+      if (MARK_GENERATED_COMPONENT_DESCRIPTIONS_AS_DERIVED) {
+        file.setDerived(true, null);
+      }
     }
 
     // finally we have to refresh the local folder
