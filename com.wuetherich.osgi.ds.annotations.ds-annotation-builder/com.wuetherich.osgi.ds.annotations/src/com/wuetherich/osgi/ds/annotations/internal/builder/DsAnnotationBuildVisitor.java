@@ -69,7 +69,7 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
       return visit(delta.getResource());
 
     } else if (delta.getKind() == IResourceDelta.REMOVED) {
-      
+
       // //
       // if (delta.getResource().getName().endsWith(".xml") && new
       // Path(Constants.COMPONENT_DESCRIPTION_FOLDER).isPrefixOf(delta.getResource().getProjectRelativePath())) {
@@ -142,6 +142,13 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
     // visit the AST
     DsAnnotationAstVisitor myAstVisitor = new DsAnnotationAstVisitor();
     result.accept(myAstVisitor);
+
+    //
+    if (myAstVisitor.getComponentDescriptions().isEmpty()) {
+
+      // delete any component description that eventually have been generated before for this resource
+      ComponentDescriptionWriter.deleteGeneratedFiles(resource.getProject(), resource.getFullPath());
+    }
 
     // iterate over the component descriptions
     for (ComponentDescription description : myAstVisitor.getComponentDescriptions()) {
