@@ -46,13 +46,16 @@ import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
 public class DsAnnotationAstVisitor extends ASTVisitor {
 
   /** the current type declaration */
-  private Stack<TypeDeclaration>                             _currentTypeDeclaration;
+  private Stack<TypeDeclaration>                     _currentTypeDeclaration;
 
   /** the current method declaration */
-  private MethodDeclaration                                  _currentMethodDeclaration;
+  private MethodDeclaration                          _currentMethodDeclaration;
 
   /** the descriptions */
   private Map<TypeDeclaration, ComponentDescription> _descriptions;
+
+  /** - */
+  private boolean                                    _hasTypes = false;
 
   /**
    * <p>
@@ -80,10 +83,21 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
   }
 
   /**
+   * <p>
+   * </p>
+   * 
+   * @return
+   */
+  public boolean hasTypes() {
+    return _hasTypes;
+  }
+
+  /**
    * {@inheritDoc}
    */
   @Override
   public boolean visit(TypeDeclaration node) {
+    _hasTypes = true;
     _currentTypeDeclaration.push(node);
     return true;
   }
@@ -175,8 +189,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
         if (node.resolveTypeBinding().getQualifiedName().equals(Component.class.getName())) {
 
           //
-          _descriptions.put(_currentTypeDeclaration.peek(),
-              new ComponentDescription(_currentTypeDeclaration.peek()));
+          _descriptions.put(_currentTypeDeclaration.peek(), new ComponentDescription(_currentTypeDeclaration.peek()));
           getCurrentComponentDescription().setComponentDefaults();
 
           //

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package com.wuetherich.osgi.ds.annotations.internal.builder;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
@@ -120,10 +121,8 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
     }
 
     //
-    IJavaElement compilationUnit = JavaCore.create(resource);
-
-    if (compilationUnit != null && compilationUnit.isStructureKnown()) {
-      parse((ICompilationUnit) compilationUnit, resource);
+    if (element != null && element.isStructureKnown()) {
+      parse((ICompilationUnit) element, resource);
     }
   }
 
@@ -143,9 +142,10 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
     DsAnnotationAstVisitor myAstVisitor = new DsAnnotationAstVisitor();
     result.accept(myAstVisitor);
 
-    //
-    if (myAstVisitor.getComponentDescriptions().isEmpty()) {
-
+    // Insane hack: we have to check whether types has been parsed or not
+    // Under some circumstances the JDT AST is empty and getComponentDescriptions() returns an empty list
+    // bug: https://github.com/wuetherich/ds-annotation-builder/issues/11 
+    if (myAstVisitor.getComponentDescriptions().isEmpty() && myAstVisitor.hasTypes()) {
       // delete any component description that eventually have been generated before for this resource
       ComponentDescriptionWriter.deleteGeneratedFiles(resource.getProject(), resource.getFullPath());
     }
@@ -190,7 +190,7 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
    * @return
    */
   private CompilationUnit createAst(ICompilationUnit icompilationUnit) {
-    ASTParser parser = ASTParser.newParser(AST.JLS3); // handles JDK 1.0,
+    ASTParser parser = ASTParser.newParser(AST.JLS4); // handles JDK 1.0,
     // 1.1, 1.2, 1.3,
     // 1.4, 1.5, 1.6
     parser.setSource(icompilationUnit);
