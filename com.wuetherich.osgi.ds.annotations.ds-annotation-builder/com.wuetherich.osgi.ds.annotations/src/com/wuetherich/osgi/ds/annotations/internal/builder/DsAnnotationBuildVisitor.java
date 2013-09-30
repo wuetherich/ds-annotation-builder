@@ -10,7 +10,6 @@
  ******************************************************************************/
 package com.wuetherich.osgi.ds.annotations.internal.builder;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
@@ -19,11 +18,11 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -136,11 +135,16 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
   private void parse(ICompilationUnit icompilationUnit, IResource resource) throws CoreException {
 
     // create the AST
-    CompilationUnit result = createAst(icompilationUnit);
+    CompilationUnit compilationUnit = createAst(icompilationUnit);
 
+    // do not process files with compile errors
+    if (hasErrors(compilationUnit)) {
+      return;
+    }
+    
     // visit the AST
     DsAnnotationAstVisitor myAstVisitor = new DsAnnotationAstVisitor();
-    result.accept(myAstVisitor);
+    compilationUnit.accept(myAstVisitor);
 
     // Insane hack: we have to check whether types has been parsed or not
     // Under some circumstances the JDT AST is empty and getComponentDescriptions() returns an empty list
@@ -180,6 +184,26 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
         ComponentDescriptionWriter.writeComponentDescription(resource.getProject(), description);
       }
     }
+  }
+
+  /**
+   * <p>
+   * </p>
+   *
+   * @param result
+   * @return
+   */
+  private boolean hasErrors(CompilationUnit result) {
+    
+    //
+    for (IProblem problem : result.getProblems()) {
+      if (problem.isError()) {
+        return true;
+      }
+    }
+    
+    //
+    return false;
   }
 
   /**
