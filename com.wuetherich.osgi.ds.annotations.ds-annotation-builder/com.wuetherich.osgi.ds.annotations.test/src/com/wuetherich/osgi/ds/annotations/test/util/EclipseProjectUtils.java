@@ -1,7 +1,9 @@
 package com.wuetherich.osgi.ds.annotations.test.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -24,9 +27,19 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetHandle;
+import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
+import org.eclipse.pde.core.target.TargetBundle;
 import org.junit.Assert;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.util.tracker.ServiceTracker;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
+import com.wuetherich.osgi.ds.annotations.internal.Activator;
 
 /**
  */
@@ -39,10 +52,14 @@ public class EclipseProjectUtils {
 	 * @throws CoreException
 	 * @throws JavaModelException
 	 */
-	public static IJavaProject createEclipsePluginProject(IProject project, String... importedPackages) throws CoreException,
+	public static IJavaProject createEclipsePluginProject(IProject project,
+			String... importedPackages) throws CoreException,
 			JavaModelException {
 
-		// 
+		//
+		setupTargetPlatform();
+
+		//
 		EclipseProjectUtils.deleteProjectIfExists(project);
 
 		//
@@ -94,10 +111,10 @@ public class EclipseProjectUtils {
 				break;
 			}
 		}
-
-		entries.add(JavaCore
-				.newContainerEntry(new Path(
-						"org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5")));
+		//
+		// entries.add(JavaCore
+		// .newContainerEntry(new Path(
+		// "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5")));
 
 		entries.add(JavaCore.newContainerEntry(new Path(
 				"org.eclipse.pde.core.requiredPlugins")));
@@ -109,17 +126,70 @@ public class EclipseProjectUtils {
 		//
 		EclipseProjectUtils.createManifest(project, importedPackages);
 		EclipseProjectUtils.createBuildProperties(project);
-		
+
+		javaProject.open(null);
+
+		for (IClasspathEntry classpathEntry : javaProject.getRawClasspath()) {
+			if (classpathEntry.getPath().toOSString()
+					.equals("org.eclipse.pde.core.requiredPlugins")) {
+
+				System.out.println("BUNDLES:");
+				System.out.println(classpathEntry.getPath());
+				IClasspathContainer classpathContainer = JavaCore
+						.getClasspathContainer(classpathEntry.getPath(),
+								javaProject);
+
+				for (IClasspathEntry entry : classpathContainer
+						.getClasspathEntries()) {
+					System.out.println("BAAM" + entry);
+				}
+			}
+		}
+
 		//
 		return javaProject;
 	}
-	
+
+	private static void setupTargetPlatform() throws CoreException {
+
+		// set up target platform
+		ServiceTracker<ITargetPlatformService, ITargetPlatformService> serviceTracker = new ServiceTracker<ITargetPlatformService, ITargetPlatformService>(
+				Activator.getBundleContext(), ITargetPlatformService.class,
+				null);
+		serviceTracker.open();
+
+		//
+		ITargetPlatformService tpService = serviceTracker.getService();
+		
+		for (ITargetHandle targetHandle : tpService.getTargets(null)) {
+			System.out.println("hanlde: " + targetHandle);
+		}
+
+		ITargetDefinition targetDefinition = tpService.newTarget();
+		targetDefinition.setTargetLocations(new ITargetLocation[] { tpService
+				.newDirectoryLocation("D:/development/test") });
+		targetDefinition.resolve(null);
+		tpService.saveTargetDefinition(targetDefinition);
+		LoadTargetDefinitionJob.load(targetDefinition);
+
+		System.out.println("Bundles:");
+		for (TargetBundle bundle : tpService.getWorkspaceTargetHandle().getTargetDefinition().getBundles()) {
+			System.out.println(bundle);
+		}
+
+		// for (TargetBundle targetBundle :) {
+		// System.out.println(" - " + targetBundle.getBundleInfo());
+		// }
+
+		serviceTracker.close();
+	}
+
 	/**
 	 * @param project
 	 * @throws CoreException
 	 */
 	public static void failOnErrors(IProject project) throws CoreException {
-		
+
 		// check for errors
 		List<IMarker> errors = new LinkedList<IMarker>();
 		for (IMarker marker : project.findMarkers(null, true,
@@ -147,7 +217,7 @@ public class EclipseProjectUtils {
 			Assert.fail(builder.toString());
 		}
 	}
-	
+
 	/**
 	 * <p>
 	 * </p>
@@ -155,8 +225,9 @@ public class EclipseProjectUtils {
 	 * @param project
 	 * @throws CoreException
 	 */
-	public static void enableDsAnnotationNature(IProject project) throws CoreException {
-		
+	public static void enableDsAnnotationNature(IProject project)
+			throws CoreException {
+
 		IProjectDescription description = project.getDescription();
 		String[] natures = description.getNatureIds();
 		String[] newNatures = new String[natures.length + 1];
@@ -165,7 +236,7 @@ public class EclipseProjectUtils {
 		description.setNatureIds(newNatures);
 		project.setDescription(description, null);
 	}
-	
+
 	/**
 	 * <p>
 	 * Deletes the project.
@@ -183,17 +254,20 @@ public class EclipseProjectUtils {
 		if (project.isOpen()) {
 			project.close(null);
 		}
-		
+
 		// create the project if not exists
-		if (project.exists()) {
+		while (project.exists()) {
 			try {
 				project.delete(true, true, null);
+				Thread.sleep(100);
 			} catch (Exception e) {
 				// e.printStackTrace();
 			}
 		}
+
+		Assert.assertFalse(project.exists());
 	}
-	
+
 	/**
 	 * @param project
 	 */
@@ -242,7 +316,8 @@ public class EclipseProjectUtils {
 	 * 
 	 * @param projectRelativePath
 	 */
-	public static void checkFileExists(IProject project, String projectRelativePath) {
+	public static void checkFileExists(IProject project,
+			String projectRelativePath) {
 
 		//
 		IFile file = project.getFile(new Path(projectRelativePath));
@@ -253,7 +328,6 @@ public class EclipseProjectUtils {
 						file.getProjectRelativePath()), file.exists());
 	}
 
-	
 	/**
 	 * <p>
 	 * </p>
@@ -265,7 +339,7 @@ public class EclipseProjectUtils {
 	 */
 	private static IFile createFile(final String name,
 			final IContainer container, final String content) {
-		
+
 		final IFile file = container.getFile(new Path(name));
 		assertExist(file.getParent());
 		try {
@@ -284,7 +358,7 @@ public class EclipseProjectUtils {
 
 		return file;
 	}
-	
+
 	/**
 	 * <p>
 	 * </p>

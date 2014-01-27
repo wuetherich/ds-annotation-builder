@@ -8,6 +8,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Fragment-Host: com.wuetherich.osgi.ds.annotations
 Require-Bundle: org.junit;bundle-version="4.10.0",
  org.eclipse.jdt.launching;bundle-version="3.6.101",
- org.eclipse.pde.core
+ org.eclipse.pde.core,
+ org.eclipse.core.runtime,
+ org.eclipse.pde.ui;bundle-version="3.7.2"
 Bundle-ClassPath: libs/xmlunit-1.4.jar,
  .
