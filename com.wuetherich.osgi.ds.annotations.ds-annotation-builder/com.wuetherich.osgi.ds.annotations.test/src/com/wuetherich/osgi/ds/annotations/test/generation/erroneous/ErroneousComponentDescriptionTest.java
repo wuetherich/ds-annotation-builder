@@ -1,4 +1,4 @@
-package com.wuetherich.osgi.ds.annotations.test.generation;
+package com.wuetherich.osgi.ds.annotations.test.generation.erroneous;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 
@@ -14,13 +14,13 @@ import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.test.util.AbstractGenerateComponentDescriptionTest;
 
 @RunWith(value = Parameterized.class)
-public class GenerateComponentDescriptionTest extends
+public class ErroneousComponentDescriptionTest extends
 		AbstractGenerateComponentDescriptionTest {
 
 	/**
 	 * @param testCase
 	 */
-	public GenerateComponentDescriptionTest(String testCase) {
+	public ErroneousComponentDescriptionTest(String testCase) {
 		super(testCase);
 	}
 
@@ -31,18 +31,13 @@ public class GenerateComponentDescriptionTest extends
 	public void test() throws Exception {
 
 		//
-		String expected = fromStream(getClass().getResourceAsStream(
-				getTestCase() + ".result"));
-
-		//
-		String actual = assertComponentDescription(COMPONENT_DESCRIPTION_FILE);
-
-		//
-		assertXMLEqual(expected, actual);
+		Assert.assertNull(getProject().findMember(
+				Constants.COMPONENT_DESCRIPTION_FOLDER + "/"
+						+ COMPONENT_DESCRIPTION_FILE));
 	}
 
 	@Parameters
 	public static List<String[]> testCases() {
-		return testCases("src/com/wuetherich/osgi/ds/annotations/test/generation");
+		return testCases("src/com/wuetherich/osgi/ds/annotations/test/generation/erroneous");
 	}
 }
