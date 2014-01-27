@@ -1,9 +1,7 @@
 package com.wuetherich.osgi.ds.annotations.test.util;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +15,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -34,8 +33,6 @@ import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.junit.Assert;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Component;
 import org.osgi.util.tracker.ServiceTracker;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
@@ -44,6 +41,7 @@ import com.wuetherich.osgi.ds.annotations.internal.Activator;
 /**
  */
 public class EclipseProjectUtils {
+
 	/**
 	 * <p>
 	 * </p>
@@ -55,9 +53,6 @@ public class EclipseProjectUtils {
 	public static IJavaProject createEclipsePluginProject(IProject project,
 			String... importedPackages) throws CoreException,
 			JavaModelException {
-
-		//
-		setupTargetPlatform();
 
 		//
 		EclipseProjectUtils.deleteProjectIfExists(project);
@@ -111,11 +106,8 @@ public class EclipseProjectUtils {
 				break;
 			}
 		}
-		//
-		// entries.add(JavaCore
-		// .newContainerEntry(new Path(
-		// "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5")));
 
+		//
 		entries.add(JavaCore.newContainerEntry(new Path(
 				"org.eclipse.pde.core.requiredPlugins")));
 
@@ -129,59 +121,8 @@ public class EclipseProjectUtils {
 
 		javaProject.open(null);
 
-		for (IClasspathEntry classpathEntry : javaProject.getRawClasspath()) {
-			if (classpathEntry.getPath().toOSString()
-					.equals("org.eclipse.pde.core.requiredPlugins")) {
-
-				System.out.println("BUNDLES:");
-				System.out.println(classpathEntry.getPath());
-				IClasspathContainer classpathContainer = JavaCore
-						.getClasspathContainer(classpathEntry.getPath(),
-								javaProject);
-
-				for (IClasspathEntry entry : classpathContainer
-						.getClasspathEntries()) {
-					System.out.println("BAAM" + entry);
-				}
-			}
-		}
-
 		//
 		return javaProject;
-	}
-
-	private static void setupTargetPlatform() throws CoreException {
-
-		// set up target platform
-		ServiceTracker<ITargetPlatformService, ITargetPlatformService> serviceTracker = new ServiceTracker<ITargetPlatformService, ITargetPlatformService>(
-				Activator.getBundleContext(), ITargetPlatformService.class,
-				null);
-		serviceTracker.open();
-
-		//
-		ITargetPlatformService tpService = serviceTracker.getService();
-		
-		for (ITargetHandle targetHandle : tpService.getTargets(null)) {
-			System.out.println("hanlde: " + targetHandle);
-		}
-
-		ITargetDefinition targetDefinition = tpService.newTarget();
-		targetDefinition.setTargetLocations(new ITargetLocation[] { tpService
-				.newDirectoryLocation("D:/development/test") });
-		targetDefinition.resolve(null);
-		tpService.saveTargetDefinition(targetDefinition);
-		LoadTargetDefinitionJob.load(targetDefinition);
-
-		System.out.println("Bundles:");
-		for (TargetBundle bundle : tpService.getWorkspaceTargetHandle().getTargetDefinition().getBundles()) {
-			System.out.println(bundle);
-		}
-
-		// for (TargetBundle targetBundle :) {
-		// System.out.println(" - " + targetBundle.getBundleInfo());
-		// }
-
-		serviceTracker.close();
 	}
 
 	/**

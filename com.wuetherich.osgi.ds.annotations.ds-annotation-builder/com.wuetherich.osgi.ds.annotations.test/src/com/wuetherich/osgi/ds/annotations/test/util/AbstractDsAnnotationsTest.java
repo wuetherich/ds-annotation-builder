@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaModelException;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
 
@@ -36,6 +37,23 @@ public abstract class AbstractDsAnnotationsTest {
 
 	{
 		XMLUnit.setIgnoreWhitespace(true);
+	}
+
+	private static boolean target_platform_setup = false;
+
+	/**
+	 * <p>
+	 * </p>
+	 * 
+	 * @throws Exception
+	 */
+	@BeforeClass
+	public static void beforeClass() throws Exception {
+
+		if (!target_platform_setup) {
+			TargetPlatformUtil.setupTargetPlatform();
+			target_platform_setup = true;
+		}
 	}
 
 	/**
