@@ -40,6 +40,7 @@ import com.wuetherich.osgi.ds.annotations.xml.TconfigurationPolicy;
 import com.wuetherich.osgi.ds.annotations.xml.Timplementation;
 import com.wuetherich.osgi.ds.annotations.xml.TjavaTypes;
 import com.wuetherich.osgi.ds.annotations.xml.Tpolicy;
+import com.wuetherich.osgi.ds.annotations.xml.TpolicyOption;
 import com.wuetherich.osgi.ds.annotations.xml.Tproperties;
 import com.wuetherich.osgi.ds.annotations.xml.Tproperty;
 import com.wuetherich.osgi.ds.annotations.xml.Tprovide;
@@ -228,13 +229,14 @@ public class ComponentDescription {
    *          the cardinality of the reference
    * @param policy
    *          the policy for the reference
+   * @param policyOption TODO
    * @param unbind
    *          the name of the unbind method
    * @param target
    *          the target filter for the reference
    */
-  public void addReference(String service, String bind, String name, String cardinality, String policy, String unbind,
-      String target) {
+  public void addReference(String service, String bind, String name, String cardinality, String policy, String policyOption,
+      String unbind, String target) {
 
     Assert.isNotNull(service);
     Assert.isNotNull(bind);
@@ -302,6 +304,10 @@ public class ComponentDescription {
 
     if (isNotEmpty(policy)) {
       reference.setPolicy(Tpolicy.fromValue(policy.toLowerCase()));
+    }
+    
+    if (isNotEmpty(policyOption)) {
+      reference.setPolicyOption(TpolicyOption.fromValue(policyOption.toLowerCase()));
     }
 
     _tcomponent.getReference().add(reference);

@@ -28,7 +28,7 @@ public class GenerateComponentDescriptionTest extends
 	 * @throws Exception
 	 */
 	@Test
-	public void test() throws Exception {
+	public void test() throws Throwable {
 
 		//
 		String expected = fromStream(getClass().getResourceAsStream(
@@ -38,7 +38,12 @@ public class GenerateComponentDescriptionTest extends
 		String actual = assertComponentDescription(COMPONENT_DESCRIPTION_FILE);
 
 		//
-		assertXMLEqual(expected, actual);
+		try {
+			assertXMLEqual(expected, actual);
+		} catch (Throwable e) {
+			System.out.println(actual);
+			throw e;
+		}
 	}
 
 	@Parameters
