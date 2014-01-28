@@ -2,6 +2,7 @@ package com.wuetherich.osgi.ds.annotations.test.resources;
 
 import org.eclipse.core.runtime.CoreException;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.wuetherich.osgi.ds.annotations.test.util.AbstractDsAnnotationsTest;
@@ -9,6 +10,7 @@ import com.wuetherich.osgi.ds.annotations.test.util.AbstractDsAnnotationsTest;
 public class RenameSource_Test extends AbstractDsAnnotationsTest {
 
 	@Test
+	@Ignore
 	public void test() throws CoreException {
 
 		Assert.fail("TODO");

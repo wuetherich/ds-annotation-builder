@@ -6,6 +6,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
@@ -15,6 +16,7 @@ import com.wuetherich.osgi.ds.annotations.test.util.EclipseProjectUtils;
 public class DeleteSource_Test extends AbstractDsAnnotationsTest {
 
 	@Test
+	@Ignore
 	public void test() throws CoreException {
 
 		// Step 1: assert that file exists
