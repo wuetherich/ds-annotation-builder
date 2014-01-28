@@ -1,43 +1,56 @@
 package com.wuetherich.osgi.ds.annotations.test.issue_22;
 
+import java.util.concurrent.Callable;
+
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
+import com.jayway.awaitility.Awaitility;
 import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.test.util.AbstractDsAnnotationsTest;
-import com.wuetherich.osgi.ds.annotations.test.util.EclipseProjectUtils;
 
 public class DeleteSource_Test extends AbstractDsAnnotationsTest {
 
 	@Test
-	@Ignore
 	public void test() throws CoreException {
 
-		// Step 1: assert that file exists
-		EclipseProjectUtils.checkFileExists(getProject(),
-				Constants.COMPONENT_DESCRIPTION_FOLDER + "/de.test.Test.xml");
+		assertResource("src/de/test/Test.java");
+		assertResource(Constants.COMPONENT_DESCRIPTION_FOLDER
+				+ "/de.test.Test.xml");
 
-		final IResource resourceToDelete = getProject().findMember(
-				"src/de/test/Test.java");
-		Assert.assertTrue(resourceToDelete.exists());
+		getProject().findMember("src/de/test/Test.java").delete(true, null);
 
-		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+		assertNoResource("src/de/test/Test.java");
+		assertNoResource(Constants.COMPONENT_DESCRIPTION_FOLDER
+				+ "/de.test.Test.xml");
+	}
 
+	/**
+	 * <p>
+	 * </p>
+	 */
+	protected void assertResource(final String resourcePath) {
+		Awaitility.await().until(new Callable<Boolean>() {
 			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				resourceToDelete.delete(true, null);
+			public Boolean call() throws Exception {
+				IResource resource = getProject().findMember(resourcePath);
+				return resource != null && resource.exists();
 			}
-		}, null);
+		});
+	}
 
-		Assert.assertNull(getProject().findMember("src/de/test/Test.java"));
-		Assert.assertNull(getProject().findMember(
-				Constants.COMPONENT_DESCRIPTION_FOLDER + "/de.test.Test.xml"));
+	/**
+	 * <p>
+	 * </p>
+	 */
+	protected void assertNoResource(final String resourcePath) {
+		Awaitility.await().until(new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				return getProject().findMember(resourcePath) == null;
+			}
+		});
 	}
 
 	@Override

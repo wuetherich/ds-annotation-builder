@@ -156,7 +156,7 @@ public class ComponentDescriptionWriter {
     Map<IPath, List<IPath>> generatedFiles = loadProperties(project);
 
     //
-    List<IPath> result = generatedFiles.get(resource.makeRelativeTo(project.getFullPath()));
+    List<IPath> result = generatedFiles.get(resource);
 
     //
     if (result != null) {
