@@ -1,16 +1,16 @@
 package com.wuetherich.osgi.ds.annotations.test.generation.erroneous;
 
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-
+import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.test.util.AbstractGenerateComponentDescriptionTest;
 
 @RunWith(value = Parameterized.class)
@@ -30,14 +30,38 @@ public class ErroneousComponentDescriptionTest extends
 	@Test
 	public void test() throws Exception {
 
+		// check for errors
+		List<IMarker> errors = new LinkedList<IMarker>();
+		for (IMarker marker : getProject().findMarkers(null, true,
+				IResource.DEPTH_INFINITE)) {
+			if (marker.getAttribute(IMarker.SEVERITY).equals(
+					IMarker.SEVERITY_ERROR)) {
+				errors.add(marker);
+			}
+		}
+
+		Assert.assertTrue(!errors.isEmpty());
+		Assert.assertEquals(1, errors.size());
+
 		//
-		Assert.assertNull(getProject().findMember(
-				Constants.COMPONENT_DESCRIPTION_FOLDER + "/"
-						+ COMPONENT_DESCRIPTION_FILE));
+		String expectedMessage = fromStream(getClass().getResourceAsStream(
+				getTestCase() + ".result"));
+
+		System.out.println(errors.get(0).getAttribute("message"));
+		
+		Assert.assertEquals(expectedMessage.trim(),
+				errors.get(0).getAttribute("message"));
 	}
 
 	@Parameters
 	public static List<String[]> testCases() {
 		return testCases("src/com/wuetherich/osgi/ds/annotations/test/generation/erroneous");
+	}
+
+	/**
+	 * @see com.wuetherich.osgi.ds.annotations.test.util.AbstractDsAnnotationsTest#failOnErrors()
+	 */
+	protected boolean failOnErrors() {
+		return false;
 	}
 }

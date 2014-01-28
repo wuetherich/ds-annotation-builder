@@ -13,6 +13,6 @@ public class Test {
   }
   
   @Deactivate
-  public void stop(Map map) {
+  public void hurz(Map map) {
   }
 }
