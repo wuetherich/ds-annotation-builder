@@ -137,12 +137,23 @@ public class ComponentDescription {
 
   public void setDeactivateMethod(String methodName) {
 
-    // TODO: check exists
-
+    //
+    if (_tcomponent.getActivate() != null && _tcomponent.getActivate().equals(methodName)) {
+      throw new DsAnnotationException(String.format("Activate and deactivate method have the same name '%s'.", methodName));
+    }
+    
+    //
     _tcomponent.setDeactivate(methodName);
   }
 
   public void setActivateMethod(String methodName) {
+
+    //
+    if (_tcomponent.getDeactivate() != null && _tcomponent.getDeactivate().equals(methodName)) {
+      throw new DsAnnotationException(String.format("Activate and deactivate method have the same name '%s'.", methodName));
+    }
+
+    //
     _tcomponent.setActivate(methodName);
   }
 
@@ -229,14 +240,15 @@ public class ComponentDescription {
    *          the cardinality of the reference
    * @param policy
    *          the policy for the reference
-   * @param policyOption TODO
+   * @param policyOption
+   *          TODO
    * @param unbind
    *          the name of the unbind method
    * @param target
    *          the target filter for the reference
    */
-  public void addReference(String service, String bind, String name, String cardinality, String policy, String policyOption,
-      String unbind, String target) {
+  public void addReference(String service, String bind, String name, String cardinality, String policy,
+      String policyOption, String unbind, String target) {
 
     Assert.isNotNull(service);
     Assert.isNotNull(bind);
@@ -261,6 +273,14 @@ public class ComponentDescription {
         name = name.substring("set".length());
       }
       reference.setName(name);
+    }
+
+    // [https://github.com/wuetherich/ds-annotation-builder/issues/21]
+    // check if reference name is unique
+    for (Treference treference : _tcomponent.getReference()) {
+      if (treference.getName().equals(reference.getName())) {
+        throw new DsAnnotationException(String.format("Reference name '%s' is not unique.", reference.getName()));
+      }
     }
 
     // step 4: set the name of the unbind method
@@ -305,7 +325,7 @@ public class ComponentDescription {
     if (isNotEmpty(policy)) {
       reference.setPolicy(Tpolicy.fromValue(policy.toLowerCase()));
     }
-    
+
     if (isNotEmpty(policyOption)) {
       reference.setPolicyOption(TpolicyOption.fromValue(policyOption.toLowerCase()));
     }
