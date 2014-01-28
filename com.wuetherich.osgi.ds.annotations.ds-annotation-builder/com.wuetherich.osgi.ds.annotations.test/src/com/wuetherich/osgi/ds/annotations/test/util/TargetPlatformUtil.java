@@ -25,6 +25,15 @@ public class TargetPlatformUtil {
 
 	public static void setupTargetPlatform() throws Exception {
 
+		// create new target definition
+		File directory = createTargetDirectory();
+		
+		if (directory.exists()) {
+			return;
+		} else {
+			directory.mkdirs();
+		}
+
 		// fetch the ITargetPlatformService
 		ServiceTracker<ITargetPlatformService, ITargetPlatformService> serviceTracker = new ServiceTracker<ITargetPlatformService, ITargetPlatformService>(
 				Activator.getBundleContext(), ITargetPlatformService.class,
@@ -41,9 +50,6 @@ public class TargetPlatformUtil {
 		//
 		BundleContext.class.getProtectionDomain().getCodeSource().getLocation();
 		Component.class.getProtectionDomain().getCodeSource().getLocation();
-
-		// create new target definition
-		File directory = createTargetDirectory();
 
 		//
 		copyCodeSource(BundleContext.class, directory);
@@ -117,11 +123,6 @@ public class TargetPlatformUtil {
 	public static File createTargetDirectory() {
 
 		//
-		File directory = new File(System.getProperty("user.dir"),
-				"target/test_tp_" + System.currentTimeMillis());
-		directory.mkdirs();
-
-		//
-		return directory;
+		return new File(System.getProperty("user.dir"), "target/test_tp");
 	}
 }
