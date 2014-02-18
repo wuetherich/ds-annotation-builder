@@ -14,7 +14,7 @@ import org.junit.Test;
 import com.wuetherich.osgi.ds.annotations.internal.builder.ComponentDescription;
 import com.wuetherich.osgi.ds.annotations.xml.Tcomponent;
 
-public class Issue26_Test {
+public class Issue26_ComponentDescriptionEqualsTest {
 
 	@Test
 	public void test() throws Exception {
@@ -27,14 +27,14 @@ public class Issue26_Test {
 		@SuppressWarnings("unchecked")
 		JAXBElement<Tcomponent> jaxbElement1 = (JAXBElement<Tcomponent>) unmarshaller
 				.unmarshal(new File(
-						"src/com/wuetherich/osgi/ds/annotations/test/issues_26/DeactivateMethodTest_2.xml"));
+						"src/com/wuetherich/osgi/ds/annotations/test/issues_26/Issue26_ComponentDescriptionEqualsTest.xml"));
 		Tcomponent tcomponent1 = jaxbElement1.getValue();
 
 		//
 		@SuppressWarnings("unchecked")
 		JAXBElement<Tcomponent> jaxbElement2 = (JAXBElement<Tcomponent>) unmarshaller
 				.unmarshal(new File(
-						"src/com/wuetherich/osgi/ds/annotations/test/issues_26/DeactivateMethodTest_2.xml"));
+						"src/com/wuetherich/osgi/ds/annotations/test/issues_26/Issue26_ComponentDescriptionEqualsTest.xml"));
 		Tcomponent tcomponent2 = jaxbElement2.getValue();
 		
 		//

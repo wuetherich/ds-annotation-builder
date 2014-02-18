@@ -1,8 +1,17 @@
 package com.wuetherich.osgi.ds.annotations.test.issues_26;
 
-import org.eclipse.core.runtime.CoreException;
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
+
+import java.io.InputStream;
+import java.util.concurrent.Callable;
+
+import junit.framework.Assert;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.junit.Test;
 
+import com.jayway.awaitility.Awaitility;
 import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.test.util.AbstractDsAnnotationsTest;
 import com.wuetherich.osgi.ds.annotations.test.util.EclipseProjectUtils;
@@ -10,11 +19,51 @@ import com.wuetherich.osgi.ds.annotations.test.util.EclipseProjectUtils;
 public class Issue26_UpdateResourceTest extends AbstractDsAnnotationsTest {
 
 	@Test
-	public void test() throws CoreException {
+	public void test() throws Exception {
 
 		//
-		EclipseProjectUtils.checkFileExists(getProject(), Constants.COMPONENT_DESCRIPTION_FOLDER
-				+ "/de.test.Test.xml");
+		EclipseProjectUtils.checkFileExists(getProject(),
+				Constants.COMPONENT_DESCRIPTION_FOLDER + "/de.test.Test.xml");
+
+		//
+		String expected_before = fromStream(getClass().getResourceAsStream(
+				this.getClass().getSimpleName() + "_Before.xml"));
+		//
+		String actual_before = fromStream(getProject().getFile(
+				Constants.COMPONENT_DESCRIPTION_FOLDER + "/de.test.Test.xml")
+				.getContents());
+
+		//
+		// System.out.println("Actual  : " + actual_before);
+		// System.out.println("Expected: " + expected_before);
+		assertXMLEqual(expected_before, actual_before);
+
+		IFile javaSourcefile = getProject().getFile("src/de/test/Test.java");
+		InputStream sourceInput = getClass().getResourceAsStream(
+				this.getClass().getSimpleName() + ".input");
+		javaSourcefile.setContents(sourceInput, true, false, null);
+
+		//
+		final String expected_after = fromStream(getClass()
+				.getResourceAsStream(
+						this.getClass().getSimpleName() + "_After.xml"));
+
+		//
+		Awaitility.await().until(new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				//
+				IFile file = getProject().getFile(
+						Constants.COMPONENT_DESCRIPTION_FOLDER
+								+ "/de.test.Test.xml");
+
+				file.refreshLocal(IResource.DEPTH_INFINITE, null);
+				String actual_after = fromStream(file.getContents());
+
+				//
+				return expected_after.equals(actual_after);
+			}
+		});
 	}
 
 	@Override
@@ -23,6 +72,5 @@ public class Issue26_UpdateResourceTest extends AbstractDsAnnotationsTest {
 				"de/test/Test.java",
 				"package de.test; import org.osgi.service.component.annotations.Component; @Component public class Test {}");
 	}
+
 }
-
-
