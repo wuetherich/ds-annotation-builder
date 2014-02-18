@@ -39,7 +39,7 @@ public class GenerateComponentDescriptionTest extends
 
 		//
 		try {
-			assertXMLEqual(expected, actual);
+			assertXMLEqual(getTestCase(), expected, actual);
 		} catch (Throwable e) {
 			System.out.println(actual);
 			throw e;

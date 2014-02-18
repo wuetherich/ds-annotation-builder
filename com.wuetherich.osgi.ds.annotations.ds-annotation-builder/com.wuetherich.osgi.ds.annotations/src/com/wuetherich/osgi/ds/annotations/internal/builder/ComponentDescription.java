@@ -139,9 +139,10 @@ public class ComponentDescription {
 
     //
     if (_tcomponent.getActivate() != null && _tcomponent.getActivate().equals(methodName)) {
-      throw new DsAnnotationException(String.format("Activate and deactivate method have the same name '%s'.", methodName));
+      throw new DsAnnotationException(String.format("Activate and deactivate method have the same name '%s'.",
+          methodName));
     }
-    
+
     //
     _tcomponent.setDeactivate(methodName);
   }
@@ -150,7 +151,8 @@ public class ComponentDescription {
 
     //
     if (_tcomponent.getDeactivate() != null && _tcomponent.getDeactivate().equals(methodName)) {
-      throw new DsAnnotationException(String.format("Activate and deactivate method have the same name '%s'.", methodName));
+      throw new DsAnnotationException(String.format("Activate and deactivate method have the same name '%s'.",
+          methodName));
     }
 
     //
@@ -388,8 +390,6 @@ public class ComponentDescription {
   public boolean equals(InputStream inputStream) throws JAXBException {
 
     JAXBContext jaxbContext = createJAXBContext();
-
-    // create the marshaller
     Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
     //
@@ -397,8 +397,36 @@ public class ComponentDescription {
     JAXBElement<Tcomponent> jaxbElement = (JAXBElement<Tcomponent>) unmarshaller.unmarshal(inputStream);
     Tcomponent tcomponent = jaxbElement.getValue();
 
+    return equals(tcomponent, _tcomponent);
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @param comp1
+   * @param comp1
+   * @return
+   */
+  public static boolean equals(Tcomponent comp1, Tcomponent comp2) {
+
     //
-    return tcomponent.equals(_tcomponent);
+    if (!comp1.equals(comp2)) {
+      return false;
+    }
+
+    //
+    if (comp2.isSetActivate() != comp1.isSetActivate()) {
+      return false;
+    }
+
+    //
+    if (comp2.isSetDeactivate() != comp1.isSetDeactivate()) {
+      return false;
+    }
+
+    //
+    return true;
   }
 
   /**

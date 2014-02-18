@@ -4,6 +4,9 @@
    xmlns:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd
 	http://jaxb2-commons.dev.java.net/namespace-prefix http://java.net/projects/jaxb2-commons/sources/svn/content/namespace-prefix/trunk/src/main/resources/prefix-namespace-schema.xsd"
    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   
+    <jxb:globalBindings generateIsSetMethod="true" />
+   
 	<jxb:bindings schemaLocation="scr-1_2_0.xsd" node="/xsd:schema">
 		<jxb:bindings node="//xsd:complexType[@name='Tproperty']">
 			<jxb:bindings node=".//xsd:attribute[@name='value']">
