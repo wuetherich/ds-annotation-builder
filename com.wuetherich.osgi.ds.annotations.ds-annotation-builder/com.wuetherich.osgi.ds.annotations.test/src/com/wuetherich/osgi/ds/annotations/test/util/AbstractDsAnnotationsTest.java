@@ -48,7 +48,10 @@ public abstract class AbstractDsAnnotationsTest {
 	 */
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-			TargetPlatformUtil.setupTargetPlatform();
+
+		System.out.println("Setup target platform...");
+
+		TargetPlatformUtil.setupTargetPlatform();
 	}
 
 	/**
@@ -61,6 +64,8 @@ public abstract class AbstractDsAnnotationsTest {
 	@Before
 	public void setup() throws JavaModelException, CoreException {
 
+	    System.out.println("Setup test project...");
+		
 		//
 		_project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(DEFAULT_JDT_TEST_PROJECT_NAME);
