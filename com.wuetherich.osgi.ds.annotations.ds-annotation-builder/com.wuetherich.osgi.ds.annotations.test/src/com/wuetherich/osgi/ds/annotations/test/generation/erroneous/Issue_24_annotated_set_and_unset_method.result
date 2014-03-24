@@ -1,0 +1,1 @@
+Method 'unsetService' must not be annotated with the DS annotation '@Reference'.

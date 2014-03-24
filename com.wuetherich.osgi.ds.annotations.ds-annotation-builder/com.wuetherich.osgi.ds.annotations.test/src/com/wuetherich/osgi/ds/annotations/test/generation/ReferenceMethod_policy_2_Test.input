@@ -10,7 +10,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 public class Test {
 
 	@Reference(policy = ReferencePolicy.STATIC)
-	public void bind(Serializable service) {}
+	public void bindService(Serializable service) {}
 
-	public void unbind(Serializable service) {}
+	public void unbindService(Serializable service) {}
 }

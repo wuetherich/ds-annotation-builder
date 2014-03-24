@@ -9,7 +9,7 @@ import org.osgi.service.component.annotations.Reference;
 public class Test {
 
 	@Reference(updated="modified")
-	public void bind(Serializable service) {}
+	public void bindService(Serializable service) {}
 	
 	public void modified(Serializable service) {}
 }

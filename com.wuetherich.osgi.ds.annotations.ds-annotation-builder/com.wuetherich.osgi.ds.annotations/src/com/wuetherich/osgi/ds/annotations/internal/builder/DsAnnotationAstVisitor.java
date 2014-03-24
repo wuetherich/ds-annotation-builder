@@ -459,7 +459,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
    * 
    * @return <code>true</code> if the specified annotation is a DS annotation, <code>false</code> otherwise.
    */
-  private boolean isDsAnnotation(Annotation annotation) {
+  public static boolean isDsAnnotation(Annotation annotation) {
 
     //
     ITypeBinding typeBinding = annotation.resolveTypeBinding();

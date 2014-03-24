@@ -41,10 +41,10 @@ public class ErroneousComponentDescriptionTest extends
 		}
 
 		Assert.assertTrue(getTestCase(), !errors.isEmpty());
-		// System.out.println("~ ~ ~ ~ ~ ~ ~ ~");
-		// for (IMarker err : errors) {
-		// System.out.println(errors.get(0).getAttribute("message"));
-		// }
+		System.out.println("~ ~ ~ ~ ~ ~ ~ ~");
+		for (IMarker err : errors) {
+			System.out.println(errors.get(0).getAttribute("message"));
+		}
 		Assert.assertEquals(getTestCase(), 1, errors.size());
 
 		//

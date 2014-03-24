@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -298,6 +299,9 @@ public class ComponentDescription {
 
     // step 3: set the name of the bind method
     if (isNotEmpty(name)) {
+      if (name == null || name.isEmpty()) {
+        throw new DsAnnotationException(String.format("Invalid reference name '%s'.", reference.getName()));
+      }
       reference.setName(name);
     } else {
       name = bind;
@@ -305,6 +309,12 @@ public class ComponentDescription {
         name = name.substring("add".length());
       } else if (name.startsWith("set")) {
         name = name.substring("set".length());
+      } else if (name.startsWith("bind")) {
+        name = name.substring("bind".length());
+      }
+      if (name == null || name.isEmpty()) {
+        throw new DsAnnotationException(String.format(
+            "Invalid reference name '%s' (derived from bind method name '%s').", reference.getName(), bind));
       }
       reference.setName(name);
     }
@@ -327,6 +337,7 @@ public class ComponentDescription {
         if (!checkMethodExists(unbind)) {
           throw new DsAnnotationException(String.format(MSG_NON_EXISTING_UNBIND_METHOD_S, unbind));
         }
+        assertNoDsAnnotation(unbind);
 
         //
         reference.setUnbind(unbind);
@@ -339,6 +350,7 @@ public class ComponentDescription {
       // osgi.cmpn-5.0.0.pdf, 112.13.7.6, p. 322
       // The unbind method is only set if the component type contains a method with the derived name.
       if (checkMethodExists(computedUnbindMethodName)) {
+        assertNoDsAnnotation(computedUnbindMethodName);
         reference.setUnbind(computedUnbindMethodName);
       }
     }
@@ -689,5 +701,29 @@ public class ComponentDescription {
    */
   private boolean isNotEmpty(String name) {
     return name != null && name.trim().length() > 0;
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @param methodName
+   */
+  private void assertNoDsAnnotation(String methodName) {
+
+    //
+    for (MethodDeclaration methodDeclaration : _typeDeclaration.getMethods()) {
+      if (methodDeclaration.getName().getFullyQualifiedName().equals(methodName)) {
+
+        for (Object modifier : methodDeclaration.modifiers()) {
+          if (modifier instanceof MarkerAnnotation) {
+            if (DsAnnotationAstVisitor.isDsAnnotation((MarkerAnnotation) modifier)) {
+              throw new DsAnnotationException(String.format("Method '%s' must not be annotated with the DS annotation '@%s'.",
+                  methodName, ((MarkerAnnotation) modifier).getTypeName()));
+            }
+          }
+        }
+      }
+    }
   }
 }
