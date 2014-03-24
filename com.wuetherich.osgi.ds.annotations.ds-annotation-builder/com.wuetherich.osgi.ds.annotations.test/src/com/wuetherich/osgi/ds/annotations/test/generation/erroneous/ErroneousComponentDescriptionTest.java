@@ -40,16 +40,18 @@ public class ErroneousComponentDescriptionTest extends
 			}
 		}
 
-		Assert.assertTrue(!errors.isEmpty());
-		Assert.assertEquals(1, errors.size());
+		Assert.assertTrue(getTestCase(), !errors.isEmpty());
+		// System.out.println("~ ~ ~ ~ ~ ~ ~ ~");
+		// for (IMarker err : errors) {
+		// System.out.println(errors.get(0).getAttribute("message"));
+		// }
+		Assert.assertEquals(getTestCase(), 1, errors.size());
 
 		//
 		String expectedMessage = fromStream(getClass().getResourceAsStream(
 				getTestCase() + ".result"));
-
-		System.out.println(errors.get(0).getAttribute("message"));
 		
-		Assert.assertEquals(expectedMessage.trim(),
+		Assert.assertEquals(getTestCase(), expectedMessage.trim(),
 				errors.get(0).getAttribute("message"));
 	}
 
