@@ -97,22 +97,19 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
    */
   private void handle(IResource resource) throws CoreException {
 
-    //
+    // Only handle Java source files here...
     if (!resource.getName().endsWith(".java")) {
       return;
     }
 
-    //
+    // get the corresponding java element
     IJavaElement element = JavaCore.create(resource);
     IJavaProject javaProject = JavaCore.create(resource.getProject());
-    if (!javaProject.isOnClasspath(element) || !element.isStructureKnown()) {
+    if (element == null || !javaProject.isOnClasspath(element) || !element.isStructureKnown()) {
       return;
     }
 
-    if (JavaCore.create(resource) == null) {
-      return;
-    }
-
+    // delete all markers
     try {
       resource.deleteMarkers(Constants.DS_ANNOTATION_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
     } catch (CoreException e1) {
@@ -120,9 +117,7 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
     }
 
     //
-    if (element != null && element.isStructureKnown()) {
-      parse((ICompilationUnit) element, resource);
-    }
+    parse((ICompilationUnit) element, resource);
   }
 
   /**
@@ -141,14 +136,14 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
     if (hasErrors(compilationUnit)) {
       return;
     }
-    
+
     // visit the AST
     DsAnnotationAstVisitor myAstVisitor = new DsAnnotationAstVisitor();
     compilationUnit.accept(myAstVisitor);
 
     // Insane hack: we have to check whether types has been parsed or not
     // Under some circumstances the JDT AST is empty and getComponentDescriptions() returns an empty list
-    // bug: https://github.com/wuetherich/ds-annotation-builder/issues/11 
+    // bug: https://github.com/wuetherich/ds-annotation-builder/issues/11
     if (myAstVisitor.getComponentDescriptions().isEmpty() && myAstVisitor.hasTypes()) {
       // delete any component description that eventually have been generated before for this resource
       ComponentDescriptionWriter.deleteGeneratedFiles(resource.getProject(), resource.getFullPath());
@@ -189,19 +184,19 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
   /**
    * <p>
    * </p>
-   *
+   * 
    * @param result
    * @return
    */
   private boolean hasErrors(CompilationUnit result) {
-    
+
     //
     for (IProblem problem : result.getProblems()) {
       if (problem.isError()) {
         return true;
       }
     }
-    
+
     //
     return false;
   }
