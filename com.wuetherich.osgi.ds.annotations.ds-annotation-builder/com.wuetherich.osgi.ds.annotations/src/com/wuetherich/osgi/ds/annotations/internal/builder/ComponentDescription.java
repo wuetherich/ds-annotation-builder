@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -185,25 +186,47 @@ public class ComponentDescription {
     tproperties.setEntry(value);
   }
 
-  public void addProperty(String keyValue) {
-
-    String[] strings = keyValue.split("=");
+  /**
+   * <p>
+   * </p>
+   * 
+   * @param properties
+   */
+  public void addProperty(Map<String, List<ComponentProperty>> properties) {
 
     //
-    Tproperty tproperty = new Tproperty();
-    _tcomponent.getPropertyOrProperties().add(tproperty);
-    String[] nameTypePair = strings[0].split(":");
-    if (nameTypePair.length > 1) {
-      tproperty.setPropertyName(nameTypePair[0]);
-      tproperty.setPropertyType(TjavaTypes.fromValue(nameTypePair[1]));
-    } else {
-      tproperty.setPropertyName(strings[0]);
+    for (String name : properties.keySet()) {
+
+      Tproperty tproperty = new Tproperty();
+      _tcomponent.getPropertyOrProperties().add(tproperty);
+
+      List<ComponentProperty> componentProperties = properties.get(name);
+
+      ComponentProperty componentProperty = componentProperties.get(0);
+      tproperty.setPropertyName(componentProperty.getName());
+      if (componentProperty.getType() != null) {
+        tproperty.setPropertyType(TjavaTypes.fromValue(componentProperty.getType()));
+      }
+
+      if (componentProperties.size() == 1) {
+        tproperty.setPropertyValue(componentProperty.getValue());
+      } else {
+        StringBuilder stringBuilder = new StringBuilder(System.getProperty("line.separator"));
+        for (ComponentProperty prop : componentProperties) {
+          stringBuilder.append(prop.getValue());
+          stringBuilder.append(System.getProperty("line.separator"));
+        }
+        tproperty.setValue(stringBuilder.toString());
+      }
     }
-
-    //
-    tproperty.setPropertyValue(strings[1]);
   }
 
+  /**
+   * <p>
+   * </p>
+   * 
+   * @param services
+   */
   public void setService(String[] services) {
 
     if (services == null || services.length == 0) {
