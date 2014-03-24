@@ -237,7 +237,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
               String bind = _currentMethodDeclaration.getName().getFullyQualifiedName();
 
               //
-              getCurrentComponentDescription().addReference(service, bind, null, null, null, null, null, null);
+              getCurrentComponentDescription().addReference(service, bind, null, null, null, null, null, null, null);
             }
           }
         }
@@ -298,6 +298,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
     String policy = null;
     String policyOption = null;
     String unbind = null;
+    String updated = null;
     String target = null;
 
     String service = _currentMethodDeclaration.resolveBinding().getParameterTypes()[0].getBinaryName();
@@ -336,13 +337,17 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
         unbind = pair.resolveMemberValuePairBinding().getValue().toString();
       }
       //
+      else if ("updated".equals(valueName)) {
+        updated = pair.resolveMemberValuePairBinding().getValue().toString();
+      }      
+      //
       else if ("target".equals(valueName)) {
         target = pair.resolveMemberValuePairBinding().getValue().toString();
       }
     }
 
     //
-    getCurrentComponentDescription().addReference(service, bind, name, cardinality, policy, policyOption, unbind, target);
+    getCurrentComponentDescription().addReference(service, bind, name, cardinality, policy, policyOption, unbind, updated, target);
   }
 
   /**

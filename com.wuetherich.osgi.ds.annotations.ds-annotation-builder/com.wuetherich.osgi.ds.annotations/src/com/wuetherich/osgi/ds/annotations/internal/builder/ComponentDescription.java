@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.osgi.framework.FrameworkUtil;
@@ -56,16 +57,22 @@ import com.wuetherich.osgi.ds.annotations.xml.Tservice;
 public class ComponentDescription {
 
   /** - */
-  private static final String       FIELD_NAME_TARGET    = "target";
+  private static final String       FIELD_NAME_TARGET                 = "target";
 
   /** - */
-  private static final String       FIELD_NAME_SERVICE   = "service";
+  private static final String       FIELD_NAME_SERVICE                = "service";
 
   /** - */
-  private static final String       MSG_NO_SUPERTYPE_S   = "NO SUPERTYPE '%s'.";
+  private static final String       MSG_NO_SUPERTYPE_S                = "NO SUPERTYPE '%s'.";
 
   /** - */
-  private static final String       MSG_INVALID_FILTER_S = "Invalid filter '%s'.";
+  private static final String       MSG_INVALID_FILTER_S              = "Invalid filter '%s'.";
+
+  /** */
+  private static final String       MSG_NON_EXISTING_UNBIND_METHOD_S  = "Non existing unbind method '%s'.";
+
+  /** */
+  private static final String       MSG_NON_EXISTING_UPDATED_METHOD_S = "Non existing updated method '%s'.";
 
   /** - */
   private Tcomponent                _tcomponent;
@@ -246,11 +253,13 @@ public class ComponentDescription {
    *          TODO
    * @param unbind
    *          the name of the unbind method
+   * @param updated
+   *          TODO
    * @param target
    *          the target filter for the reference
    */
   public void addReference(String service, String bind, String name, String cardinality, String policy,
-      String policyOption, String unbind, String target) {
+      String policyOption, String unbind, String updated, String target) {
 
     Assert.isNotNull(service);
     Assert.isNotNull(bind);
@@ -290,19 +299,51 @@ public class ComponentDescription {
       if ("-".equals(unbind)) {
         reference.setUnbind(null);
       } else {
+
+        //
+        if (!checkMethodExists(unbind)) {
+          throw new DsAnnotationException(String.format(MSG_NON_EXISTING_UNBIND_METHOD_S, unbind));
+        }
+
+        //
         reference.setUnbind(unbind);
       }
     } else {
-      if (bind.startsWith("set")) {
-        reference.setUnbind("unset" + bind.substring("set".length()));
-      } else if (bind.startsWith("add")) {
-        reference.setUnbind("remove" + bind.substring("add".length()));
-      } else {
-        reference.setUnbind("un" + bind);
+
+      //
+      String computedUnbindMethodName = computeUnbindMethodName(bind);
+
+      // osgi.cmpn-5.0.0.pdf, 112.13.7.6, p. 322
+      // The unbind method is only set if the component type contains a method with the derived name.
+      if (checkMethodExists(computedUnbindMethodName)) {
+        reference.setUnbind(computedUnbindMethodName);
       }
     }
 
-    // step 5: set the filter
+    // step 5: set the name of the updated method
+    if (isNotEmpty(updated)) {
+      if ("-".equals(updated)) {
+        reference.setUpdated(null);
+      } else {
+        //
+        if (!checkMethodExists(updated)) {
+          throw new DsAnnotationException(String.format(MSG_NON_EXISTING_UPDATED_METHOD_S, updated));
+        }
+        reference.setUpdated(updated);
+      }
+    } else {
+
+      //
+      String computedUpdatedMethodName = computeUpdatedMethodName(bind);
+
+      // osgi.cmpn-5.0.0.pdf, 112.13.7.8, p. 322
+      // The updated method is only set if the component type contains a method with the derived name.
+      if (checkMethodExists(computedUpdatedMethodName)) {
+        reference.setUpdated(computedUpdatedMethodName);
+      }
+    }
+
+    // step 6: set the filter
     if (isNotEmpty(target)) {
       try {
         FrameworkUtil.createFilter(target);
@@ -333,10 +374,6 @@ public class ComponentDescription {
     }
 
     _tcomponent.getReference().add(reference);
-  }
-
-  private boolean isNotEmpty(String name) {
-    return name != null && name.trim().length() > 0;
   }
 
   /**
@@ -561,5 +598,73 @@ public class ComponentDescription {
 
     //
     return false;
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @param bindName
+   * @return
+   */
+  private String computeUnbindMethodName(String bindName) {
+
+    //
+    Assert.isNotNull(bindName);
+
+    //
+    if (bindName.startsWith("set")) {
+      return "unset" + bindName.substring("set".length());
+    } else if (bindName.startsWith("add")) {
+      return "remove" + bindName.substring("add".length());
+    } else {
+      return "un" + bindName;
+    }
+  }
+
+  private String computeUpdatedMethodName(String bindName) {
+
+    //
+    Assert.isNotNull(bindName);
+
+    //
+    if (bindName.startsWith("set")) {
+      return "updated" + bindName.substring("set".length());
+    } else if (bindName.startsWith("add")) {
+      return "updated" + bindName.substring("add".length());
+    } else if (bindName.startsWith("bind")) {
+      return "updated" + bindName.substring("bind".length());
+    } else {
+      return "updated" + bindName;
+    }
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @param computedUnbindMethodName
+   */
+  private boolean checkMethodExists(String computedUnbindMethodName) {
+
+    //
+    for (MethodDeclaration methodDeclaration : _typeDeclaration.getMethods()) {
+      if (methodDeclaration.getName().getFullyQualifiedName().equals(computedUnbindMethodName)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @param name
+   * @return
+   */
+  private boolean isNotEmpty(String name) {
+    return name != null && name.trim().length() > 0;
   }
 }

@@ -1,0 +1,15 @@
+package de.test;
+
+import java.io.Serializable;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+@Component 
+public class Test {
+
+	@Reference(updated="updated")
+	public void bind(Serializable service) {}
+	
+	public void updated(Serializable service) {}
+}
