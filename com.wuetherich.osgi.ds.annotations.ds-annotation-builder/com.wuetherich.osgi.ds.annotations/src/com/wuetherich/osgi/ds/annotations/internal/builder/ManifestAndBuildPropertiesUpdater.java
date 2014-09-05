@@ -11,6 +11,7 @@
 package com.wuetherich.osgi.ds.annotations.internal.builder;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,6 +68,9 @@ public class ManifestAndBuildPropertiesUpdater {
             descriptions.add(iPath.toPortableString());
           }
         }
+        
+        // Bug-Fix: https://github.com/wuetherich/ds-annotation-builder/issues/38
+        Collections.sort(descriptions);
 
         //
         StringBuilder stringBuilder = new StringBuilder();
