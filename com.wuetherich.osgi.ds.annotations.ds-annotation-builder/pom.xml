@@ -7,10 +7,15 @@
 	<version>1.1.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+	<properties>
+		<ds-annotation-builder.version>1.1.5-SNAPSHOT</ds-annotation-builder.version>
+		<tycho-version>0.21.0</tycho-version>
+	</properties>
+
 	<modules>
+		<module>com.wuetherich.org.osgi.service.component.annotations</module>
 		<module>com.wuetherich.osgi.ds.annotations</module>
 		<module>com.wuetherich.osgi.ds.annotations.ui</module>
-		<module>com.wuetherich.osgi.ds.annotations.test</module>
 		<module>com.wuetherich.osgi.ds.annotations.feature</module>
 		<module>com.wuetherich.osgi.ds.annotations.target</module>
 		<module>com.wuetherich.osgi.ds.annotations.p2.repo</module>
@@ -20,10 +25,6 @@
 	<prerequisites>
 		<maven>3.0</maven>
 	</prerequisites>
-
-	<properties>
-		<tycho-version>0.18.1</tycho-version>
-	</properties>
 
 	<build>
 		<plugins>
@@ -37,7 +38,7 @@
 						<artifact>
 							<groupId>com.wuetherich.osgi.ds</groupId>
 							<artifactId>com.wuetherich.osgi.ds.annotations.target</artifactId>
-							<version>${project.version}</version>
+							<version>${ds-annotation-builder.version}</version>
 						</artifact>
 					</target>
 				</configuration>
