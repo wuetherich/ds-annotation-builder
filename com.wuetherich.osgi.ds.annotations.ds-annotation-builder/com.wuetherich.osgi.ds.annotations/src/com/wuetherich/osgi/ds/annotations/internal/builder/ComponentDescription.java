@@ -43,7 +43,6 @@ import com.wuetherich.osgi.ds.annotations.xml.TconfigurationPolicy;
 import com.wuetherich.osgi.ds.annotations.xml.Timplementation;
 import com.wuetherich.osgi.ds.annotations.xml.TjavaTypes;
 import com.wuetherich.osgi.ds.annotations.xml.Tpolicy;
-import com.wuetherich.osgi.ds.annotations.xml.TpolicyOption;
 import com.wuetherich.osgi.ds.annotations.xml.Tproperties;
 import com.wuetherich.osgi.ds.annotations.xml.Tproperty;
 import com.wuetherich.osgi.ds.annotations.xml.Tprovide;
@@ -357,26 +356,29 @@ public class ComponentDescription {
 
     // step 5: set the name of the updated method
     if (isNotEmpty(updated)) {
-      if ("-".equals(updated)) {
-        reference.setUpdated(null);
-      } else {
-        //
-        if (!checkMethodExists(updated)) {
-          throw new DsAnnotationException(String.format(MSG_NON_EXISTING_UPDATED_METHOD_S, updated));
-        }
-        reference.setUpdated(updated);
-      }
-    } else {
-
-      //
-      String computedUpdatedMethodName = computeUpdatedMethodName(bind);
-
-      // osgi.cmpn-5.0.0.pdf, 112.13.7.8, p. 322
-      // The updated method is only set if the component type contains a method with the derived name.
-      if (checkMethodExists(computedUpdatedMethodName)) {
-        reference.setUpdated(computedUpdatedMethodName);
-      }
+      throw new DsAnnotationException("Field 'updated' is not supported in DS 1.1.");
     }
+    // if (isNotEmpty(updated)) {
+    // if ("-".equals(updated)) {
+    // reference.setUpdated(null);
+    // } else {
+    // //
+    // if (!checkMethodExists(updated)) {
+    // throw new DsAnnotationException(String.format(MSG_NON_EXISTING_UPDATED_METHOD_S, updated));
+    // }
+    // reference.setUpdated(updated);
+    // }
+    // } else {
+    //
+    // //
+    // String computedUpdatedMethodName = computeUpdatedMethodName(bind);
+    //
+    // // osgi.cmpn-5.0.0.pdf, 112.13.7.8, p. 322
+    // // The updated method is only set if the component type contains a method with the derived name.
+    // if (checkMethodExists(computedUpdatedMethodName)) {
+    // reference.setUpdated(computedUpdatedMethodName);
+    // }
+    // }
 
     // step 6: set the filter
     if (isNotEmpty(target)) {
@@ -405,7 +407,8 @@ public class ComponentDescription {
     }
 
     if (isNotEmpty(policyOption)) {
-      reference.setPolicyOption(TpolicyOption.fromValue(policyOption.toLowerCase()));
+      throw new DsAnnotationException("Field 'policyOption' is not supported in DS 1.1.");
+      // reference.setPolicyOption(TpolicyOption.fromValue(policyOption.toLowerCase()));
     }
 
     _tcomponent.getReference().add(reference);
@@ -718,8 +721,9 @@ public class ComponentDescription {
         for (Object modifier : methodDeclaration.modifiers()) {
           if (modifier instanceof MarkerAnnotation) {
             if (DsAnnotationAstVisitor.isDsAnnotation((MarkerAnnotation) modifier)) {
-              throw new DsAnnotationException(String.format("Method '%s' must not be annotated with the DS annotation '@%s'.",
-                  methodName, ((MarkerAnnotation) modifier).getTypeName()));
+              throw new DsAnnotationException(String.format(
+                  "Method '%s' must not be annotated with the DS annotation '@%s'.", methodName,
+                  ((MarkerAnnotation) modifier).getTypeName()));
             }
           }
         }

@@ -7,7 +7,7 @@
    
     <jxb:globalBindings generateIsSetMethod="true" />
    
-	<jxb:bindings schemaLocation="scr-1_2_0.xsd" node="/xsd:schema">
+	<jxb:bindings schemaLocation="scr-1_1_0.xsd" node="/xsd:schema">
 		<jxb:bindings node="//xsd:complexType[@name='Tproperty']">
 			<jxb:bindings node=".//xsd:attribute[@name='value']">
 				<jxb:property name="propertyValue" />
