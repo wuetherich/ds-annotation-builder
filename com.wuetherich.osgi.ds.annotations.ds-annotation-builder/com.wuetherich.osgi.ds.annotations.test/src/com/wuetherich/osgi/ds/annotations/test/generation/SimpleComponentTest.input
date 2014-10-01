@@ -1,7 +1,0 @@
-package de.test; 
-
-import org.osgi.service.component.annotations.Component; 
-
-@Component 
-public class Test {
-}
