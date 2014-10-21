@@ -16,5 +16,7 @@ Bundle-ClassPath: libs/commons-lang-2.2.jar,
  libs/jaxb2-basics-runtime-0.6.3.jar,
  .
 Import-Package: org.osgi.service.component.annotations;version="1.2.0"
-Export-Package: com.wuetherich.osgi.ds.annotations
+Export-Package: com.wuetherich.osgi.ds.annotations,
+ org.osgi.xmlns.scr.v1_1,
+ org.osgi.xmlns.scr.v1_2
 

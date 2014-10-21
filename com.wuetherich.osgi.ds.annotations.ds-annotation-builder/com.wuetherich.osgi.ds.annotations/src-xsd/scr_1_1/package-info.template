@@ -6,6 +6,6 @@
 //
 
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://www.osgi.org/xmlns/scr/v1.1.0", xmlns = { @javax.xml.bind.annotation.XmlNs(namespaceURI = "http://www.osgi.org/xmlns/scr/v1.1.0", prefix = "scr") }, elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package com.wuetherich.osgi.ds.annotations.xml;
+package org.osgi.xmlns.scr.v1_1;
 
 

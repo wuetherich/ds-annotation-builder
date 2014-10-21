@@ -37,8 +37,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
 import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
-import com.wuetherich.osgi.ds.annotations.xml.TjavaTypes;
-import com.wuetherich.osgi.ds.annotations.xml.Tproperty;
 
 /**
  * <p>

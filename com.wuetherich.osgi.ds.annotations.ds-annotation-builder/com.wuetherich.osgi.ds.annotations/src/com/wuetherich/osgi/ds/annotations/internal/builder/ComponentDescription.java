@@ -33,22 +33,23 @@ import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.xmlns.scr.v1_2.ObjectFactory;
+import org.osgi.xmlns.scr.v1_2.Tcomponent;
+import org.osgi.xmlns.scr.v1_2.TconfigurationPolicy;
+import org.osgi.xmlns.scr.v1_2.Timplementation;
+import org.osgi.xmlns.scr.v1_2.TjavaTypes;
+import org.osgi.xmlns.scr.v1_2.Tpolicy;
+import org.osgi.xmlns.scr.v1_2.TpolicyOption;
+import org.osgi.xmlns.scr.v1_2.Tproperties;
+import org.osgi.xmlns.scr.v1_2.Tproperty;
+import org.osgi.xmlns.scr.v1_2.Tprovide;
+import org.osgi.xmlns.scr.v1_2.Treference;
+import org.osgi.xmlns.scr.v1_2.Tservice;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
-import com.wuetherich.osgi.ds.annotations.xml.ObjectFactory;
-import com.wuetherich.osgi.ds.annotations.xml.Tcomponent;
-import com.wuetherich.osgi.ds.annotations.xml.TconfigurationPolicy;
-import com.wuetherich.osgi.ds.annotations.xml.Timplementation;
-import com.wuetherich.osgi.ds.annotations.xml.TjavaTypes;
-import com.wuetherich.osgi.ds.annotations.xml.Tpolicy;
-import com.wuetherich.osgi.ds.annotations.xml.TpolicyOption;
-import com.wuetherich.osgi.ds.annotations.xml.Tproperties;
-import com.wuetherich.osgi.ds.annotations.xml.Tproperty;
-import com.wuetherich.osgi.ds.annotations.xml.Tprovide;
-import com.wuetherich.osgi.ds.annotations.xml.Treference;
-import com.wuetherich.osgi.ds.annotations.xml.Tservice;
+
 
 /**
  * <p>

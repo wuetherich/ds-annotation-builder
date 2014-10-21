@@ -10,9 +10,9 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
+import org.osgi.xmlns.scr.v1_2.Tcomponent;
 
 import com.wuetherich.osgi.ds.annotations.internal.builder.ComponentDescription;
-import com.wuetherich.osgi.ds.annotations.xml.Tcomponent;
 
 public class Issue26_ComponentDescriptionEqualsTest {
 
