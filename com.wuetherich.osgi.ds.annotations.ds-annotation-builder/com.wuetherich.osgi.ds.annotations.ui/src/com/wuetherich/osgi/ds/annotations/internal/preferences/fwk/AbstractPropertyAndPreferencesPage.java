@@ -1,4 +1,4 @@
-package com.wuetherich.osgi.ds.annotations.internal.preferences;
+package com.wuetherich.osgi.ds.annotations.internal.preferences.fwk;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,11 +30,6 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.service.prefs.BackingStoreException;
-
-import com.wuetherich.osgi.ds.annotations.internal.preferences.fwk.DialogField;
-import com.wuetherich.osgi.ds.annotations.internal.preferences.fwk.IDialogFieldListener;
-import com.wuetherich.osgi.ds.annotations.internal.preferences.fwk.ProjectSelectionDialog;
-import com.wuetherich.osgi.ds.annotations.internal.preferences.fwk.SelectionButtonDialogField;
 
 /**
  * <p>

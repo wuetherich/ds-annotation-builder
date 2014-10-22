@@ -1,4 +1,4 @@
-package com.wuetherich.osgi.ds.annotations.internal.preferences;
+package com.wuetherich.osgi.ds.annotations.internal.preferences.fwk;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;

@@ -12,9 +12,6 @@ package com.wuetherich.osgi.ds.annotations.internal.preferences.fwk;
 
 import java.util.Set;
 
-import org.bundlemaker.core.BundleMakerCore;
-import org.bundlemaker.core.project.IProjectDescriptionAwareBundleMakerProject;
-import org.bundlemaker.core.ui.BundleMakerImages;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;

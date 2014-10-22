@@ -13,6 +13,8 @@ package com.wuetherich.osgi.ds.annotations.internal.preferences.fwk;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
+import com.wuetherich.osgi.ds.annotations.internal.Activator;
+
 /**
  * A settable IStatus. Can be an error, warning, info or ok. For error, info and warning states, a message describes the
  * problem.

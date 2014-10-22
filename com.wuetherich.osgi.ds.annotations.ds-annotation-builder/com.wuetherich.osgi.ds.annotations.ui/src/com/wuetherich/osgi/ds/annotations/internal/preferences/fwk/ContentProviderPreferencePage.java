@@ -1,4 +1,4 @@
-package com.wuetherich.osgi.ds.annotations.internal.preferences;
+package com.wuetherich.osgi.ds.annotations.internal.preferences.fwk;
 
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;

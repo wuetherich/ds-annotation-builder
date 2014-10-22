@@ -1,4 +1,4 @@
-package com.wuetherich.osgi.ds.annotations.internal.preferences;
+package com.wuetherich.osgi.ds.annotations.internal.preferences.fwk;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
