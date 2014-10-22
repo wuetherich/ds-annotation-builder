@@ -15,21 +15,20 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jaxb2-maven-plugin</artifactId>
-				<version>1.6</version>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>0.11.0</version>
 				<executions>
 					<execution>
-						<id>generate_1_1</id>
+						<id>generate-scr_1_1</id>
 						<goals>
-							<goal>xjc</goal>
+							<goal>generate</goal>
 						</goals>
 						<configuration>
-							<generatePackage>com.wuetherich.osgi.ds.annotations.xml_1_1</generatePackage>
+							<generatePackage>org.osgi.xmlns.scr.v1_1</generatePackage>
 							<schemaDirectory>${project.basedir}/src-xsd/scr_1_1</schemaDirectory>
 							<bindingDirectory>${project.basedir}/src-xsd/scr_1_1</bindingDirectory>
-							<outputDirectory>${project.build.directory}/generated-sources/xjc</outputDirectory>
-							<extension>true</extension>
+							<removeOldOutput>true</removeOldOutput>
 							<args>
 								<arg>-XtoString</arg>
 								<arg>-Xequals</arg>
@@ -37,54 +36,45 @@
 								<arg>-Xcopyable</arg>
 								<arg>-Xnamespace-prefix</arg>
 							</args>
-							<plugins>
-								<plugin>
-									<groupId>org.jvnet.jaxb2_commons</groupId>
-									<artifactId>jaxb2-basics</artifactId>
-									<version>0.6.2</version>
-								</plugin>
-								<dependency>
-									<groupId>org.jvnet.jaxb2_commons</groupId>
-									<artifactId>jaxb2-namespace-prefix</artifactId>
-									<version>1.1</version>
-								</dependency>
-							</plugins>
 						</configuration>
 					</execution>
 					<execution>
-						<id>generate_1_2</id>
+						<id>generate-scr_1_2</id>
 						<goals>
-							<goal>xjc</goal>
+							<goal>generate</goal>
 						</goals>
 						<configuration>
-							<generatePackage>com.wuetherich.osgi.ds.annotations.xml_1_2</generatePackage>
+							<generatePackage>org.osgi.xmlns.scr.v1_2</generatePackage>
 							<schemaDirectory>${project.basedir}/src-xsd/scr_1_2</schemaDirectory>
 							<bindingDirectory>${project.basedir}/src-xsd/scr_1_2</bindingDirectory>
-							<outputDirectory>${project.build.directory}/generated-sources/xjc</outputDirectory>
-							<extension>true</extension>
-							<clearOutputDir>false</clearOutputDir>
-							<args>
-								<arg>-XtoString</arg>
-								<arg>-Xequals</arg>
-								<arg>-XhashCode</arg>
-								<arg>-Xcopyable</arg>
-								<arg>-Xnamespace-prefix</arg>
-							</args>
-							<plugins>
-								<plugin>
-									<groupId>org.jvnet.jaxb2_commons</groupId>
-									<artifactId>jaxb2-basics</artifactId>
-									<version>0.6.2</version>
-								</plugin>
-								<dependency>
-									<groupId>org.jvnet.jaxb2_commons</groupId>
-									<artifactId>jaxb2-namespace-prefix</artifactId>
-									<version>1.1</version>
-								</dependency>
-							</plugins>
+							<removeOldOutput>false</removeOldOutput>
 						</configuration>
 					</execution>
 				</executions>
+				<configuration>
+					<extension>true</extension>
+					<episode>false</episode>
+					<forceRegenerate>true</forceRegenerate>
+					<args>
+						<arg>-XtoString</arg>
+						<arg>-Xequals</arg>
+						<arg>-XhashCode</arg>
+						<arg>-Xcopyable</arg>
+						<arg>-Xnamespace-prefix</arg>
+					</args>
+					<plugins>
+						<plugin>
+							<groupId>org.jvnet.jaxb2_commons</groupId>
+							<artifactId>jaxb2-basics</artifactId>
+							<version>0.9.0</version>
+						</plugin>
+						<dependency>
+							<groupId>org.jvnet.jaxb2_commons</groupId>
+							<artifactId>jaxb2-namespace-prefix</artifactId>
+							<version>1.1</version>
+						</dependency>
+					</plugins>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
