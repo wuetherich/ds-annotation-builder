@@ -44,4 +44,30 @@
       </objectContribution>
    </extension>
    
+   <!-- define the preferences page -->
+   <extension
+       point="org.eclipse.ui.preferencePages">
+     <page
+          class="com.wuetherich.osgi.ds.annotations.internal.preferences.DsAnnotationsPropertyAndPreferencePage"
+          id="com.wuetherich.osgi.ds.annotations.ui.preferences"
+          name="DS Annotations" />
+   </extension>
+ 
+  <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+          class="com.wuetherich.osgi.ds.annotations.internal.preferences.DsAnnotationsPropertyAndPreferencePage"
+          id="com.wuetherich.osgi.ds.annotations.ui.properties"
+          name="DS Annotations" >
+        <enabledWhen>
+          <and>
+            <adapt type="org.eclipse.core.resources.IProject">
+              <test property="org.eclipse.core.resources.projectNature"
+                    value="com.wuetherich.osgi.ds.annotations.dsAnnotationNature"/>
+            </adapt>
+          </and>
+        </enabledWhen>
+      </page>
+  </extension>
+   
 </plugin>

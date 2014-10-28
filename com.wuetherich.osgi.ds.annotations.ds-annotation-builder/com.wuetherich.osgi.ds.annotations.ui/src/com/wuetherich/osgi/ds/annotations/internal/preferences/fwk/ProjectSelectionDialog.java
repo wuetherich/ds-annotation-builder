@@ -27,15 +27,13 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionStatusDialog;
 
 import com.wuetherich.osgi.ds.annotations.DsAnnotationsCore;
@@ -46,7 +44,7 @@ import com.wuetherich.osgi.ds.annotations.DsAnnotationsCore;
  * 
  * <p>
  * This source was copied (and than modified) from the internal class
- * {@link org.org.bundlemaker.core.ui.internal.preferences.fwk.ProjectSelectionDialog}.
+ * {@link org.eclipse.pde.internal.ui.preferences.ProjectSelectionDialog}.
  * </p>
  * 
  * @author Gerd W&uuml;therich (gerd@gerd-wuetherich.de)
@@ -62,8 +60,6 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
   private final static int                                SIZING_SELECTION_WIDGET_HEIGHT = 250;
 
   private final static int                                SIZING_SELECTION_WIDGET_WIDTH  = 300;
-
-  private final static String                             DIALOG_SETTINGS_SHOW_ALL       = "ProjectSelectionDialog.show_all"; //$NON-NLS-1$
 
   private ViewerFilter                                    fFilter;
 
@@ -116,7 +112,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
       @Override
       public Image getImage(Object element) {
-        return BundleMakerImages.BUNDLEMAKER_PROJECT.getImage();
+        return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJ_PROJECT);
       }
 
       @Override
@@ -128,41 +124,11 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
     _tableViewer.setComparator(new ViewerComparator());
     _tableViewer.getControl().setFont(font);
 
-    Button checkbox = new Button(composite, SWT.CHECK);
-    checkbox.setText("Show only projects with project specific settings");
-    checkbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false));
-    checkbox.addSelectionListener(new SelectionListener() {
-      @Override
-      public void widgetSelected(SelectionEvent e) {
-        updateFilter(((Button) e.widget).getSelection());
-      }
-
-      @Override
-      public void widgetDefaultSelected(SelectionEvent e) {
-        updateFilter(((Button) e.widget).getSelection());
-      }
-    });
-    // IDialogSettings dialogSettings= JavaPlugin.getDefault().getDialogSettings();
-    // boolean doFilter= !dialogSettings.getBoolean(DIALOG_SETTINGS_SHOW_ALL) &&
-    // !fProjectsWithSpecifics.isEmpty();
-    boolean doFilter = false;
-    checkbox.setSelection(doFilter);
-    updateFilter(doFilter);
-
     _tableViewer.setInput(DsAnnotationsCore.getDsAnnotationAwareProjects());
 
     doSelectionChanged(new Object[0]);
     Dialog.applyDialogFont(composite);
     return composite;
-  }
-
-  protected void updateFilter(boolean selected) {
-    if (selected) {
-      _tableViewer.addFilter(fFilter);
-    } else {
-      _tableViewer.removeFilter(fFilter);
-    }
-    // JavaPlugin.getDefault().getDialogSettings().put(DIALOG_SETTINGS_SHOW_ALL, !selected);
   }
 
   private void doSelectionChanged(Object[] objects) {

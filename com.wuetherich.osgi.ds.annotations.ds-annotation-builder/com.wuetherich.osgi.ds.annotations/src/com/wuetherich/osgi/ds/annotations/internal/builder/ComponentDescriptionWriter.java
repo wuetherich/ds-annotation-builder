@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
@@ -33,6 +32,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
 import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
 
 /**
@@ -44,11 +44,11 @@ import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
 public class ComponentDescriptionWriter {
 
   /** - */
-  private static Pattern REGEXP_PATTERN = Pattern.compile(Constants.DS_ANNOTATION_BUILDER_GENERATED_REGEXP); ;
+  private static Pattern       REGEXP_PATTERN                                   = Pattern
+                                                                                    .compile(Constants.DS_ANNOTATION_BUILDER_GENERATED_REGEXP); ;
 
   /** - */
   private static final boolean MARK_GENERATED_COMPONENT_DESCRIPTIONS_AS_DERIVED = false;
-  
 
   /**
    * <p>
@@ -98,7 +98,8 @@ public class ComponentDescriptionWriter {
    * @param description
    * @throws CoreException
    */
-  public static void writeComponentDescription(IProject project, ComponentDescription description) throws CoreException {
+  public static void writeComponentDescription(IProject project, IComponentDescription description)
+      throws CoreException {
 
     // get the output file
     IFile file = project.getFile(new Path(Constants.COMPONENT_DESCRIPTION_FOLDER).append(new Path(description.getName()
@@ -109,7 +110,7 @@ public class ComponentDescriptionWriter {
       if (file.exists() && description.equals(file.getContents(true)) && containsDsAnnotationBuilderComment(file)) {
         return;
       }
-    } catch (JAXBException e) {
+    } catch (Exception e) {
       // simply ignore exceptions
     }
 
@@ -162,11 +163,17 @@ public class ComponentDescriptionWriter {
     if (result != null) {
 
       for (IPath path : result) {
-        try {
-          IFile file = project.getFile(path);
-          file.delete(true, null);
-        } catch (Exception e) {
-          e.printStackTrace();
+
+        IFile file = project.getFile(path);
+
+        long start = System.currentTimeMillis();
+        
+        while (file.exists() && (System.currentTimeMillis() - start) < 2000) {
+          try {
+            file.delete(true, null);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
         }
       }
     }

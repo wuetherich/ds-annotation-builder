@@ -36,6 +36,9 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.ComponentDescriptionFactory;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.AbstractComponentDescription;
 import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
 
 /**
@@ -47,16 +50,16 @@ import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
 public class DsAnnotationAstVisitor extends ASTVisitor {
 
   /** the current type declaration */
-  private Stack<TypeDeclaration>                     _currentTypeDeclaration;
+  private Stack<TypeDeclaration>                      _currentTypeDeclaration;
 
   /** the current method declaration */
-  private MethodDeclaration                          _currentMethodDeclaration;
+  private MethodDeclaration                           _currentMethodDeclaration;
 
   /** the descriptions */
-  private Map<TypeDeclaration, ComponentDescription> _descriptions;
+  private Map<TypeDeclaration, IComponentDescription> _descriptions;
 
   /** - */
-  private boolean                                    _hasTypes = false;
+  private boolean                                     _hasTypes = false;
 
   /**
    * <p>
@@ -66,7 +69,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
   public DsAnnotationAstVisitor() {
 
     // create the description map
-    _descriptions = new HashMap<TypeDeclaration, ComponentDescription>();
+    _descriptions = new HashMap<TypeDeclaration, IComponentDescription>();
 
     //
     _currentTypeDeclaration = new Stack<TypeDeclaration>();
@@ -79,7 +82,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
    * 
    * @return all the component descriptions.
    */
-  public Collection<ComponentDescription> getComponentDescriptions() {
+  public Collection<IComponentDescription> getComponentDescriptions() {
     return _descriptions.values();
   }
 
@@ -190,8 +193,8 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
         if (node.resolveTypeBinding().getQualifiedName().equals(Component.class.getName())) {
 
           //
-          _descriptions.put(_currentTypeDeclaration.peek(), new ComponentDescription(_currentTypeDeclaration.peek()));
-          getCurrentComponentDescription().setComponentDefaults();
+          _descriptions.put(_currentTypeDeclaration.peek(),
+              ComponentDescriptionFactory.createComponentDescription(_currentTypeDeclaration.peek()));
 
           //
           if (node.isNormalAnnotation()) {
@@ -219,8 +222,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
 
           //
           else if (node.resolveTypeBinding().getQualifiedName().equals(Modified.class.getName())) {
-            getCurrentComponentDescription().setModifiedMethod(
-                _currentMethodDeclaration.getName().getFullyQualifiedName());
+            getCurrentComponentDescription().setModified(_currentMethodDeclaration.getName().getFullyQualifiedName());
           }
 
           //
@@ -245,7 +247,9 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
       }
 
     } catch (Exception e) {
-
+      
+      e.printStackTrace();
+      
       ASTNode astNode = node;
 
       //
@@ -393,6 +397,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
         //
         GenericCache<String, List<ComponentProperty>> properties = new GenericCache<String, List<ComponentProperty>>() {
           private static final long serialVersionUID = 1L;
+
           @Override
           protected List<ComponentProperty> create(String key) {
             return new LinkedList<ComponentProperty>();
@@ -401,11 +406,11 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
 
         //
         for (Object keyValue : (Object[]) pair.resolveMemberValuePairBinding().getValue()) {
-           
+
           //
-          String[] strings = ((String)keyValue).split("=");
+          String[] strings = ((String) keyValue).split("=");
           String[] nameTypePair = strings[0].split(":");
-          
+
           //
           ComponentProperty componentProperty = new ComponentProperty();
           if (nameTypePair.length > 1) {
@@ -420,7 +425,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
           //
           componentProperty.setValue(strings[1]);
         }
-        
+
         //
         getCurrentComponentDescription().addProperty(properties);
       }
@@ -477,7 +482,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
    * 
    * @return the current {@link AbstractComponentDescription}.
    */
-  private ComponentDescription getCurrentComponentDescription() {
+  private IComponentDescription getCurrentComponentDescription() {
     return _descriptions.get(_currentTypeDeclaration.peek());
   }
 }

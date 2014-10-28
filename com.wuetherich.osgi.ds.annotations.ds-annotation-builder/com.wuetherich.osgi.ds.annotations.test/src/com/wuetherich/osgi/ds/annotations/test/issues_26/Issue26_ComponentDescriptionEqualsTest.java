@@ -11,8 +11,17 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.osgi.xmlns.scr.v1_2.Tcomponent;
+import org.osgi.xmlns.scr.v1_2.TconfigurationPolicy;
+import org.osgi.xmlns.scr.v1_2.Timplementation;
+import org.osgi.xmlns.scr.v1_2.TjavaTypes;
+import org.osgi.xmlns.scr.v1_2.Tpolicy;
+import org.osgi.xmlns.scr.v1_2.Tproperties;
+import org.osgi.xmlns.scr.v1_2.Tproperty;
+import org.osgi.xmlns.scr.v1_2.Treference;
+import org.osgi.xmlns.scr.v1_2.Tservice;
 
-import com.wuetherich.osgi.ds.annotations.internal.builder.ComponentDescription;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.AbstractComponentDescription;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.SCR_1_2_ComponentDescription;
 
 public class Issue26_ComponentDescriptionEqualsTest {
 
@@ -20,7 +29,8 @@ public class Issue26_ComponentDescriptionEqualsTest {
 	public void test() throws Exception {
 
 		//
-		JAXBContext context = ComponentDescription.createJAXBContext();
+		JAXBContext context = JAXBContext.newInstance(Tcomponent.class, TconfigurationPolicy.class, Timplementation.class,
+		          TjavaTypes.class, Tpolicy.class, Tproperties.class, Tproperty.class, Treference.class, Tservice.class);;
 		Unmarshaller unmarshaller = context.createUnmarshaller();
 		
 		//
@@ -38,8 +48,8 @@ public class Issue26_ComponentDescriptionEqualsTest {
 		Tcomponent tcomponent2 = jaxbElement2.getValue();
 		
 		//
-		assertTrue(ComponentDescription.equals(tcomponent1, tcomponent2));
+		assertTrue(SCR_1_2_ComponentDescription.equals(tcomponent1, tcomponent2));
 		tcomponent1.setDeactivate("deactivate");
-		assertFalse(ComponentDescription.equals(tcomponent1, tcomponent2));
+		assertFalse(SCR_1_2_ComponentDescription.equals(tcomponent1, tcomponent2));
 	}
 }

@@ -29,6 +29,8 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.AbstractComponentDescription;
 
 /**
  * <p>
@@ -150,7 +152,7 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
     }
 
     // iterate over the component descriptions
-    for (ComponentDescription description : myAstVisitor.getComponentDescriptions()) {
+    for (IComponentDescription description : myAstVisitor.getComponentDescriptions()) {
 
       if (description.hasProblems()) {
 
