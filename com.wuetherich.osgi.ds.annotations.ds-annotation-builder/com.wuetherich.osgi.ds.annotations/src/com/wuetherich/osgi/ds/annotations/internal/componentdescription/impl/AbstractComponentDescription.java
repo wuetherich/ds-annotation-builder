@@ -184,6 +184,11 @@ public abstract class AbstractComponentDescription implements IComponentDescript
   public final void setConfigurationPolicy(String configurationPolicy) {
     onSetConfigurationPolicy(configurationPolicy);
   }
+  
+  @Override
+  public final void setConfigurationPid(String configurationPid) {
+    onSetConfigurationPid(configurationPid);
+  }
 
   @Override
   public final void setServiceFactory(Boolean value) {
@@ -251,6 +256,8 @@ public abstract class AbstractComponentDescription implements IComponentDescript
   public abstract void onAddProperty(Map<String, List<ComponentProperty>> properties);
 
   public abstract void onSetConfigurationPolicy(String configurationPolicy);
+  
+  public abstract void onSetConfigurationPid(String configurationPid);
 
   public abstract void onSetServiceFactory(Boolean value);
 

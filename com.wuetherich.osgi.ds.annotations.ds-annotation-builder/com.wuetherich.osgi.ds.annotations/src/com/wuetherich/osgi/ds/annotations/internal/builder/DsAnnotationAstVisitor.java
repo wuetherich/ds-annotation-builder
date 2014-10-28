@@ -387,6 +387,10 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
         getCurrentComponentDescription().setFactory((String) pair.resolveMemberValuePairBinding().getValue());
       }
       //
+      else if ("configurationPid".equals(valueName)) {
+        getCurrentComponentDescription().setConfigurationPid((String) pair.resolveMemberValuePairBinding().getValue());
+      }
+      //
       else if ("configurationPolicy".equals(valueName)) {
         IVariableBinding variableBinding = (IVariableBinding) pair.resolveMemberValuePairBinding().getValue();
         getCurrentComponentDescription().setConfigurationPolicy(variableBinding.getName().toLowerCase());

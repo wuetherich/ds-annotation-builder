@@ -30,6 +30,8 @@ public interface IComponentDescription {
   void setFactory(String value);
 
   void setConfigurationPolicy(String lowerCase);
+  
+  void setConfigurationPid(String value);
 
   void addProperty(Map<String, List<ComponentProperty>> properties);
 
@@ -42,5 +44,4 @@ public interface IComponentDescription {
   String toXml();
 
   String getName();
-
 }

@@ -155,6 +155,11 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
     TconfigurationPolicy tconfigurationPolicy = TconfigurationPolicy.fromValue(lowerCase);
     _tcomponent.setConfigurationPolicy(tconfigurationPolicy);
   }
+  
+  @Override
+  public void onSetConfigurationPid(String configurationPid) {
+    _tcomponent.setConfigurationPid(configurationPid);
+  }
 
   @Override
   public void onAddProperties(String value) {
