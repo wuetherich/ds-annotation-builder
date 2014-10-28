@@ -1,5 +1,5 @@
 /*
- * Copyright (c) OSGi Alliance (2011). All Rights Reserved.
+ * Copyright (c) OSGi Alliance (2011, 2013). All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@ package org.osgi.service.component.annotations;
 
 /**
  * Cardinality for the {@link Reference} annotation.
- *
+ * 
  * <p>
  * Specifies if the reference is optional and if the component implementation
  * support a single bound service or multiple bound services.
- *
- * @version $Id: ab8c5ee35742b3190a2af8a45855bda98f82ebea $
+ * 
+ * @author $Id: f01a55c3ea006d931dd3f066605da80b78c8bd9e $
  */
 public enum ReferenceCardinality {
 	/**

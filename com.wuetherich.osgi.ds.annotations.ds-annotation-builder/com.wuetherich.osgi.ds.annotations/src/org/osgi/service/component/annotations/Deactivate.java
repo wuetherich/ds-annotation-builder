@@ -1,5 +1,5 @@
 /*
- * Copyright (c) OSGi Alliance (2011). All Rights Reserved.
+ * Copyright (c) OSGi Alliance (2011, 2013). All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,17 @@ import java.lang.annotation.Target;
 /**
  * Identify the annotated method as the {@code deactivate} method of a Service
  * Component.
- *
+ * 
  * <p>
  * The annotated method is the deactivate method of the Component.
- *
+ * 
  * <p>
  * This annotation is not processed at runtime by a Service Component Runtime
  * implementation. It must be processed by tools and used to add a Component
  * Description to the bundle.
- *
+ * 
  * @see "The deactivate attribute of the component element of a Component Description."
- * @version $Id: 29e2ba22d4bff9952b96ec31a74a5bac8cd863cf $
+ * @author $Id: 1809c70ebf50ecdb649b1804bcd48d21a626fa37 $
  * @since 1.1
  */
 @Retention(RetentionPolicy.CLASS)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) OSGi Alliance (2011). All Rights Reserved.
+ * Copyright (c) OSGi Alliance (2011, 2013). All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,17 @@ import java.lang.annotation.Target;
 /**
  * Identify the annotated method as the {@code activate} method of a Service
  * Component.
- *
+ * 
  * <p>
  * The annotated method is the activate method of the Component.
- *
+ * 
  * <p>
  * This annotation is not processed at runtime by a Service Component Runtime
  * implementation. It must be processed by tools and used to add a Component
  * Description to the bundle.
- *
+ * 
  * @see "The activate attribute of the component element of a Component Description."
- * @version $Id: 65132e7c194aae7a05079acea248dbe8673c904c $
+ * @author $Id: e24a899f70a9f7ec19b85b9e046471dc15236294 $
  * @since 1.1
  */
 @Retention(RetentionPolicy.CLASS)

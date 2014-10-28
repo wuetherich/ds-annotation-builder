@@ -1,5 +1,5 @@
 /*
- * Copyright (c) OSGi Alliance (2011). All Rights Reserved.
+ * Copyright (c) OSGi Alliance (2011, 2013). All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.osgi.service.component.annotations;
 /**
  * Policy option for the {@link Reference} annotation.
  * 
- * @version $Id: 914e3ef6b1ebfc140776ab4ba8773bb1f213d50d $
+ * @author $Id: 1023cb41ab8539820d1658af1eb7d08944932353 $
  * @since 1.2
  */
 public enum ReferencePolicyOption {
