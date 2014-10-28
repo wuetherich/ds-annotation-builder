@@ -25,10 +25,10 @@
 							<goal>generate</goal>
 						</goals>
 						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/xjc-scr_1_1</generateDirectory>
 							<generatePackage>org.osgi.xmlns.scr.v1_1</generatePackage>
 							<schemaDirectory>${project.basedir}/src-xsd/scr_1_1</schemaDirectory>
 							<bindingDirectory>${project.basedir}/src-xsd/scr_1_1</bindingDirectory>
-							<removeOldOutput>true</removeOldOutput>
 							<args>
 								<arg>-XtoString</arg>
 								<arg>-Xequals</arg>
@@ -44,10 +44,10 @@
 							<goal>generate</goal>
 						</goals>
 						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/xjc-scr_1_2</generateDirectory>
 							<generatePackage>org.osgi.xmlns.scr.v1_2</generatePackage>
 							<schemaDirectory>${project.basedir}/src-xsd/scr_1_2</schemaDirectory>
 							<bindingDirectory>${project.basedir}/src-xsd/scr_1_2</bindingDirectory>
-							<removeOldOutput>false</removeOldOutput>
 						</configuration>
 					</execution>
 				</executions>

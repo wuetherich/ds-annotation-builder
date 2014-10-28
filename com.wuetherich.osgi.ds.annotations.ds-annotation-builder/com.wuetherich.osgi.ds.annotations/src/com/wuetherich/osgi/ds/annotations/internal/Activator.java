@@ -10,13 +10,19 @@
  ******************************************************************************/
 package com.wuetherich.osgi.ds.annotations.internal;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+
+import com.wuetherich.osgi.ds.annotations.Constants;
 
 /**
  * <p>
@@ -88,5 +94,35 @@ public class Activator implements BundleActivator {
 
     // return null if no IBundleProjectService is available
     return null;
+  }
+
+  /**
+   * <p>
+   * </p>
+   *
+   * @return
+   */
+  public static List<IProject> getDsAnnotationAwareProjects() {
+
+    //
+    IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+
+    //
+    List<IProject> result = new LinkedList<IProject>();
+
+    //
+    for (IProject iProject : projects) {
+
+      try {
+        if (iProject.hasNature(Constants.NATURE_ID)) {
+          result.add(iProject);
+        }
+      } catch (CoreException e) {
+        // ignore
+      }
+    }
+
+    // return the result
+    return result;
   }
 }

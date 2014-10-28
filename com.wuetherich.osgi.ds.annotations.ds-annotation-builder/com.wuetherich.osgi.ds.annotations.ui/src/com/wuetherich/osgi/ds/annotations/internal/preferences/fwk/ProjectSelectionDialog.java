@@ -12,6 +12,7 @@ package com.wuetherich.osgi.ds.annotations.internal.preferences.fwk;
 
 import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -37,6 +38,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.SelectionStatusDialog;
 
+import com.wuetherich.osgi.ds.annotations.DsAnnotationsCore;
+
 /**
  * <p>
  * </p>
@@ -53,7 +56,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
   // the visual selection widget group
   private TableViewer                                     _tableViewer;
 
-  private Set<IProjectDescriptionAwareBundleMakerProject> _projectsWithSpecifics;
+  private Set<IProject> _projectsWithSpecifics;
 
   // sizing constants
   private final static int                                SIZING_SELECTION_WIDGET_HEIGHT = 250;
@@ -64,7 +67,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
   private ViewerFilter                                    fFilter;
 
-  public ProjectSelectionDialog(Shell parentShell, Set<IProjectDescriptionAwareBundleMakerProject> projectsWithSpecifics) {
+  public ProjectSelectionDialog(Shell parentShell, Set<IProject> projectsWithSpecifics) {
     super(parentShell);
     setTitle("Project Specific Configuration");
     setMessage("Select the project to configure:");
@@ -118,7 +121,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
       @Override
       public String getText(Object element) {
-        return ((IProjectDescriptionAwareBundleMakerProject) element).getName();
+        return ((IProject) element).getName();
       }
     });
     _tableViewer.setContentProvider(ArrayContentProvider.getInstance());
@@ -146,7 +149,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
     checkbox.setSelection(doFilter);
     updateFilter(doFilter);
 
-    _tableViewer.setInput(BundleMakerCore.getBundleMakerProjects());
+    _tableViewer.setInput(DsAnnotationsCore.getDsAnnotationAwareProjects());
 
     doSelectionChanged(new Object[0]);
     Dialog.applyDialogFont(composite);
