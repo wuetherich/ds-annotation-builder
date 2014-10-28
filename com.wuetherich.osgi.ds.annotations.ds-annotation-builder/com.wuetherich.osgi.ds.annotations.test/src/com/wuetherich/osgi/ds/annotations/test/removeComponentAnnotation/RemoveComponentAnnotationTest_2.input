@@ -1,0 +1,12 @@
+package de.test; 
+
+import org.osgi.service.component.annotations.Component; 
+import org.osgi.service.component.annotations.Activate; 
+
+ 
+public class Test {
+
+	@Activate
+	public void activate() {
+	}	
+}

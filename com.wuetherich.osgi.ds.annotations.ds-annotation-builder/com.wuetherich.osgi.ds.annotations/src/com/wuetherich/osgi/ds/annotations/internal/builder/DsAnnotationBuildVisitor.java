@@ -148,7 +148,7 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
     // bug: https://github.com/wuetherich/ds-annotation-builder/issues/11
     if (myAstVisitor.getComponentDescriptions().isEmpty() && myAstVisitor.hasTypes()) {
       // delete any component description that eventually have been generated before for this resource
-      ComponentDescriptionWriter.deleteGeneratedFiles(resource.getProject(), resource.getFullPath());
+      ComponentDescriptionWriter.deleteGeneratedFiles(resource.getProject(), resource.getProjectRelativePath());
     }
 
     // iterate over the component descriptions

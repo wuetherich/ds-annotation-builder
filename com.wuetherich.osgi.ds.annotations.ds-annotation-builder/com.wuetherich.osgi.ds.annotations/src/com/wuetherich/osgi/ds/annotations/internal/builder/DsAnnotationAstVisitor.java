@@ -206,7 +206,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
           }
         }
 
-        if (_currentMethodDeclaration != null) {
+        if (_currentMethodDeclaration != null && getCurrentComponentDescription() != null) {
 
           //
           if (node.resolveTypeBinding().getQualifiedName().equals(Activate.class.getName())) {
