@@ -104,12 +104,7 @@ public abstract class AbstractComponentDescription implements IComponentDescript
     return _typeDeclarationReader.getImplementationClassName();
   }
 
-  /**
-   * <p>
-   * </p>
-   * 
-   * @return
-   */
+  @Override
   public String getSourceFile() {
     return _sourceFile;
   }

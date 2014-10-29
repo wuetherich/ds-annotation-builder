@@ -129,6 +129,10 @@ public class ComponentDescriptionWriter {
       }
       file.setContents(new StringBufferInputStream(description.toXml()), IFile.FORCE, null);
     } else {
+      
+      // delete old files
+      deleteGeneratedFiles(project, new Path(description.getSourceFile()));
+      
       // write the new component description to disc
       file.create(new StringBufferInputStream(description.toXml()), true, null);
       if (MARK_GENERATED_COMPONENT_DESCRIPTIONS_AS_DERIVED) {
@@ -167,7 +171,7 @@ public class ComponentDescriptionWriter {
         IFile file = project.getFile(path);
 
         long start = System.currentTimeMillis();
-        
+
         while (file.exists() && (System.currentTimeMillis() - start) < 2000) {
           try {
             file.delete(true, null);

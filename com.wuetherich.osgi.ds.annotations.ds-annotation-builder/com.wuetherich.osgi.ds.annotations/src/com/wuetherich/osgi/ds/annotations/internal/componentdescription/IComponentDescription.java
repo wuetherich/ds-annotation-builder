@@ -44,4 +44,6 @@ public interface IComponentDescription {
   String toXml();
 
   String getName();
+
+  String getSourceFile();
 }
