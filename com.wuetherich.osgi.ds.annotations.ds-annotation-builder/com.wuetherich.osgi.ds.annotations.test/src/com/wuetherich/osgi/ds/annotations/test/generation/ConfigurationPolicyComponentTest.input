@@ -1,0 +1,7 @@
+package de.test; 
+
+import org.osgi.service.component.annotations.Component; 
+
+@Component(configurationPolicy=ConfigurationPolicy.REQUIRE)
+public class Test {
+}
