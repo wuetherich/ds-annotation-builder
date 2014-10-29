@@ -247,9 +247,9 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
       }
 
     } catch (Exception e) {
-      
+
       e.printStackTrace();
-      
+
       ASTNode astNode = node;
 
       //
@@ -399,36 +399,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
       else if ("property".equals(valueName)) {
 
         //
-        GenericCache<String, List<ComponentProperty>> properties = new GenericCache<String, List<ComponentProperty>>() {
-          private static final long serialVersionUID = 1L;
-
-          @Override
-          protected List<ComponentProperty> create(String key) {
-            return new LinkedList<ComponentProperty>();
-          }
-        };
-
-        //
-        for (Object keyValue : (Object[]) pair.resolveMemberValuePairBinding().getValue()) {
-
-          //
-          String[] strings = ((String) keyValue).split("=");
-          String[] nameTypePair = strings[0].split(":");
-
-          //
-          ComponentProperty componentProperty = new ComponentProperty();
-          if (nameTypePair.length > 1) {
-            properties.getOrCreate(nameTypePair[0]).add(componentProperty);
-            componentProperty.setName(nameTypePair[0]);
-            componentProperty.setType(nameTypePair[1]);
-          } else {
-            properties.getOrCreate(strings[0]).add(componentProperty);
-            componentProperty.setName(strings[0]);
-          }
-
-          //
-          componentProperty.setValue(strings[1]);
-        }
+        Object[] properties = (Object[]) pair.resolveMemberValuePairBinding().getValue();
 
         //
         getCurrentComponentDescription().addProperty(properties);

@@ -23,6 +23,7 @@ import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
 import com.wuetherich.osgi.ds.annotations.internal.builder.ComponentProperty;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
+import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
 
 /**
  * <p>
@@ -191,14 +192,54 @@ public abstract class AbstractComponentDescription implements IComponentDescript
   }
 
   @Override
-  public final void addProperty(Map<String, List<ComponentProperty>> properties) {
-    onAddProperty(properties);
+  public final void addProperty(Object[] properties) {
+    
+    //
+    GenericCache<String, List<ComponentProperty>> propertyMap = new GenericCache<String, List<ComponentProperty>>() {
+      private static final long serialVersionUID = 1L;
+
+      @Override
+      protected List<ComponentProperty> create(String key) {
+        return new LinkedList<ComponentProperty>();
+      }
+    };
+
+    // process the property entries
+    for (Object keyValue : properties) {
+
+      //
+      String[] strings = ((String) keyValue).split("=");
+      
+      //
+      if (strings.length < 2) {
+        throw new DsAnnotationException(String.format("Invalid property definition '%s'. Property definitions must follow the following syntax: name ( ’:’ type )? ’=’ value. ",
+            ((String) keyValue)));
+      }
+      
+      String[] nameTypePair = strings[0].split(":");
+
+      //
+      ComponentProperty componentProperty = new ComponentProperty();
+      if (nameTypePair.length > 1) {
+        propertyMap.getOrCreate(nameTypePair[0]).add(componentProperty);
+        componentProperty.setName(nameTypePair[0]);
+        componentProperty.setType(nameTypePair[1]);
+      } else {
+        propertyMap.getOrCreate(strings[0]).add(componentProperty);
+        componentProperty.setName(strings[0]);
+      }
+
+      //
+      componentProperty.setValue(strings[1]);
+    }
+    
+    // 
+    onAddProperty(propertyMap);
   }
 
   @Override
-  public final void addProperties(String keyValue) {
-    // TODO Auto-generated method stub
-
+  public final void addProperties(String value) {
+    onAddProperties(value);
   }
 
   /**

@@ -88,7 +88,7 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
     Timplementation timplementation = new Timplementation();
     timplementation.setClazz(getImplementationClassName());
     _tcomponent.setImplementation(timplementation);
-    
+
     // set the default services
     List<String> stypes = getTypeDeclarationReader().getAllDirectlyImplementedSuperInterfaces();
     setService(stypes.toArray(new String[0]));
@@ -155,7 +155,7 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
     TconfigurationPolicy tconfigurationPolicy = TconfigurationPolicy.fromValue(lowerCase);
     _tcomponent.setConfigurationPolicy(tconfigurationPolicy);
   }
-  
+
   @Override
   public void onSetConfigurationPid(String configurationPid) {
     _tcomponent.setConfigurationPid(configurationPid);
@@ -163,8 +163,9 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
 
   @Override
   public void onAddProperties(String value) {
-    // TODO Auto-generated method stub
-
+    Tproperties tproperties = new Tproperties();
+    tproperties.setEntry(value);
+    _tcomponent.getPropertyOrProperties().add(tproperties);
   }
 
   /**
@@ -184,7 +185,12 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
       ComponentProperty componentProperty = componentProperties.get(0);
       tproperty.setPropertyName(componentProperty.getName());
       if (componentProperty.getType() != null) {
-        tproperty.setPropertyType(TjavaTypes.fromValue(componentProperty.getType()));
+        try {
+          tproperty.setPropertyType(TjavaTypes.fromValue(componentProperty.getType()));
+        } catch (Exception e) {
+          throw new DsAnnotationException(String.format("Invalid property type '%s'. Allowed values are 'String', 'Long', 'Double', 'Float', 'Integer', 'Byte' ,'Character', 'Boolean' or 'Short').",
+              componentProperty.getType()));
+        }
       }
 
       if (componentProperties.size() == 1) {

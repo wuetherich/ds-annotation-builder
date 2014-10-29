@@ -33,7 +33,7 @@ public interface IComponentDescription {
   
   void setConfigurationPid(String value);
 
-  void addProperty(Map<String, List<ComponentProperty>> properties);
+  void addProperty(Object[] properties);
 
   void addProperties(String keyValue);
 
