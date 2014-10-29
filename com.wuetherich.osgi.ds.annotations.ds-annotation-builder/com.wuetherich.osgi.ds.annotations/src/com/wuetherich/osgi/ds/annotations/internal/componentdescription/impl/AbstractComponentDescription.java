@@ -37,7 +37,7 @@ public abstract class AbstractComponentDescription implements IComponentDescript
   protected static final String     FIELD_NAME_SERVICE                = "service";
 
   /** - */
-  protected static final String     MSG_NO_SUPERTYPE_S                = "NO SUPERTYPE '%s'.";
+  protected static final String     MSG_NO_SUPERTYPE_S                = "Invalid service type. The specified component must implement/extend type '%s'.";
 
   /** - */
   protected static final String     FIELD_NAME_TARGET                 = "target";
@@ -212,7 +212,7 @@ public abstract class AbstractComponentDescription implements IComponentDescript
       
       //
       if (strings.length < 2) {
-        throw new DsAnnotationException(String.format("Invalid property definition '%s'. Property definitions must follow the following syntax: name ( ’:’ type )? ’=’ value. ",
+        throw new DsAnnotationException(String.format("Invalid property definition '%s'. Property definitions must follow the following syntax: name ( ï¿½:ï¿½ type )? ï¿½=ï¿½ value. ",
             ((String) keyValue)));
       }
       

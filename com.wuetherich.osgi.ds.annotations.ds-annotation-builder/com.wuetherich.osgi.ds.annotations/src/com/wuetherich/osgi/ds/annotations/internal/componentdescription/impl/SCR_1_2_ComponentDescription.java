@@ -146,8 +146,14 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
 
   @Override
   public void onSetServiceFactory(Boolean value) {
-    // TODO Auto-generated method stub
 
+    //
+    if (_tcomponent.getService() == null) {
+      _tcomponent.setService(new Tservice());
+    }
+
+    //
+    _tcomponent.getService().setServicefactory(value);
   }
 
   @Override
@@ -188,8 +194,11 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
         try {
           tproperty.setPropertyType(TjavaTypes.fromValue(componentProperty.getType()));
         } catch (Exception e) {
-          throw new DsAnnotationException(String.format("Invalid property type '%s'. Allowed values are 'String', 'Long', 'Double', 'Float', 'Integer', 'Byte' ,'Character', 'Boolean' or 'Short').",
-              componentProperty.getType()));
+          throw new DsAnnotationException(
+              String
+                  .format(
+                      "Invalid property type '%s'. Allowed values are 'String', 'Long', 'Double', 'Float', 'Integer', 'Byte' ,'Character', 'Boolean' or 'Short').",
+                      componentProperty.getType()));
         }
       }
 
