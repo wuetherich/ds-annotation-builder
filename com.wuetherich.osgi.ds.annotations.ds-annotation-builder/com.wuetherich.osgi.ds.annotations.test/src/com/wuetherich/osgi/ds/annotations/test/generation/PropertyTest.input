@@ -3,6 +3,6 @@ package de.test;
 import org.osgi.service.component.annotations.Component; 
 import org.osgi.service.component.annotations.ConfigurationPolicy; 
 
-@Component(configurationPolicy=ConfigurationPolicy.REQUIRE)
+@Component(property={"test=fest", "test=hurz"})
 public class Test {
 }
