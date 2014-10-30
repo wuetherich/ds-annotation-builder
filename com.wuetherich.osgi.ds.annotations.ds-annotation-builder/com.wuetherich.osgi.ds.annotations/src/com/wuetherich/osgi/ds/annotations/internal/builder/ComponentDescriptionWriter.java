@@ -29,7 +29,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
@@ -129,10 +133,10 @@ public class ComponentDescriptionWriter {
       }
       file.setContents(new StringBufferInputStream(description.toXml()), IFile.FORCE, null);
     } else {
-      
+
       // delete old files
       deleteGeneratedFiles(project, new Path(description.getSourceFile()));
-      
+
       // write the new component description to disc
       file.create(new StringBufferInputStream(description.toXml()), true, null);
       if (MARK_GENERATED_COMPONENT_DESCRIPTIONS_AS_DERIVED) {
@@ -168,15 +172,36 @@ public class ComponentDescriptionWriter {
 
       for (IPath path : result) {
 
-        IFile file = project.getFile(path);
+        final IFile file = project.getFile(path);
+
+        Job job = new Job(String.format("Deleting resource '%s'...", file.getName())) {
+          @Override
+          protected IStatus run(IProgressMonitor monitor) {
+            long start = System.currentTimeMillis();
+            while (file.exists() && (System.currentTimeMillis() - start) < 7500) {
+              try {
+                file.delete(true, null);
+              } catch (Exception e) {
+              }
+            }
+            // TODO
+            // if (file.exists()) {
+            // return Status.
+            // }
+            return Status.OK_STATUS;
+          }
+
+        };
+        job.setUser(true);
+        job.schedule();
 
         long start = System.currentTimeMillis();
 
-        while (file.exists() && (System.currentTimeMillis() - start) < 2000) {
+        while (file.exists() && (System.currentTimeMillis() - start) < 3500) {
           try {
             file.delete(true, null);
           } catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
           }
         }
       }
