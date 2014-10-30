@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Annotation;
@@ -39,7 +40,6 @@ import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.ComponentDescriptionFactory;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.AbstractComponentDescription;
-import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
 
 /**
  * <p>
@@ -61,18 +61,23 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
   /** - */
   private boolean                                     _hasTypes = false;
 
+  private IProject                                    _project;
+
   /**
    * <p>
    * Creates a new instance of type {@link DsAnnotationAstVisitor}.
    * </p>
    */
-  public DsAnnotationAstVisitor() {
+  public DsAnnotationAstVisitor(IProject project) {
 
     // create the description map
     _descriptions = new HashMap<TypeDeclaration, IComponentDescription>();
 
     //
     _currentTypeDeclaration = new Stack<TypeDeclaration>();
+    
+    //
+    _project = project;
   }
 
   /**
@@ -194,7 +199,7 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
 
           //
           _descriptions.put(_currentTypeDeclaration.peek(),
-              ComponentDescriptionFactory.createComponentDescription(_currentTypeDeclaration.peek()));
+              ComponentDescriptionFactory.createComponentDescription(_currentTypeDeclaration.peek(), _project));
 
           //
           if (node.isNormalAnnotation()) {

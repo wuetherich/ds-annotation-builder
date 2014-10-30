@@ -30,7 +30,6 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
-import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.AbstractComponentDescription;
 
 /**
  * <p>
@@ -140,7 +139,7 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
     }
 
     // visit the AST
-    DsAnnotationAstVisitor myAstVisitor = new DsAnnotationAstVisitor();
+    DsAnnotationAstVisitor myAstVisitor = new DsAnnotationAstVisitor(resource.getProject());
     compilationUnit.accept(myAstVisitor);
 
     // Insane hack: we have to check whether types has been parsed or not

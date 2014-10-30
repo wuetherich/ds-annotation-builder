@@ -112,17 +112,12 @@ public class DsAnnotationsPropertyAndPreferenceConfigurationBlock extends
 	@Override
 	public boolean performOk() {
 
-		// //
-		// getPage().getPreferenceStore().putValue(Constants.PREF_MVN_CURRENT_SETTING,
-		// _configurationSetting.name());
+		DsAnnotationVersion dsAnnotationVersion = _button_1_1.getSelection() ? DsAnnotationVersion.V_1_1
+				: DsAnnotationVersion.V_1_2;
+
 		//
-		// getPage().getPreferenceStore().putValue(Constants.PREF_MVN_LOCAL_REPO,
-		// _text_localRepositoryPath.getText());
-		// getPage().getPreferenceStore().putValue(Constants.PREF_MVN_REMOTE_REPO,
-		// _text_remoteRepositoryPath.getText());
-		//
-		// getPage().getPreferenceStore().putValue(Constants.PREF_MVN_SETTINGSXML,
-		// _text_settingsXml.getText());
+		getPage().getPreferenceStore().putValue(Constants.PREF_DS_VERSION,
+				dsAnnotationVersion.name());
 
 		//
 		return true;
