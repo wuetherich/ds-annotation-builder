@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.jar.Manifest;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -68,7 +69,7 @@ public class ManifestAndBuildPropertiesUpdater {
             descriptions.add(iPath.toPortableString());
           }
         }
-        
+
         // Bug-Fix: https://github.com/wuetherich/ds-annotation-builder/issues/38
         Collections.sort(descriptions);
 
@@ -128,26 +129,28 @@ public class ManifestAndBuildPropertiesUpdater {
       IBundleProjectDescription bundleProjectDescription) {
 
     //
-    IPath componentDescriptionFolder = new Path(Constants.COMPONENT_DESCRIPTION_FOLDER + "/");
+    IPath componentDescriptionPath = new Path(Constants.COMPONENT_DESCRIPTION_FOLDER + "/");
 
     //
     IPath[] binIncludePaths = bundleProjectDescription.getBinIncludes();
-    if (!PathUtils.contains(binIncludePaths, componentDescriptionFolder) && map.size() > 0) {
+    if (!PathUtils.contains(binIncludePaths, componentDescriptionPath) && map.size() > 0) {
       if (binIncludePaths != null) {
         IPath[] newPaths = new IPath[binIncludePaths.length + 1];
         System.arraycopy(binIncludePaths, 0, newPaths, 0, binIncludePaths.length);
-        newPaths[binIncludePaths.length] = componentDescriptionFolder;
+        newPaths[binIncludePaths.length] = componentDescriptionPath;
         binIncludePaths = newPaths;
       } else {
-        binIncludePaths = new IPath[] { componentDescriptionFolder };
+        binIncludePaths = new IPath[] { componentDescriptionPath };
       }
     }
 
-    //
-    else if (PathUtils.contains(binIncludePaths, componentDescriptionFolder) && map.size() == 0) {
+    // remove component description folder
+    // https://github.com/wuetherich/ds-annotation-builder/issues/15
+    else if (PathUtils.contains(binIncludePaths, componentDescriptionPath) && map.size() == 0
+        && !keepComponentDescriptionFolder(bundleProjectDescription.getProject(), componentDescriptionPath)) {
       List<IPath> newPathList = new LinkedList<IPath>();
       for (IPath binIncludePath : binIncludePaths) {
-        if (!binIncludePath.equals(componentDescriptionFolder)) {
+        if (!binIncludePath.equals(componentDescriptionPath)) {
           newPathList.add(binIncludePath);
         }
       }
@@ -198,5 +201,27 @@ public class ManifestAndBuildPropertiesUpdater {
     catch (Throwable throwable) {
       return new String[] {};
     }
+  }
+
+  /**
+   * <p>
+   * </p>
+   *
+   * @param project
+   * @param componentDescriptionPath
+   * @return
+   */
+  // https://github.com/wuetherich/ds-annotation-builder/issues/15
+  private static boolean keepComponentDescriptionFolder(IProject project, IPath componentDescriptionPath) {
+
+    //
+    IFolder componentDescriptionFolder = project.getFolder(componentDescriptionPath);
+
+    //
+    // try {
+    return componentDescriptionFolder.exists() /* && componentDescriptionFolder.members().length > 0 */;
+    // } catch (CoreException e) {
+    // return false;
+    // }
   }
 }

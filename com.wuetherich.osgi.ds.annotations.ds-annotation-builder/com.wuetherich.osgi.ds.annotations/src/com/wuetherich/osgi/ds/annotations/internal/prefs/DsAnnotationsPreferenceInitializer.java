@@ -24,7 +24,9 @@ public class DsAnnotationsPreferenceInitializer extends AbstractPreferenceInitia
     // get the preferences
     IEclipsePreferences preferences = DefaultScope.INSTANCE.getNode(Constants.BUNDLE_ID);
 
-    // default setting: ds version
+    // default setting
     preferences.put(Constants.PREF_DS_VERSION, DsAnnotationVersion.V_1_2.name());
+    preferences.putBoolean(Constants.PREF_MARK_COMPONENT_DESCRIPTOR_AS_DERIVED, true);
+
   }
 }

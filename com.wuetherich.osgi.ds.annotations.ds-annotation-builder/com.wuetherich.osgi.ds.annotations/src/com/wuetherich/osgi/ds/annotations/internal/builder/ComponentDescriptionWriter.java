@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
+import com.wuetherich.osgi.ds.annotations.internal.prefs.DsAnnotationsPreferences;
 import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
 
 /**
@@ -48,11 +49,7 @@ import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
 public class ComponentDescriptionWriter {
 
   /** - */
-  private static Pattern       REGEXP_PATTERN                                   = Pattern
-                                                                                    .compile(Constants.DS_ANNOTATION_BUILDER_GENERATED_REGEXP); ;
-
-  /** - */
-  private static final boolean MARK_GENERATED_COMPONENT_DESCRIPTIONS_AS_DERIVED = false;
+  private static Pattern REGEXP_PATTERN = Pattern.compile(Constants.DS_ANNOTATION_BUILDER_GENERATED_REGEXP); ;
 
   /**
    * <p>
@@ -126,7 +123,7 @@ public class ComponentDescriptionWriter {
 
     //
     if (file.exists()) {
-      if (MARK_GENERATED_COMPONENT_DESCRIPTIONS_AS_DERIVED) {
+      if (markGeneratedComponentDescriptionsAsDerived(project)) {
         if (!file.isDerived()) {
           file.setDerived(true, null);
         }
@@ -139,7 +136,7 @@ public class ComponentDescriptionWriter {
 
       // write the new component description to disc
       file.create(new StringBufferInputStream(description.toXml()), true, null);
-      if (MARK_GENERATED_COMPONENT_DESCRIPTIONS_AS_DERIVED) {
+      if (markGeneratedComponentDescriptionsAsDerived(project)) {
         file.setDerived(true, null);
       }
     }
@@ -334,5 +331,15 @@ public class ComponentDescriptionWriter {
       }
     }
     return null;
+  }
+
+  /**
+   * <p>
+   * </p>
+   *
+   * @return
+   */
+  private static boolean markGeneratedComponentDescriptionsAsDerived(IProject project) {
+    return DsAnnotationsPreferences.getBoolean(project, Constants.PREF_MARK_COMPONENT_DESCRIPTOR_AS_DERIVED, true);
   }
 }
