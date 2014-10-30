@@ -146,7 +146,7 @@ public abstract class AbstractPropertyAndPreferencesPage extends PreferencePage
 	 * @return
 	 */
 	protected boolean hasProjectSpecificOptions(IProject project) {
-		return _configurationBlock != null
+		return project != null && _configurationBlock != null
 				&& _configurationBlock.hasProjectSpecificOptions(project);
 	}
 
