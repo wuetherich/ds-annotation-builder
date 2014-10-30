@@ -24,4 +24,9 @@
       <persistent value="true"/>
    </extension>
    
+   <!-- org.eclipse.core.runtime.preferences -->
+   <extension point="org.eclipse.core.runtime.preferences">
+      <initializer class="com.wuetherich.osgi.ds.annotations.internal.prefs.DsAnnotationsPreferenceInitializer" /> 
+   </extension>
+   
 </plugin>

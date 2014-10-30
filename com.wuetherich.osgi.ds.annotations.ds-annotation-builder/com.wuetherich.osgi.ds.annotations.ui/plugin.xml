@@ -50,7 +50,8 @@
      <page
           class="com.wuetherich.osgi.ds.annotations.internal.preferences.DsAnnotationsPropertyAndPreferencePage"
           id="com.wuetherich.osgi.ds.annotations.ui.preferences"
-          name="DS Annotations" />
+          name="DS Annotations" 
+          category="org.eclipse.pde.ui.MainPreferencePage"/>
    </extension>
  
   <extension
@@ -58,6 +59,7 @@
       <page
           class="com.wuetherich.osgi.ds.annotations.internal.preferences.DsAnnotationsPropertyAndPreferencePage"
           id="com.wuetherich.osgi.ds.annotations.ui.properties"
+          category="org.eclipse.pde.internal.ui.properties.pluginDevelopmentPage"
           name="DS Annotations" >
         <enabledWhen>
           <and>

@@ -1,282 +1,143 @@
 package com.wuetherich.osgi.ds.annotations.internal.preferences;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Group;
 
+import com.wuetherich.osgi.ds.annotations.Constants;
+import com.wuetherich.osgi.ds.annotations.DsAnnotationVersion;
 import com.wuetherich.osgi.ds.annotations.internal.preferences.fwk.AbstractPropertyAndPreferencesPage;
 import com.wuetherich.osgi.ds.annotations.internal.preferences.fwk.ConfigurationBlock;
 
-public class DsAnnotationsPropertyAndPreferenceConfigurationBlock extends ConfigurationBlock {
+public class DsAnnotationsPropertyAndPreferenceConfigurationBlock extends
+		ConfigurationBlock {
 
-  /** - */
-  private static final String         LOCAL_REPO_TITLE    = "Local Repository:";
+	/** - */
+	private static final String DS_VERSION_TITLE = "DS Version:";
 
-  /** - */
-  private static final String         REMOTE_REPO_TITLE   = "Remote Repository:";
+	/** - */
+	private Button _button_1_1;
 
-  /** - */
-  private static final String         SETTINGS_PATH_TITLE = "Path:";
+	/** - */
+	private Button _button_1_2;
 
-  /** - */
-  private Text                        _text_localRepositoryPath;
+	/**
+	 * <p>
+	 * Creates a new instance of type
+	 * {@link DsAnnotationsPropertyAndPreferenceConfigurationBlock}.
+	 * </p>
+	 * 
+	 * @param parent
+	 * @param page
+	 */
+	public DsAnnotationsPropertyAndPreferenceConfigurationBlock(
+			Composite parent, AbstractPropertyAndPreferencesPage page) {
+		super(parent, SWT.NONE, page);
+	}
 
-  /** - */
-  private Text                        _text_remoteRepositoryPath;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void createContent() {
 
-  /** - */
-  private Text                        _text_settingsXml;
+		//
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		setLayout(layout);
 
-  /** - */
-  private Button                      _check_m2eSettings;
+		// Create the first group
+		Group group1 = new Group(this, SWT.SHADOW_IN);
+		group1.setText("Declarative Services Version");
+		group1.setLayout(new RowLayout(SWT.VERTICAL));
+		group1.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-  /** - */
-  private Button                      _check_settingsXml;
+		_button_1_1 = new Button(group1, SWT.RADIO);
+		_button_1_1.setText("1.1 (OSGi Release 4.2)");
 
-  /** - */
-  private Button                      _check_configureRepositories;
+		_button_1_2 = new Button(group1, SWT.RADIO);
+		_button_1_2.setText("1.2 (OSGi Release 4.3+)");
+	}
 
-  /** - */
-  private EnabledStateHelper          _stateHelper_settingsXml;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void initialize() {
 
-  /** - */
-  private EnabledStateHelper          _stateHelper_configureRepositories;
+		switch (getDsAnnotationVersion(false)) {
+		case V_1_1: {
+			_button_1_1.setSelection(true);
+			break;
+		}
+		case V_1_2: {
+			_button_1_2.setSelection(true);
+			break;
+		}
+		default:
+			break;
+		}
 
-  /** - */
-  private MvnConfigurationSettingEnum _configurationSetting;
+	}
 
-  /**
-   * <p>
-   * Creates a new instance of type {@link DsAnnotationsPropertyAndPreferenceConfigurationBlock}.
-   * </p>
-   * 
-   * @param parent
-   * @param page
-   */
-  public DsAnnotationsPropertyAndPreferenceConfigurationBlock(Composite parent, AbstractPropertyAndPreferencesPage page) {
-    super(parent, SWT.NONE, page);
-  }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void performDefaults() {
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void createContent() {
+		switch (getDsAnnotationVersion(true)) {
+		case V_1_1: {
+			_button_1_1.setSelection(true);
+			break;
+		}
+		case V_1_2: {
+			_button_1_2.setSelection(true);
+			break;
+		}
+		default:
+			break;
+		}
+	}
 
-    //
-    GridLayout layout = new GridLayout();
-    layout.numColumns = 3;
-    setLayout(layout);
+	@Override
+	protected String[] getPreferenceKeys() {
+		return new String[] { Constants.PREF_DS_VERSION };
+	}
 
-    //
-    SelectionListener selectionListener = new SelectionListener() {
-      @Override
-      public void widgetSelected(SelectionEvent e) {
+	@Override
+	public boolean performOk() {
 
-        if (e.getSource().equals(_check_configureRepositories)) {
-          selectConfigureRepositories();
-        }
-        //
-        else if (e.getSource().equals(_check_m2eSettings)) {
-          selectCheckM2eSettings();
-        }
-        //
-        else if (e.getSource().equals(_check_settingsXml)) {
-          selectSettingsXml();
-        }
-      }
+		// //
+		// getPage().getPreferenceStore().putValue(Constants.PREF_MVN_CURRENT_SETTING,
+		// _configurationSetting.name());
+		//
+		// getPage().getPreferenceStore().putValue(Constants.PREF_MVN_LOCAL_REPO,
+		// _text_localRepositoryPath.getText());
+		// getPage().getPreferenceStore().putValue(Constants.PREF_MVN_REMOTE_REPO,
+		// _text_remoteRepositoryPath.getText());
+		//
+		// getPage().getPreferenceStore().putValue(Constants.PREF_MVN_SETTINGSXML,
+		// _text_settingsXml.getText());
 
-      @Override
-      public void widgetDefaultSelected(SelectionEvent e) {
-        //
-      }
-    };
+		//
+		return true;
+	}
 
-    //
-    _check_m2eSettings = new Button(this, SWT.CHECK);
-    _check_m2eSettings.addSelectionListener(selectionListener);
-    _check_m2eSettings.setData(MvnConfigurationSettingEnum.USE_M2E_SETTINGS);
-    Label label_m2eSettings = new Label(this, SWT.NONE);
-    label_m2eSettings.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-    label_m2eSettings.setText("Use M2E settings");
+	private DsAnnotationVersion getDsAnnotationVersion(boolean getDefault) {
 
-    // the settingsXml block
-    _check_settingsXml = new Button(this, SWT.CHECK);
-    _check_settingsXml.addSelectionListener(selectionListener);
-    _check_settingsXml.setData(MvnConfigurationSettingEnum.USE_SETTINGS_XML);
-    Label label_settingsXml = new Label(this, SWT.NONE);
-    label_settingsXml.setText("Specify 'settings.xml' file");
-    label_settingsXml.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		String version = getDefault ? getPage().getPreferenceStore()
+				.getDefaultString(Constants.PREF_DS_VERSION) : getPage()
+				.getPreferenceStore().getString(Constants.PREF_DS_VERSION);
 
-    _stateHelper_settingsXml = new EnabledStateHelper();
-    _stateHelper_settingsXml.add(new Label(this, SWT.NONE)); // dummy label
-    Label label_settingsXmlFile = new Label(this, SWT.NONE);
-    label_settingsXmlFile.setText(SETTINGS_PATH_TITLE);
-    _stateHelper_settingsXml.add(label_settingsXmlFile);
-    _text_settingsXml = new Text(this, SWT.SINGLE | SWT.BORDER);
-    _text_settingsXml.setLayoutData(new GridData(GridData.FILL_BOTH));
-    _stateHelper_settingsXml.add(_text_settingsXml);
+		DsAnnotationVersion annotationVersion = DsAnnotationVersion
+				.valueOf(version);
 
-    // the configure repositories block
-    _check_configureRepositories = new Button(this, SWT.CHECK);
-    _check_configureRepositories.addSelectionListener(selectionListener);
-    _check_configureRepositories.setData(MvnConfigurationSettingEnum.USE_CONFIGURED_RESPOSITORIES);
-    Label label_configureRepositories = new Label(this, SWT.NONE);
-    label_configureRepositories.setText("Directly configure repositories");
-    label_configureRepositories.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-    _stateHelper_configureRepositories = new EnabledStateHelper();
-    _stateHelper_configureRepositories.add(new Label(this, SWT.NONE)); // dummy label
-    Label label_localRepoPath = new Label(this, SWT.NONE);
-    label_localRepoPath.setText(LOCAL_REPO_TITLE);
-    _stateHelper_configureRepositories.add(label_localRepoPath);
-    _text_localRepositoryPath = new Text(this, SWT.SINGLE | SWT.BORDER);
-    _text_localRepositoryPath.setLayoutData(new GridData(GridData.FILL_BOTH));
-    _stateHelper_configureRepositories.add(_text_localRepositoryPath);
-    _stateHelper_configureRepositories.add(new Label(this, SWT.NONE)); // dummy label
-    Label label_remoteRepoPath = new Label(this, SWT.NONE);
-    label_remoteRepoPath.setText(REMOTE_REPO_TITLE);
-    _stateHelper_configureRepositories.add(label_remoteRepoPath);
-    _text_remoteRepositoryPath = new Text(this, SWT.SINGLE | SWT.BORDER);
-    _text_remoteRepositoryPath.setLayoutData(new GridData(GridData.FILL_BOTH));
-    _stateHelper_configureRepositories.add(_text_remoteRepositoryPath);
-  }
+		return annotationVersion;
+	}
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void initialize() {
-
-//    //
-//    _text_localRepositoryPath.setText(getPage().getPreferenceStore().getString(
-//        Constants.PREF_MVN_LOCAL_REPO));
-//
-//    //
-//    _text_remoteRepositoryPath.setText(getPage().getPreferenceStore().getString(
-//        Constants.PREF_MVN_REMOTE_REPO));
-//
-//    //
-//    _text_settingsXml.setText(getPage().getPreferenceStore().getString(
-//        Constants.PREF_MVN_SETTINGSXML));
-//
-//    //
-//    String currentSettingString = getPage().getPreferenceStore()
-//        .getString(Constants.PREF_MVN_CURRENT_SETTING);
-//
-//    try {
-//      MvnConfigurationSettingEnum setting = MvnConfigurationSettingEnum.valueOf(currentSettingString);
-//      switch (setting) {
-//      case USE_CONFIGURED_RESPOSITORIES:
-//        selectConfigureRepositories();
-//        break;
-//      case USE_M2E_SETTINGS:
-//        selectCheckM2eSettings();
-//        break;
-//      case USE_SETTINGS_XML:
-//        selectSettingsXml();
-//        break;
-//      }
-//    } catch (Exception e) {
-//      // TODO Auto-generated catch block
-//      e.printStackTrace();
-//    }
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void performDefaults() {
-
-//    //
-//    _text_localRepositoryPath.setText(getPage().getPreferenceStore().getDefaultString(
-//        Constants.PREF_MVN_LOCAL_REPO));
-//
-//    //
-//    _text_remoteRepositoryPath.setText(getPage().getPreferenceStore().getDefaultString(
-//        Constants.PREF_MVN_REMOTE_REPO));
-//
-//    //
-//    _text_settingsXml.setText(getPage().getPreferenceStore().getDefaultString(
-//        Constants.PREF_MVN_SETTINGSXML));
-//
-//    //
-//    String currentSettingString = getPage().getPreferenceStore()
-//        .getDefaultString(Constants.PREF_MVN_CURRENT_SETTING);
-//
-//    try {
-//      MvnConfigurationSettingEnum setting = MvnConfigurationSettingEnum.valueOf(currentSettingString);
-//      switch (setting) {
-//      case USE_CONFIGURED_RESPOSITORIES:
-//        selectConfigureRepositories();
-//        break;
-//      case USE_M2E_SETTINGS:
-//        selectCheckM2eSettings();
-//        break;
-//      case USE_SETTINGS_XML:
-//        selectSettingsXml();
-//        break;
-//      }
-//    } catch (Exception e) {
-//      // TODO Auto-generated catch block
-//      e.printStackTrace();
-//    }
-  }
-
-  @Override
-  protected String[] getPreferenceKeys() {
-    return new String[] { /* Constants.PREF_MVN_LOCAL_REPO, Constants.PREF_MVN_REMOTE_REPO */ };
-  }
-
-  @Override
-  public boolean performOk() {
-
-//    //
-//    getPage().getPreferenceStore().putValue(Constants.PREF_MVN_CURRENT_SETTING,
-//        _configurationSetting.name());
-//
-//    getPage().getPreferenceStore().putValue(Constants.PREF_MVN_LOCAL_REPO,
-//        _text_localRepositoryPath.getText());
-//    getPage().getPreferenceStore().putValue(Constants.PREF_MVN_REMOTE_REPO,
-//        _text_remoteRepositoryPath.getText());
-//    
-//    getPage().getPreferenceStore().putValue(Constants.PREF_MVN_SETTINGSXML,
-//        _text_settingsXml.getText());
-
-    //
-    return true;
-  }
-
-  private void selectSettingsXml() {
-    _stateHelper_configureRepositories.disable();
-    _stateHelper_settingsXml.enable();
-    _check_configureRepositories.setSelection(false);
-    _check_m2eSettings.setSelection(false);
-    _check_settingsXml.setSelection(true);
-    _configurationSetting = (MvnConfigurationSettingEnum) _check_settingsXml.getData();
-  }
-
-  private void selectCheckM2eSettings() {
-    _stateHelper_configureRepositories.disable();
-    _stateHelper_settingsXml.disable();
-    _check_configureRepositories.setSelection(false);
-    _check_m2eSettings.setSelection(true);
-    _check_settingsXml.setSelection(false);
-    _configurationSetting = (MvnConfigurationSettingEnum) _check_m2eSettings.getData();
-  }
-
-  private void selectConfigureRepositories() {
-    _stateHelper_configureRepositories.enable();
-    _stateHelper_settingsXml.disable();
-    _check_configureRepositories.setSelection(true);
-    _check_m2eSettings.setSelection(false);
-    _check_settingsXml.setSelection(false);
-    _configurationSetting = (MvnConfigurationSettingEnum) _check_configureRepositories.getData();
-  }
 }
