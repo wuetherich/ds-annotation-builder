@@ -4,22 +4,41 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.osgi.service.prefs.Preferences;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
 
 public class DsAnnotationsPreferences {
 
+  /**
+   * <p>
+   * </p>
+   *
+   * @param project
+   * @param key
+   * @param defaultValue
+   * @return
+   */
   public static String get(IProject project, String key, String defaultValue) {
+    return Platform.getPreferencesService().getString(Constants.BUNDLE_ID, key, defaultValue, getContexts(project));
+  }
 
-    //
-    Preferences projectPreferences = new ProjectScope(project).getNode(Constants.BUNDLE_ID);
-    Preferences instancePreferences = InstanceScope.INSTANCE.getNode(Constants.BUNDLE_ID);
-    Preferences defaultPreferences = DefaultScope.INSTANCE.getNode(Constants.BUNDLE_ID);
-    
-    //
-    return Platform.getPreferencesService().get(key, defaultValue,
-        new Preferences[] { projectPreferences, instancePreferences, defaultPreferences });
+  public static boolean getBoolean(IProject project, String key, boolean defaultValue) {
+    return Platform.getPreferencesService().getBoolean(Constants.BUNDLE_ID, key, defaultValue, getContexts(project));
+  }
+
+  /**
+   * <p>
+   * </p>
+   *
+   * @param project
+   * @return
+   */
+  private static IScopeContext[] getContexts(IProject project) {
+    IScopeContext projectCtx = new ProjectScope(project);
+    IScopeContext instanceCtx = InstanceScope.INSTANCE;
+    IScopeContext defaultCtx = DefaultScope.INSTANCE;
+    return new IScopeContext[] { projectCtx, instanceCtx, defaultCtx };
   }
 }
