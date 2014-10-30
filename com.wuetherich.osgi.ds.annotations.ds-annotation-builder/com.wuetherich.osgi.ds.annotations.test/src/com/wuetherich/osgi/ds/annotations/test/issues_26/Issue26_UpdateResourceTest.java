@@ -5,8 +5,6 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import java.io.InputStream;
 import java.util.concurrent.Callable;
 
-import junit.framework.Assert;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.junit.Test;
@@ -56,6 +54,10 @@ public class Issue26_UpdateResourceTest extends AbstractDsAnnotationsTest {
 				IFile file = getProject().getFile(
 						Constants.COMPONENT_DESCRIPTION_FOLDER
 								+ "/de.test.Test.xml");
+				
+				if (!file.exists()) {
+				  return false;
+				}
 
 				file.refreshLocal(IResource.DEPTH_INFINITE, null);
 				String actual_after = fromStream(file.getContents());
