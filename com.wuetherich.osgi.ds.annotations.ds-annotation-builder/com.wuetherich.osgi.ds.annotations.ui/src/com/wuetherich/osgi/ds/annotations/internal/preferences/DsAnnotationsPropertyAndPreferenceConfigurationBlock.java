@@ -17,13 +17,13 @@ public class DsAnnotationsPropertyAndPreferenceConfigurationBlock extends
 		ConfigurationBlock {
 
 	/** - */
-	private static final String DS_VERSION_TITLE = "DS Version:";
-
-	/** - */
 	private Button _button_1_1;
 
 	/** - */
 	private Button _button_1_2;
+
+	/** - */
+	private Button _button_markAsDerived;
 
 	/**
 	 * <p>
@@ -46,21 +46,26 @@ public class DsAnnotationsPropertyAndPreferenceConfigurationBlock extends
 	protected void createContent() {
 
 		//
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
+		GridLayout layout = new GridLayout(1, false);
 		setLayout(layout);
 
 		// Create the first group
 		Group group1 = new Group(this, SWT.SHADOW_IN);
-		group1.setText("Declarative Services Version");
-		group1.setLayout(new RowLayout(SWT.VERTICAL));
-		group1.setLayoutData(new GridData(GridData.FILL_BOTH));
+		group1.setText("Service Component Version");
+		group1.setLayout(createRowLayout());
+
+		GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
+		group1.setLayoutData(data);
 
 		_button_1_1 = new Button(group1, SWT.RADIO);
 		_button_1_1.setText("1.1 (OSGi Release 4.2)");
 
 		_button_1_2 = new Button(group1, SWT.RADIO);
 		_button_1_2.setText("1.2 (OSGi Release 4.3+)");
+
+		_button_markAsDerived = new Button(this, SWT.CHECK);
+		_button_markAsDerived
+				.setText("Mark generated component descriptors as derived");
 	}
 
 	/**
@@ -69,6 +74,7 @@ public class DsAnnotationsPropertyAndPreferenceConfigurationBlock extends
 	@Override
 	public void initialize() {
 
+		//
 		switch (getDsAnnotationVersion(false)) {
 		case V_1_1: {
 			_button_1_1.setSelection(true);
@@ -82,6 +88,8 @@ public class DsAnnotationsPropertyAndPreferenceConfigurationBlock extends
 			break;
 		}
 
+		_button_markAsDerived
+				.setSelection(getMarkGeneratedDescriptorsAsDerived(false));
 	}
 
 	/**
@@ -90,6 +98,7 @@ public class DsAnnotationsPropertyAndPreferenceConfigurationBlock extends
 	@Override
 	public void performDefaults() {
 
+		//
 		switch (getDsAnnotationVersion(true)) {
 		case V_1_1: {
 			_button_1_1.setSelection(true);
@@ -102,22 +111,32 @@ public class DsAnnotationsPropertyAndPreferenceConfigurationBlock extends
 		default:
 			break;
 		}
+
+		//
+		_button_markAsDerived
+				.setSelection(getMarkGeneratedDescriptorsAsDerived(true));
 	}
 
 	@Override
 	protected String[] getPreferenceKeys() {
-		return new String[] { Constants.PREF_DS_VERSION };
+		return new String[] { Constants.PREF_DS_VERSION,
+				Constants.PREF_MARK_COMPONENT_DESCRIPTOR_AS_DERIVED };
 	}
 
 	@Override
 	public boolean performOk() {
 
+		//
 		DsAnnotationVersion dsAnnotationVersion = _button_1_1.getSelection() ? DsAnnotationVersion.V_1_1
 				: DsAnnotationVersion.V_1_2;
 
-		//
 		getPage().getPreferenceStore().putValue(Constants.PREF_DS_VERSION,
 				dsAnnotationVersion.name());
+
+		//
+		getPage().getPreferenceStore().putValue(
+				Constants.PREF_MARK_COMPONENT_DESCRIPTOR_AS_DERIVED,
+				Boolean.toString(_button_markAsDerived.getSelection()));
 
 		//
 		return true;
@@ -135,4 +154,20 @@ public class DsAnnotationsPropertyAndPreferenceConfigurationBlock extends
 		return annotationVersion;
 	}
 
+	private boolean getMarkGeneratedDescriptorsAsDerived(boolean getDefault) {
+
+		return getDefault ? getPage().getPreferenceStore().getDefaultBoolean(
+				Constants.PREF_MARK_COMPONENT_DESCRIPTOR_AS_DERIVED)
+				: getPage().getPreferenceStore().getBoolean(
+						Constants.PREF_MARK_COMPONENT_DESCRIPTOR_AS_DERIVED);
+	}
+
+	private static RowLayout createRowLayout() {
+		RowLayout layout = new RowLayout(SWT.VERTICAL);
+		layout.spacing = 10;
+		layout.marginTop = 10;
+		layout.marginBottom = 10;
+		layout.fill = true;
+		return layout;
+	}
 }
