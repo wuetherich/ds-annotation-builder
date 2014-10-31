@@ -15,31 +15,25 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MemberValuePair;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
-import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Modified;
-import org.osgi.service.component.annotations.Reference;
 
+import com.wuetherich.osgi.ds.annotations.DsAnnotationVersion;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.ComponentDescriptionFactory;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.AbstractComponentDescription;
+import com.wuetherich.osgi.ds.annotations.internal.prefs.DsAnnotationsPreferences;
 
 /**
  * <p>
@@ -47,21 +41,10 @@ import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.Abs
  * 
  * @author Gerd W&uuml;therich (gerd@gerd-wuetherich.de)
  */
-public class DsAnnotationAstVisitor extends ASTVisitor {
-
-  /** the current type declaration */
-  private Stack<TypeDeclaration>                      _currentTypeDeclaration;
-
-  /** the current method declaration */
-  private MethodDeclaration                           _currentMethodDeclaration;
+public class DsAnnotationAstVisitor extends AbstractDsAnnotationAstVisitor {
 
   /** the descriptions */
   private Map<TypeDeclaration, IComponentDescription> _descriptions;
-
-  /** - */
-  private boolean                                     _hasTypes = false;
-
-  private IProject                                    _project;
 
   /**
    * <p>
@@ -69,15 +52,10 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
    * </p>
    */
   public DsAnnotationAstVisitor(IProject project) {
+    super(project);
 
     // create the description map
     _descriptions = new HashMap<TypeDeclaration, IComponentDescription>();
-
-    //
-    _currentTypeDeclaration = new Stack<TypeDeclaration>();
-    
-    //
-    _project = project;
   }
 
   /**
@@ -91,218 +69,15 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
     return _descriptions.values();
   }
 
-  /**
-   * <p>
-   * </p>
-   * 
-   * @return
-   */
-  public boolean hasTypes() {
-    return _hasTypes;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   @Override
-  public boolean visit(TypeDeclaration node) {
-    _hasTypes = true;
-    _currentTypeDeclaration.push(node);
-    return true;
+  protected void handleReferenceAnnotation(MarkerAnnotation node) {
+    String service = getCurrentMethodDeclaration().resolveBinding().getParameterTypes()[0].getBinaryName();
+    String bind = getCurrentMethodDeclaration().getName().getFullyQualifiedName();
+    getCurrentComponentDescription().addReference(service, bind, null, null, null, null, null, null, null);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
-  public void endVisit(TypeDeclaration node) {
-    _currentTypeDeclaration.pop();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean visit(MethodDeclaration node) {
-    _currentMethodDeclaration = node;
-    return true;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void endVisit(MethodDeclaration node) {
-    _currentMethodDeclaration = null;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean visit(MarkerAnnotation node) {
-
-    // handle annotation
-    if (isDsAnnotation(node)) {
-      handleDsAnnotation(node);
-    }
-
-    // only visit types and methods
-    return _currentMethodDeclaration == null;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean visit(NormalAnnotation node) {
-
-    // handle annotation
-    if (isDsAnnotation(node)) {
-      handleDsAnnotation(node);
-    }
-
-    // only visit types and methods
-    return _currentMethodDeclaration == null;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean visit(SingleMemberAnnotation node) {
-
-    // handle annotation
-    if (isDsAnnotation(node)) {
-      handleDsAnnotation(node);
-    }
-
-    // only visit types and methods
-    return _currentMethodDeclaration == null;
-  }
-
-  /**
-   * <p>
-   * </p>
-   * 
-   * @param node
-   */
-  private void handleDsAnnotation(Annotation node) {
-
-    try {
-
-      //
-      if (!_currentTypeDeclaration.isEmpty()) {
-
-        //
-        if (node.resolveTypeBinding().getQualifiedName().equals(Component.class.getName())) {
-
-          //
-          _descriptions.put(_currentTypeDeclaration.peek(),
-              ComponentDescriptionFactory.createComponentDescription(_currentTypeDeclaration.peek(), _project));
-
-          //
-          if (node.isNormalAnnotation()) {
-            handleNormalComponentAnnotation((NormalAnnotation) node);
-          } else if (node.isSingleMemberAnnotation()) {
-            //
-          } else if (node.isMarkerAnnotation()) {
-            //
-          }
-        }
-
-        if (_currentMethodDeclaration != null && getCurrentComponentDescription() != null) {
-
-          //
-          if (node.resolveTypeBinding().getQualifiedName().equals(Activate.class.getName())) {
-            getCurrentComponentDescription().setActivateMethod(
-                _currentMethodDeclaration.getName().getFullyQualifiedName());
-          }
-
-          //
-          else if (node.resolveTypeBinding().getQualifiedName().equals(Deactivate.class.getName())) {
-            getCurrentComponentDescription().setDeactivateMethod(
-                _currentMethodDeclaration.getName().getFullyQualifiedName());
-          }
-
-          //
-          else if (node.resolveTypeBinding().getQualifiedName().equals(Modified.class.getName())) {
-            getCurrentComponentDescription().setModified(_currentMethodDeclaration.getName().getFullyQualifiedName());
-          }
-
-          //
-          else if (node.resolveTypeBinding().getQualifiedName().equals(Reference.class.getName())) {
-
-            //
-            if (node.isNormalAnnotation()) {
-              handleNormalReferenceAnnotation((NormalAnnotation) node);
-            } else if (node.isSingleMemberAnnotation()) {
-              //
-            } else if (node.isMarkerAnnotation()) {
-
-              //
-              String service = _currentMethodDeclaration.resolveBinding().getParameterTypes()[0].getBinaryName();
-              String bind = _currentMethodDeclaration.getName().getFullyQualifiedName();
-
-              //
-              getCurrentComponentDescription().addReference(service, bind, null, null, null, null, null, null, null);
-            }
-          }
-        }
-      }
-
-    } catch (Exception e) {
-
-      e.printStackTrace();
-
-      ASTNode astNode = node;
-
-      //
-      if (e instanceof DsAnnotationException) {
-
-        //
-        DsAnnotationException annotationException = (DsAnnotationException) e;
-
-        //
-        if (annotationException.hasAnnotationField()) {
-
-          astNode = node;
-
-          if (node instanceof NormalAnnotation) {
-
-            for (Object object : ((NormalAnnotation) node).values()) {
-
-              //
-              MemberValuePair pair = (MemberValuePair) object;
-              String valueName = pair.getName().toString();
-
-              //
-              if (valueName.equals(annotationException.getAnnotationField())) {
-                astNode = pair;
-                break;
-              }
-            }
-          }
-        }
-      }
-
-      //
-      if (getCurrentComponentDescription() != null) {
-        getCurrentComponentDescription().getProblems().add(
-            new DsAnnotationProblem(e.getMessage() != null ? e.getMessage() : "Unknown error in annotation", astNode
-                .getStartPosition(), astNode.getStartPosition() + astNode.getLength()));
-      }
-    }
-  }
-
-  /**
-   * <p>
-   * </p>
-   * 
-   * @param normalAnnotation
-   */
-  private void handleNormalReferenceAnnotation(NormalAnnotation normalAnnotation) {
-
+  protected void handleReferenceAnnotation(NormalAnnotation node) {
     String name = null;
     String cardinality = null;
     String policy = null;
@@ -311,10 +86,10 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
     String updated = null;
     String target = null;
 
-    String service = _currentMethodDeclaration.resolveBinding().getParameterTypes()[0].getBinaryName();
-    String bind = _currentMethodDeclaration.getName().getFullyQualifiedName();
+    String service = getCurrentMethodDeclaration().resolveBinding().getParameterTypes()[0].getBinaryName();
+    String bind = getCurrentMethodDeclaration().getName().getFullyQualifiedName();
 
-    for (Object object : normalAnnotation.values()) {
+    for (Object object : node.values()) {
 
       //
       MemberValuePair pair = (MemberValuePair) object;
@@ -361,63 +136,73 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
         updated, target);
   }
 
-  /**
-   * <p>
-   * </p>
-   * 
-   * @param normalAnnotation
-   */
-  private void handleNormalComponentAnnotation(NormalAnnotation normalAnnotation) {
+  @Override
+  protected void handleModifiedAnnotation(MarkerAnnotation node) {
+    getCurrentComponentDescription().setModified(getCurrentMethodDeclaration().getName().getFullyQualifiedName());
+  }
 
-    for (Object object : normalAnnotation.values()) {
+  @Override
+  protected void handleDeactivateAnnotation(MarkerAnnotation node) {
+    getCurrentComponentDescription().setDeactivateMethod(
+        getCurrentMethodDeclaration().getName().getFullyQualifiedName());
+  }
 
-      //
+  @Override
+  protected void handleActivateAnnotation(MarkerAnnotation node) {
+    getCurrentComponentDescription().setActivateMethod(getCurrentMethodDeclaration().getName().getFullyQualifiedName());
+  }
+
+  @Override
+  protected void handleComponentAnnotation(MarkerAnnotation node) {
+    createNewComponentDeclaration(node);
+  }
+
+  @Override
+  protected void handleComponentAnnotation(NormalAnnotation node) {
+    createNewComponentDeclaration(node);
+
+    //
+    for (Object object : node.values()) {
       MemberValuePair pair = (MemberValuePair) object;
-      String valueName = pair.getName().toString();
 
       //
-      if ("name".equals(valueName)) {
+      if ("name".equals(pair.getName().toString())) {
         getCurrentComponentDescription().setName((String) pair.resolveMemberValuePairBinding().getValue());
       }
       //
-      else if ("enabled".equals(valueName)) {
+      else if ("enabled".equals(pair.getName().toString())) {
         getCurrentComponentDescription().setEnabled((Boolean) pair.resolveMemberValuePairBinding().getValue());
       }
       //
-      else if ("immediate".equals(valueName)) {
+      else if ("immediate".equals(pair.getName().toString())) {
         getCurrentComponentDescription().setImmediate((Boolean) pair.resolveMemberValuePairBinding().getValue());
       }
       //
-      else if ("factory".equals(valueName)) {
+      else if ("factory".equals(pair.getName().toString())) {
         getCurrentComponentDescription().setFactory((String) pair.resolveMemberValuePairBinding().getValue());
       }
       //
-      else if ("configurationPid".equals(valueName)) {
+      else if ("configurationPid".equals(pair.getName().toString())) {
         getCurrentComponentDescription().setConfigurationPid((String) pair.resolveMemberValuePairBinding().getValue());
       }
       //
-      else if ("configurationPolicy".equals(valueName)) {
+      else if ("configurationPolicy".equals(pair.getName().toString())) {
         IVariableBinding variableBinding = (IVariableBinding) pair.resolveMemberValuePairBinding().getValue();
         getCurrentComponentDescription().setConfigurationPolicy(variableBinding.getName().toLowerCase());
       }
       //
-      else if ("property".equals(valueName)) {
-
-        //
+      else if ("property".equals(pair.getName().toString())) {
         Object[] properties = (Object[]) pair.resolveMemberValuePairBinding().getValue();
-
-        //
         getCurrentComponentDescription().addProperty(properties);
       }
       //
-      else if ("properties".equals(valueName)) {
+      else if ("properties".equals(pair.getName().toString())) {
         for (Object keyValue : (Object[]) pair.resolveMemberValuePairBinding().getValue()) {
           getCurrentComponentDescription().addProperties((String) keyValue);
         }
       }
       //
-      else if ("service".equals(valueName)) {
-
+      else if ("service".equals(pair.getName().toString())) {
         Object[] objects = (Object[]) pair.resolveMemberValuePairBinding().getValue();
         List<String> services = new LinkedList<String>();
         for (Object tb : objects) {
@@ -427,31 +212,50 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
         getCurrentComponentDescription().setService(services.toArray(new String[0]));
       }
       //
-      else if ("servicefactory".equals(valueName)) {
+      else if ("servicefactory".equals(pair.getName().toString())) {
         getCurrentComponentDescription().setServiceFactory((Boolean) pair.resolveMemberValuePairBinding().getValue());
       }
-
     }
   }
 
-  /**
-   * <p>
-   * Helper method. Returns <code>true</code> if the specified annotation is a DS annotation, <code>false</code>
-   * otherwise.
-   * </p>
-   * 
-   * @return <code>true</code> if the specified annotation is a DS annotation, <code>false</code> otherwise.
-   */
-  public static boolean isDsAnnotation(Annotation annotation) {
+  public void handleException(Annotation node, Exception e) {
+
+    ASTNode astNode = node;
 
     //
-    ITypeBinding typeBinding = annotation.resolveTypeBinding();
+    if (e instanceof DsAnnotationException) {
+
+      //
+      DsAnnotationException annotationException = (DsAnnotationException) e;
+
+      //
+      if (annotationException.hasAnnotationField()) {
+
+        astNode = node;
+
+        if (node instanceof NormalAnnotation) {
+
+          for (Object object : ((NormalAnnotation) node).values()) {
+
+            //
+            MemberValuePair pair = (MemberValuePair) object;
+            String valueName = pair.getName().toString();
+
+            //
+            if (valueName.equals(annotationException.getAnnotationField())) {
+              astNode = pair;
+              break;
+            }
+          }
+        }
+      }
+    }
 
     //
-    if (typeBinding != null) {
-      return Component.class.getPackage().getName().equals(annotation.resolveTypeBinding().getPackage().getName());
-    } else {
-      return false;
+    if (getCurrentComponentDescription() != null) {
+      getCurrentComponentDescription().getProblems().add(
+          new DsAnnotationProblem(e.getMessage() != null ? e.getMessage() : "Unknown error in annotation", astNode
+              .getStartPosition(), astNode.getStartPosition() + astNode.getLength()));
     }
   }
 
@@ -463,6 +267,45 @@ public class DsAnnotationAstVisitor extends ASTVisitor {
    * @return the current {@link AbstractComponentDescription}.
    */
   private IComponentDescription getCurrentComponentDescription() {
-    return _descriptions.get(_currentTypeDeclaration.peek());
+    return _descriptions.get(getCurrentTypeDeclarationStack().peek());
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   */
+  private void createNewComponentDeclaration(Annotation annotation) {
+
+    DetectDsAnnotationVersionAstVisitor visitor = new DetectDsAnnotationVersionAstVisitor(getProject());
+    annotation.getRoot().accept(visitor);
+
+    //
+    DsAnnotationVersion projectDsVersion = DsAnnotationsPreferences.getDsAnnotationVersion(getProject());
+    DsAnnotationVersion effectiveVersion = visitor.getEffectiveVersion();
+
+    //
+    IComponentDescription componentDescription = ComponentDescriptionFactory.createComponentDescription(
+        getCurrentTypeDeclarationStack().peek(), getProject(),
+        effectiveVersion.greaterThan(projectDsVersion) ? projectDsVersion : effectiveVersion);
+
+    _descriptions.put(getCurrentTypeDeclarationStack().peek(), componentDescription);
+
+    // throw exception
+    if (visitor.hasAnnotationException()) {
+      throw visitor.getAnnotationException();
+    }
+
+    //
+    if (visitor.hasSpecifiedXmlns()
+        && visitor.getSpecifiedXmlns().greaterThan(DsAnnotationsPreferences.getDsAnnotationVersion(getProject()))) {
+
+      //
+      throw new DsAnnotationException(
+          String
+              .format("XML namespace '%s' is higher than the XML namespace '%s' defined in the preferences.", visitor
+                  .getSpecifiedXmlns().getXmlns(), DsAnnotationsPreferences.getDsAnnotationVersion(getProject())
+                  .getXmlns()));
+    }
   }
 }

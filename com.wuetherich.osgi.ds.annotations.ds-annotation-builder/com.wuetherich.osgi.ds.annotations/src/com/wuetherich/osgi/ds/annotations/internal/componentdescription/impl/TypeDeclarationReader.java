@@ -3,17 +3,18 @@ package com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.osgi.service.component.annotations.Component;
 
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
-import com.wuetherich.osgi.ds.annotations.internal.builder.DsAnnotationAstVisitor;
 
 public class TypeDeclarationReader {
-  
+
   /** - */
   private TypeDeclaration _typeDeclaration;
 
@@ -21,7 +22,7 @@ public class TypeDeclarationReader {
    * <p>
    * Creates a new instance of type {@link TypeDeclarationReader}.
    * </p>
-   *
+   * 
    * @param _typeDeclaration
    */
   public TypeDeclarationReader(TypeDeclaration _typeDeclaration) {
@@ -104,7 +105,7 @@ public class TypeDeclarationReader {
 
         for (Object modifier : methodDeclaration.modifiers()) {
           if (modifier instanceof MarkerAnnotation) {
-            if (DsAnnotationAstVisitor.isDsAnnotation((MarkerAnnotation) modifier)) {
+            if (isDsAnnotation((MarkerAnnotation) modifier)) {
               throw new DsAnnotationException(String.format(
                   "Method '%s' must not be annotated with the DS annotation '@%s'.", methodName,
                   ((MarkerAnnotation) modifier).getTypeName()));
@@ -114,7 +115,25 @@ public class TypeDeclarationReader {
       }
     }
   }
-  
- 
 
+  /**
+   * <p>
+   * Helper method. Returns <code>true</code> if the specified annotation is a DS annotation, <code>false</code>
+   * otherwise.
+   * </p>
+   * 
+   * @return <code>true</code> if the specified annotation is a DS annotation, <code>false</code> otherwise.
+   */
+  public static boolean isDsAnnotation(Annotation annotation) {
+
+    //
+    ITypeBinding typeBinding = annotation.resolveTypeBinding();
+
+    //
+    if (typeBinding != null) {
+      return Component.class.getPackage().getName().equals(annotation.resolveTypeBinding().getPackage().getName());
+    } else {
+      return false;
+    }
+  }
 }

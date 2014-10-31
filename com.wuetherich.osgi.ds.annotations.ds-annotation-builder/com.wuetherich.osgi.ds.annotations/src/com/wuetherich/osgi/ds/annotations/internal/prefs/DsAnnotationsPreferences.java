@@ -8,13 +8,14 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
+import com.wuetherich.osgi.ds.annotations.DsAnnotationVersion;
 
 public class DsAnnotationsPreferences {
 
   /**
    * <p>
    * </p>
-   *
+   * 
    * @param project
    * @param key
    * @param defaultValue
@@ -28,10 +29,15 @@ public class DsAnnotationsPreferences {
     return Platform.getPreferencesService().getBoolean(Constants.BUNDLE_ID, key, defaultValue, getContexts(project));
   }
 
+  public static DsAnnotationVersion getDsAnnotationVersion(IProject project) {
+    return DsAnnotationVersion.valueOf(DsAnnotationsPreferences.get(project, Constants.PREF_DS_VERSION,
+        DsAnnotationVersion.V_1_2.name()));
+  }
+
   /**
    * <p>
    * </p>
-   *
+   * 
    * @param project
    * @return
    */
