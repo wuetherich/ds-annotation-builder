@@ -20,6 +20,18 @@
 				<version>0.11.0</version>
 				<executions>
 					<execution>
+						<id>generate-scr_1_0</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/xjc-scr_1_0</generateDirectory>
+							<generatePackage>org.osgi.xmlns.scr.v1_0</generatePackage>
+							<schemaDirectory>${project.basedir}/src-xsd/scr_1_0</schemaDirectory>
+							<bindingDirectory>${project.basedir}/src-xsd/scr_1_0</bindingDirectory>
+						</configuration>
+					</execution>
+					<execution>
 						<id>generate-scr_1_1</id>
 						<goals>
 							<goal>generate</goal>
@@ -29,13 +41,6 @@
 							<generatePackage>org.osgi.xmlns.scr.v1_1</generatePackage>
 							<schemaDirectory>${project.basedir}/src-xsd/scr_1_1</schemaDirectory>
 							<bindingDirectory>${project.basedir}/src-xsd/scr_1_1</bindingDirectory>
-							<args>
-								<arg>-XtoString</arg>
-								<arg>-Xequals</arg>
-								<arg>-XhashCode</arg>
-								<arg>-Xcopyable</arg>
-								<arg>-Xnamespace-prefix</arg>
-							</args>
 						</configuration>
 					</execution>
 					<execution>
