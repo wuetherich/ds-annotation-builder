@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: com.wuetherich.org.osgi.service.component.annotations
+Bundle-SymbolicName: com.wuetherich.org.osgi.service.component.annotations
+Bundle-Version: 1.2.0
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: org.osgi.service.component.annotations
+Bundle-Vendor: OSGi Alliance
