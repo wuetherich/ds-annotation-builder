@@ -2,6 +2,83 @@
 <?eclipse version="3.4"?>
 <plugin>
    
+   <!-- the expression definitions -->
+	<extension point="org.eclipse.core.expressions.definitions">
+		<definition id="com.wuetherich.osgi.ds.annotations.ui.dsAnnotationProjectSelected">
+			<with variable="selection">
+				<count value="1" />
+				<iterate ifEmpty="false" operator="and">
+						<adapt type="org.eclipse.core.resources.IResource">
+							<test property="org.eclipse.core.resources.projectNature"
+								value="org.bundlemaker.core.bundlemakernature"/>
+						</adapt>
+				</iterate>
+			</with>
+		</definition>		              
+	</extension>
+   
+   
+   <extension
+        point="org.eclipse.ui.commands">
+      <command
+            name="TEST COMMAND"
+            description="TEST COMMAND DESCRIPTION"
+            id="com.wuetherich.osgi.ds.annotations.ui.test">
+      </command> 
+   </extension>  
+   
+   <extension 
+   		point="org.eclipse.ui.handlers">
+          <handler
+                class="com.wuetherich.osgi.ds.annotations.internal.TestHandler"
+                commandId="com.wuetherich.osgi.ds.annotations.ui.test">
+          </handler>
+   </extension> 
+   
+    <extension
+             point="org.eclipse.ui.menus">
+             
+              <menuContribution
+                locationURI="popup:org.eclipse.ui.popup.any">
+             <menu
+                   id="com.wuetherich.osgi.ds.annotations.ui.tools"
+                   label="com.wuetherich.osgi.ds.annotations.ui.tools">
+                <visibleWhen
+                      checkEnabled="false">
+                   <or>
+                      <reference
+                            definitionId="org.eclipse.pde.ui.pluginFile">
+                      </reference>
+                      <reference
+                            definitionId="org.eclipse.pde.ui.featureFile">
+                      </reference>
+                   </or>
+                </visibleWhen>
+             </menu>
+          </menuContribution>
+           <menuContribution
+                allPopups="false"
+                locationURI="popup:com.wuetherich.osgi.ds.annotations.ui.tools">
+             <separator
+                   name="group0"
+                   visible="false">
+             </separator>
+             <command
+                   commandId="com.wuetherich.osgi.ds.annotations.ui.test"
+                   icon="icons/obj16/plugin_mf_obj.gif"
+                   label="%command.openManifest.label"
+                   style="push">
+                <visibleWhen
+                      checkEnabled="false">
+                   <reference
+                         definitionId="org.eclipse.pde.ui.pluginFile">
+                   </reference>
+                </visibleWhen>
+             </command>
+          </menuContribution>             
+   </extension>
+   
+   
    <extension point="org.eclipse.ui.popupMenus">
 
       <objectContribution id="enableNatureAction"
