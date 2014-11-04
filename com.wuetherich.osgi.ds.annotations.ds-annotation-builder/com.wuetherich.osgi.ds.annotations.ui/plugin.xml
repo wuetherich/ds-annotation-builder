@@ -2,38 +2,36 @@
 <?eclipse version="3.4"?>
 <plugin>
    
-   <!-- the expression definitions -->
+   <!-- the expression definitions 
 	<extension point="org.eclipse.core.expressions.definitions">
-		<definition id="com.wuetherich.osgi.ds.annotations.ui.dsAnnotationProjectSelected">
+		<definition id="com.wuetherich.osgi.ds.annotations.ui.dsAnnotationProjectsSelected">
 			<with variable="selection">
-				<count value="1" />
 				<iterate ifEmpty="false" operator="and">
 						<adapt type="org.eclipse.core.resources.IResource">
 							<test property="org.eclipse.core.resources.projectNature"
-								value="org.bundlemaker.core.bundlemakernature"/>
+								value="com.wuetherich.osgi.ds.annotations.dsAnnotationNature"/>
 						</adapt>
 				</iterate>
 			</with>
 		</definition>		              
 	</extension>
    
-   
    <extension
         point="org.eclipse.ui.commands">
       <command
-            name="TEST COMMAND"
-            description="TEST COMMAND DESCRIPTION"
-            id="com.wuetherich.osgi.ds.annotations.ui.test">
+            name="Regenerate component descriptions"
+            description="Regenerates all component description of the selected projects."
+            id="com.wuetherich.osgi.ds.annotations.ui.regenerateComponentDesciptions">
       </command> 
    </extension>  
    
    <extension 
    		point="org.eclipse.ui.handlers">
           <handler
-                class="com.wuetherich.osgi.ds.annotations.internal.TestHandler"
-                commandId="com.wuetherich.osgi.ds.annotations.ui.test">
+                class="com.wuetherich.osgi.ds.annotations.internal.handler.RegenerateComponentDesciptionsHandler"
+                commandId="com.wuetherich.osgi.ds.annotations.ui.regenerateComponentDesciptions">
           </handler>
-   </extension> 
+   </extension>  -->
    
     <extension
              point="org.eclipse.ui.menus">
@@ -47,10 +45,7 @@
                       checkEnabled="false">
                    <or>
                       <reference
-                            definitionId="org.eclipse.pde.ui.pluginFile">
-                      </reference>
-                      <reference
-                            definitionId="org.eclipse.pde.ui.featureFile">
+                            definitionId="com.wuetherich.osgi.ds.annotations.ui.dsAnnotationProjectsSelected">
                       </reference>
                    </or>
                 </visibleWhen>
@@ -64,14 +59,13 @@
                    visible="false">
              </separator>
              <command
-                   commandId="com.wuetherich.osgi.ds.annotations.ui.test"
-                   icon="icons/obj16/plugin_mf_obj.gif"
-                   label="%command.openManifest.label"
+                   commandId="com.wuetherich.osgi.ds.annotations.ui.regenerateComponentDesciptions"
+                   label="Regenerate component descriptions"
                    style="push">
                 <visibleWhen
                       checkEnabled="false">
                    <reference
-                         definitionId="org.eclipse.pde.ui.pluginFile">
+                         definitionId="com.wuetherich.osgi.ds.annotations.ui.dsAnnotationProjectsSelected">
                    </reference>
                 </visibleWhen>
              </command>
