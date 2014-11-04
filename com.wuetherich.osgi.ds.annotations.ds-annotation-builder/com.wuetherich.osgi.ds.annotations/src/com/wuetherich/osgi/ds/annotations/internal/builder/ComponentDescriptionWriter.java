@@ -60,7 +60,7 @@ public class ComponentDescriptionWriter {
   public static void removeDanglingComponentDescriptions(IProject project) {
 
     //
-    for (Map.Entry<IPath, List<IPath>> entry : loadProperties(project).entrySet()) {
+    for (Map.Entry<IPath, List<IPath>> entry : loadGeneratedDescriptionsMap(project).entrySet()) {
 
       try {
 
@@ -71,6 +71,7 @@ public class ComponentDescriptionWriter {
         if (!originFile.exists()) {
           for (IPath path : entry.getValue()) {
             try {
+
               project.getFile(path).delete(true, null);
             } catch (Exception e) {
               e.printStackTrace();
@@ -84,7 +85,7 @@ public class ComponentDescriptionWriter {
 
     //
     try {
-      ManifestAndBuildPropertiesUpdater.updateManifestAndBuildProperties(project, loadProperties(project));
+      ManifestAndBuildPropertiesUpdater.updateManifestAndBuildProperties(project);
     } catch (CoreException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -145,7 +146,7 @@ public class ComponentDescriptionWriter {
     folder.refreshLocal(IResource.DEPTH_INFINITE, null);
 
     //
-    ManifestAndBuildPropertiesUpdater.updateManifestAndBuildProperties(project, loadProperties(project));
+    ManifestAndBuildPropertiesUpdater.updateManifestAndBuildProperties(project);
   }
 
   /**
@@ -159,7 +160,7 @@ public class ComponentDescriptionWriter {
   public static void deleteGeneratedFiles(IProject project, IPath resource) throws CoreException {
 
     //
-    Map<IPath, List<IPath>> generatedFiles = loadProperties(project);
+    Map<IPath, List<IPath>> generatedFiles = loadGeneratedDescriptionsMap(project);
 
     //
     List<IPath> result = generatedFiles.get(resource);
@@ -205,7 +206,7 @@ public class ComponentDescriptionWriter {
     }
 
     //
-    ManifestAndBuildPropertiesUpdater.updateManifestAndBuildProperties(project, loadProperties(project));
+    ManifestAndBuildPropertiesUpdater.updateManifestAndBuildProperties(project);
   }
 
   /**
@@ -216,7 +217,7 @@ public class ComponentDescriptionWriter {
    * @return
    * @throws CoreException
    */
-  private static Map<IPath, List<IPath>> loadProperties(IProject project) {
+  private static Map<IPath, List<IPath>> loadGeneratedDescriptionsMap(IProject project) {
 
     //
     Assert.isNotNull(project);
@@ -261,6 +262,42 @@ public class ComponentDescriptionWriter {
     return genericCache;
   }
 
+  public static List<IPath> loadComponentDescriptionMap(IProject project) {
+
+    //
+    Assert.isNotNull(project);
+
+    //
+    IFolder folder = project.getFolder(Constants.COMPONENT_DESCRIPTION_FOLDER);
+    try {
+      if (folder.exists()) {
+        folder.refreshLocal(IResource.DEPTH_INFINITE, null);
+      }
+    } catch (CoreException e) {
+      // noop
+    }
+
+    //
+    List<IPath> result = new LinkedList<IPath>();
+
+    //
+    try {
+      if (folder.exists()) {
+        for (IResource iResource : folder.members()) {
+          if (iResource instanceof IFile && iResource.getName().endsWith(".xml")
+              && isComponentDesciptor((IFile) iResource)) {
+            result.add(iResource.getProjectRelativePath());
+          }
+        }
+      }
+    } catch (CoreException e) {
+      e.printStackTrace();
+    }
+
+    //
+    return result;
+  }
+
   /**
    * <p>
    * </p>
@@ -295,7 +332,6 @@ public class ComponentDescriptionWriter {
 
         //
         xmlStreamReader = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
-
         //
         while (xmlStreamReader.hasNext() && result == null) {
           if (xmlStreamReader.next() == XMLStreamConstants.COMMENT) {
@@ -322,8 +358,49 @@ public class ComponentDescriptionWriter {
     return result;
   }
 
+  /**
+   * <p>
+   * </p>
+   * 
+   * @param file
+   * @return
+   */
+  private static boolean isComponentDesciptor(IFile file) {
+
+    try {
+      // get input stream
+      InputStream inputStream = file.getContents();
+      XMLStreamReader xmlStreamReader = null;
+
+      try {
+
+        //
+        xmlStreamReader = XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
+        //
+        while (xmlStreamReader.hasNext()) {
+          if (xmlStreamReader.next() == XMLStreamConstants.START_ELEMENT) {
+            String namespace = xmlStreamReader.getNamespaceURI();
+            System.out.println(namespace);
+          }
+        }
+      } finally {
+        try {
+          inputStream.close();
+          xmlStreamReader.close();
+        } catch (Exception e) {
+          //
+        }
+      }
+    } catch (Throwable e) {
+      //
+    }
+
+    //
+    return true;
+  }
+
   private static IPath findSourceFileForComponentDescriptionPath(IProject project, IPath path) {
-    for (Map.Entry<IPath, List<IPath>> entry : loadProperties(project).entrySet()) {
+    for (Map.Entry<IPath, List<IPath>> entry : loadGeneratedDescriptionsMap(project).entrySet()) {
       for (IPath iPath : entry.getValue()) {
         if (iPath.equals(path)) {
           return entry.getKey();
@@ -336,7 +413,7 @@ public class ComponentDescriptionWriter {
   /**
    * <p>
    * </p>
-   *
+   * 
    * @return
    */
   private static boolean markGeneratedComponentDescriptionsAsDerived(IProject project) {

@@ -47,8 +47,9 @@ public class ManifestAndBuildPropertiesUpdater {
    * @param generatedComponentDescriptions
    * @throws CoreException
    */
-  public static void updateManifestAndBuildProperties(IProject project, Map<IPath, List<IPath>> map)
-      throws CoreException {
+  public static void updateManifestAndBuildProperties(IProject project) throws CoreException {
+
+    List<IPath> descriptorPathes = ComponentDescriptionWriter.loadComponentDescriptionMap(project);
 
     //
     boolean projectDescriptionChanged = false;
@@ -60,14 +61,12 @@ public class ManifestAndBuildPropertiesUpdater {
     if (bundleProjectDescription != null) {
 
       //
-      if (map.size() > 0) {
+      if (descriptorPathes.size() > 0) {
 
         //
         List<String> descriptions = new LinkedList<String>();
-        for (List<IPath> pathes : map.values()) {
-          for (IPath iPath : pathes) {
-            descriptions.add(iPath.toPortableString());
-          }
+        for (IPath iPath : descriptorPathes) {
+          descriptions.add(iPath.toPortableString());
         }
 
         // Bug-Fix: https://github.com/wuetherich/ds-annotation-builder/issues/38
@@ -99,7 +98,8 @@ public class ManifestAndBuildPropertiesUpdater {
       }
 
       // Bug-Fix: https://github.com/wuetherich/ds-annotation-builder/issues/12
-      boolean changedBuildProperties = addComponentDescriptionFolderToBinIncludes(map, bundleProjectDescription);
+      boolean changedBuildProperties = addComponentDescriptionFolderToBinIncludes(bundleProjectDescription,
+          descriptorPathes.size() > 0);
       projectDescriptionChanged = projectDescriptionChanged || changedBuildProperties;
 
       if (projectDescriptionChanged) {
@@ -125,15 +125,15 @@ public class ManifestAndBuildPropertiesUpdater {
    * @param bundleProjectDescription
    * @return
    */
-  private static boolean addComponentDescriptionFolderToBinIncludes(Map<IPath, List<IPath>> map,
-      IBundleProjectDescription bundleProjectDescription) {
+  private static boolean addComponentDescriptionFolderToBinIncludes(IBundleProjectDescription bundleProjectDescription,
+      boolean hasComponentDescriptions) {
 
     //
     IPath componentDescriptionPath = new Path(Constants.COMPONENT_DESCRIPTION_FOLDER + "/");
 
     //
     IPath[] binIncludePaths = bundleProjectDescription.getBinIncludes();
-    if (!PathUtils.contains(binIncludePaths, componentDescriptionPath) && map.size() > 0) {
+    if (!PathUtils.contains(binIncludePaths, componentDescriptionPath) && hasComponentDescriptions) {
       if (binIncludePaths != null) {
         IPath[] newPaths = new IPath[binIncludePaths.length + 1];
         System.arraycopy(binIncludePaths, 0, newPaths, 0, binIncludePaths.length);
@@ -146,7 +146,7 @@ public class ManifestAndBuildPropertiesUpdater {
 
     // remove component description folder
     // https://github.com/wuetherich/ds-annotation-builder/issues/15
-    else if (PathUtils.contains(binIncludePaths, componentDescriptionPath) && map.size() == 0
+    else if (PathUtils.contains(binIncludePaths, componentDescriptionPath) && !hasComponentDescriptions
         && !keepComponentDescriptionFolder(bundleProjectDescription.getProject(), componentDescriptionPath)) {
       List<IPath> newPathList = new LinkedList<IPath>();
       for (IPath binIncludePath : binIncludePaths) {
@@ -206,7 +206,7 @@ public class ManifestAndBuildPropertiesUpdater {
   /**
    * <p>
    * </p>
-   *
+   * 
    * @param project
    * @param componentDescriptionPath
    * @return
