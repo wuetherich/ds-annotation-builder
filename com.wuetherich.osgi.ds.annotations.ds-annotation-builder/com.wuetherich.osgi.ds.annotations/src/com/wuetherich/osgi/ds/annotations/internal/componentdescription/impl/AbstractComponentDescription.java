@@ -37,19 +37,7 @@ public abstract class AbstractComponentDescription implements IComponentDescript
   protected static final String     FIELD_NAME_SERVICE                = "service";
 
   /** - */
-  protected static final String     MSG_NO_SUPERTYPE_S                = "Invalid service type. The specified component must implement/extend type '%s'.";
-
-  /** - */
   protected static final String     FIELD_NAME_TARGET                 = "target";
-
-  /** - */
-  protected static final String     MSG_INVALID_FILTER_S              = "Invalid filter '%s'.";
-
-  /** */
-  protected static final String     MSG_NON_EXISTING_UNBIND_METHOD_S  = "Non existing unbind method '%s'.";
-
-  /** */
-  protected static final String     MSG_NON_EXISTING_UPDATED_METHOD_S = "Non existing updated method '%s'.";
 
   /** - */
   private List<DsAnnotationProblem> _problems;
@@ -212,7 +200,7 @@ public abstract class AbstractComponentDescription implements IComponentDescript
       
       //
       if (strings.length < 2) {
-        throw new DsAnnotationException(String.format("Invalid property definition '%s'. Property definitions must follow the following syntax: name ( �:� type )? �=� value. ",
+        throw new DsAnnotationException(String.format("Invalid property definition '%s'. Property definitions must follow the following syntax: name ( : type )? = value. ",
             ((String) keyValue)));
       }
       
@@ -255,7 +243,7 @@ public abstract class AbstractComponentDescription implements IComponentDescript
       for (String service : services) {
         Assert.isNotNull(service);
         if (!_typeDeclarationReader.isInstanceOf(service)) {
-          throw new DsAnnotationException(String.format(MSG_NO_SUPERTYPE_S, service, FIELD_NAME_SERVICE));
+          throw new DsAnnotationException(String.format(Messages.ComponentDescription_INVALID_SERVICE_TYPE, service, FIELD_NAME_SERVICE));
         }
       }
     }
