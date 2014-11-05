@@ -309,46 +309,7 @@ public abstract class AbstractComponentDescription implements IComponentDescript
    * @param name
    * @return
    */
-  public static boolean isNotEmpty(String name) {
+  public boolean isNotEmpty(String name) {
     return name != null && name.trim().length() > 0;
-  }
-
-  /**
-   * <p>
-   * </p>
-   * 
-   * @param bindName
-   * @return
-   */
-  public static String computeUnbindMethodName(String bindName) {
-
-    //
-    Assert.isNotNull(bindName);
-
-    //
-    if (bindName.startsWith("set")) {
-      return "unset" + bindName.substring("set".length());
-    } else if (bindName.startsWith("add")) {
-      return "remove" + bindName.substring("add".length());
-    } else {
-      return "un" + bindName;
-    }
-  }
-
-  public static String computeUpdatedMethodName(String bindName) {
-
-    //
-    Assert.isNotNull(bindName);
-
-    //
-    if (bindName.startsWith("set")) {
-      return "updated" + bindName.substring("set".length());
-    } else if (bindName.startsWith("add")) {
-      return "updated" + bindName.substring("add".length());
-    } else if (bindName.startsWith("bind")) {
-      return "updated" + bindName.substring("bind".length());
-    } else {
-      return "updated" + bindName;
-    }
   }
 }

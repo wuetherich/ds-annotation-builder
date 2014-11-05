@@ -39,6 +39,7 @@ import org.osgi.xmlns.scr.v1_0.Tservice;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
+import com.wuetherich.osgi.ds.annotations.internal.builder.AbstractDsAnnotationAstVisitor;
 import com.wuetherich.osgi.ds.annotations.internal.builder.ComponentProperty;
 
 /**
@@ -377,7 +378,7 @@ public class SCR_1_0_ComponentDescription extends AbstractComponentDescription {
     } else {
 
       //
-      String computedUnbindMethodName = computeUnbindMethodName(bind);
+      String computedUnbindMethodName = AbstractDsAnnotationAstVisitor.computeUnbindMethodName(bind);
 
       // osgi.cmpn-5.0.0.pdf, 112.13.7.6, p. 322
       // The unbind method is only set if the component type contains a method with the derived name.
@@ -390,7 +391,7 @@ public class SCR_1_0_ComponentDescription extends AbstractComponentDescription {
     // step 5: set the name of the updated method
     if (isNotEmpty(updated)) {
       throw new DsAnnotationException("Explicit updated methods are not supported in DS 1.0.");
-    } 
+    }
 
     // step 6: set the filter
     if (isNotEmpty(target)) {

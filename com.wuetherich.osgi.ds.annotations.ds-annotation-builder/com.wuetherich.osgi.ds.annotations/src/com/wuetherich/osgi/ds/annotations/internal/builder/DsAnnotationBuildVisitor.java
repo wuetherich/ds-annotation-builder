@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -97,6 +98,11 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
    * @throws CoreException
    */
   private void handle(IResource resource) throws CoreException {
+
+    //
+    if (new Path(Constants.COMPONENT_DESCRIPTION_FOLDER).isPrefixOf(resource.getProjectRelativePath())) {
+      ManifestAndBuildPropertiesUpdater.updateManifestAndBuildProperties(resource.getProject());
+    }
 
     // Only handle Java source files here...
     if (!resource.getName().endsWith(".java")) {

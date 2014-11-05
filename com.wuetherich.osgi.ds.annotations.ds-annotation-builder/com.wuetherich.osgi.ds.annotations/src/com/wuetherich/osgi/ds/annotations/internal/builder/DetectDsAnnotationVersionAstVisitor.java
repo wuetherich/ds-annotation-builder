@@ -12,12 +12,15 @@ package com.wuetherich.osgi.ds.annotations.internal.builder;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MemberValuePair;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
 
 import com.wuetherich.osgi.ds.annotations.DsAnnotationVersion;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.AbstractComponentDescription;
 
 /**
  * <p>
@@ -136,11 +139,15 @@ public class DetectDsAnnotationVersionAstVisitor extends AbstractDsAnnotationAst
 
   @Override
   protected void handleReferenceAnnotation(MarkerAnnotation node) {
+    
     //
+    checkReferenceForUpdateMethod();
   }
+
 
   @Override
   protected void handleReferenceAnnotation(NormalAnnotation node) {
+   
     for (Object object : node.values()) {
       MemberValuePair pair = (MemberValuePair) object;
       String valueName = pair.getName().toString();
@@ -148,12 +155,17 @@ public class DetectDsAnnotationVersionAstVisitor extends AbstractDsAnnotationAst
       //
       if ("updated".equals(valueName)) {
         setUpTo(DsAnnotationVersion.V_1_2);
+        return;
       }
       //
       else if ("policyOption".equals(valueName)) {
         setUpTo(DsAnnotationVersion.V_1_2);
+        return;
       }
     }
+    
+    //
+    checkReferenceForUpdateMethod();
   }
 
   @Override
@@ -185,6 +197,16 @@ public class DetectDsAnnotationVersionAstVisitor extends AbstractDsAnnotationAst
   private void setUpTo(DsAnnotationVersion version) {
     if (version.greaterThan(_xmlns)) {
       _xmlns = version;
+    }
+  }
+  
+  private void checkReferenceForUpdateMethod() {
+    String methodName = getCurrentMethodDeclaration().getName().getFullyQualifiedName();
+    String updatedMethodName = computeUpdatedMethodName(methodName);
+    for (MethodDeclaration methodDeclaration : getCurrentTypeDeclarationStack().peek().getMethods()) {
+      if (updatedMethodName.equals(methodDeclaration.getName().getFullyQualifiedName())) {
+        setUpTo(DsAnnotationVersion.V_1_2);
+      }
     }
   }
 }

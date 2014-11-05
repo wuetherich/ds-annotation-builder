@@ -49,7 +49,7 @@ public class ManifestAndBuildPropertiesUpdater {
    */
   public static void updateManifestAndBuildProperties(IProject project) throws CoreException {
 
-    List<IPath> descriptorPathes = ComponentDescriptionWriter.loadComponentDescriptionMap(project);
+    List<IPath> descriptorPathes = ComponentDescriptionReader.getAllComponentDescriptions(project);
 
     //
     boolean projectDescriptionChanged = false;

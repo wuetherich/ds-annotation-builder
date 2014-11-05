@@ -13,6 +13,7 @@ package com.wuetherich.osgi.ds.annotations.internal.builder;
 import java.util.Stack;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
@@ -204,6 +205,52 @@ public abstract class AbstractDsAnnotationAstVisitor extends ASTVisitor {
 
     // only visit types and methods
     return _currentMethodDeclaration == null;
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @param bindName
+   * @return
+   */
+  public static String computeUnbindMethodName(String bindName) {
+
+    //
+    Assert.isNotNull(bindName);
+
+    //
+    if (bindName.startsWith("set")) {
+      return "unset" + bindName.substring("set".length());
+    } else if (bindName.startsWith("add")) {
+      return "remove" + bindName.substring("add".length());
+    } else {
+      return "un" + bindName;
+    }
+  }
+
+  /**
+   * <p>
+   * </p>
+   *
+   * @param bindName
+   * @return
+   */
+  public static String computeUpdatedMethodName(String bindName) {
+
+    //
+    Assert.isNotNull(bindName);
+
+    //
+    if (bindName.startsWith("set")) {
+      return "updated" + bindName.substring("set".length());
+    } else if (bindName.startsWith("add")) {
+      return "updated" + bindName.substring("add".length());
+    } else if (bindName.startsWith("bind")) {
+      return "updated" + bindName.substring("bind".length());
+    } else {
+      return "updated" + bindName;
+    }
   }
 
   protected abstract void handleReferenceAnnotation(MarkerAnnotation node);
