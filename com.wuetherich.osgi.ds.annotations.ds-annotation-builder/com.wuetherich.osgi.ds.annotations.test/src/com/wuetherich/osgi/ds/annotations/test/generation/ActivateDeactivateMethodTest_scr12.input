@@ -1,0 +1,17 @@
+package de.test; 
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Activate; 
+import org.osgi.service.component.annotations.Deactivate; 
+
+@Component(xmlns="http://www.osgi.org/xmlns/scr/v1.2.0") 
+public class Test {
+
+  @Activate
+  public void hurz() {
+  }
+  
+  @Deactivate
+  public void stop() {
+  }
+}

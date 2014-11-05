@@ -23,7 +23,7 @@ import org.osgi.xmlns.scr.v1_2.Tservice;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.AbstractComponentDescription;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.SCR_1_2_ComponentDescription;
 
-public class Issue26_ComponentDescriptionEqualsTest {
+public class Issue26_ComponentDescriptionEqualsTest_scr12 {
 
 	@Test
 	public void test() throws Exception {
@@ -37,14 +37,14 @@ public class Issue26_ComponentDescriptionEqualsTest {
 		@SuppressWarnings("unchecked")
 		JAXBElement<Tcomponent> jaxbElement1 = (JAXBElement<Tcomponent>) unmarshaller
 				.unmarshal(new File(
-						"src/com/wuetherich/osgi/ds/annotations/test/issues_26/Issue26_ComponentDescriptionEqualsTest.xml"));
+						"src/com/wuetherich/osgi/ds/annotations/test/issues_26/Issue26_ComponentDescriptionEqualsTest_scr12.xml"));
 		Tcomponent tcomponent1 = jaxbElement1.getValue();
 
 		//
 		@SuppressWarnings("unchecked")
 		JAXBElement<Tcomponent> jaxbElement2 = (JAXBElement<Tcomponent>) unmarshaller
 				.unmarshal(new File(
-						"src/com/wuetherich/osgi/ds/annotations/test/issues_26/Issue26_ComponentDescriptionEqualsTest.xml"));
+						"src/com/wuetherich/osgi/ds/annotations/test/issues_26/Issue26_ComponentDescriptionEqualsTest_scr12.xml"));
 		Tcomponent tcomponent2 = jaxbElement2.getValue();
 		
 		//

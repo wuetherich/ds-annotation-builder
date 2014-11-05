@@ -1,0 +1,1 @@
+Invalid service type. The specified component must implement/extend type 'java.io.Serializable'.
