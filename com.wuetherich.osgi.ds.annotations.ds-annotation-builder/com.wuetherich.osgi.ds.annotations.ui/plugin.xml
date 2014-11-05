@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    
-   <!-- the expression definitions 
+   <!-- the expression definitions --> 
 	<extension point="org.eclipse.core.expressions.definitions">
 		<definition id="com.wuetherich.osgi.ds.annotations.ui.dsAnnotationProjectsSelected">
 			<with variable="selection">
@@ -31,7 +31,7 @@
                 class="com.wuetherich.osgi.ds.annotations.internal.handler.RegenerateComponentDesciptionsHandler"
                 commandId="com.wuetherich.osgi.ds.annotations.ui.regenerateComponentDesciptions">
           </handler>
-   </extension>  -->
+   </extension>
    
     <extension
              point="org.eclipse.ui.menus">
@@ -40,7 +40,7 @@
                 locationURI="popup:org.eclipse.ui.popup.any">
              <menu
                    id="com.wuetherich.osgi.ds.annotations.ui.tools"
-                   label="com.wuetherich.osgi.ds.annotations.ui.tools">
+                   label="DS Annotations Tools">
                 <visibleWhen
                       checkEnabled="false">
                    <or>

@@ -1,16 +1,9 @@
 package com.wuetherich.osgi.ds.annotations.internal.preferences;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Composite;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
-import com.wuetherich.osgi.ds.annotations.DsAnnotationsCore;
+import com.wuetherich.osgi.ds.annotations.internal.handler.BuildSupport;
 import com.wuetherich.osgi.ds.annotations.internal.preferences.fwk.AbstractPropertyAndPreferencesPage;
 import com.wuetherich.osgi.ds.annotations.internal.preferences.fwk.ConfigurationBlock;
 
@@ -41,7 +34,13 @@ public class DsAnnotationsPropertyAndPreferencePage extends AbstractPropertyAndP
 
     //
     if (super.performOk()) {
-      rebuildProjects();
+      
+      if (hasProjectSpecificOptions(getProject())) {
+        BuildSupport.rebuildProject(getProject());
+      } else {
+        BuildSupport.rebuildProjects();
+      }
+      
       return true;
     }
 
@@ -53,48 +52,10 @@ public class DsAnnotationsPropertyAndPreferencePage extends AbstractPropertyAndP
   protected void performApply() {
     super.performApply();
 
-    rebuildProjects();
-  }
-
-  private void rebuildProjects() {
-
-    //
     if (hasProjectSpecificOptions(getProject())) {
-      rebuildProject(getProject());
+      BuildSupport.rebuildProject(getProject());
+    } else {
+      BuildSupport.rebuildProjects();
     }
-
-    //
-    else {
-
-      //
-      for (IProject project : DsAnnotationsCore.getDsAnnotationAwareProjects()) {
-        rebuildProject(project);
-      }
-    }
-  }
-
-  /**
-   * <p>
-   * </p>
-   *
-   * @param project
-   */
-  private void rebuildProject(final IProject project) {
-
-    Job job = new Job(String.format("Rebuild '%s'...", project.getName())) {
-
-      @Override
-      protected IStatus run(IProgressMonitor monitor) {
-        try {
-          project.build(IncrementalProjectBuilder.FULL_BUILD, Constants.BUILDER_ID, null, monitor);
-        } catch (CoreException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-        return Status.OK_STATUS;
-      }
-
-    };
-    job.schedule();
   }
 }

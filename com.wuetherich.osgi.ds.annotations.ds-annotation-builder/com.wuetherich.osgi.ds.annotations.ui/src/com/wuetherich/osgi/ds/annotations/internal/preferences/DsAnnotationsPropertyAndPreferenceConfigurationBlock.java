@@ -13,161 +13,170 @@ import com.wuetherich.osgi.ds.annotations.DsAnnotationVersion;
 import com.wuetherich.osgi.ds.annotations.internal.preferences.fwk.AbstractPropertyAndPreferencesPage;
 import com.wuetherich.osgi.ds.annotations.internal.preferences.fwk.ConfigurationBlock;
 
-public class DsAnnotationsPropertyAndPreferenceConfigurationBlock extends
-		ConfigurationBlock {
+public class DsAnnotationsPropertyAndPreferenceConfigurationBlock extends ConfigurationBlock {
 
-	/** - */
-	private Button _button_1_1;
+  /** - */
+  private Button _button_1_0;
 
-	/** - */
-	private Button _button_1_2;
+  /** - */
+  private Button _button_1_1;
 
-	/** - */
-	private Button _button_markAsDerived;
+  /** - */
+  private Button _button_1_2;
 
-	/**
-	 * <p>
-	 * Creates a new instance of type
-	 * {@link DsAnnotationsPropertyAndPreferenceConfigurationBlock}.
-	 * </p>
-	 * 
-	 * @param parent
-	 * @param page
-	 */
-	public DsAnnotationsPropertyAndPreferenceConfigurationBlock(
-			Composite parent, AbstractPropertyAndPreferencesPage page) {
-		super(parent, SWT.NONE, page);
-	}
+  /** - */
+  private Button _button_markAsDerived;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void createContent() {
+  /**
+   * <p>
+   * Creates a new instance of type {@link DsAnnotationsPropertyAndPreferenceConfigurationBlock}.
+   * </p>
+   * 
+   * @param parent
+   * @param page
+   */
+  public DsAnnotationsPropertyAndPreferenceConfigurationBlock(Composite parent, AbstractPropertyAndPreferencesPage page) {
+    super(parent, SWT.NONE, page);
+  }
 
-		//
-		GridLayout layout = new GridLayout(1, false);
-		setLayout(layout);
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void createContent() {
 
-		// Create the first group
-		Group group1 = new Group(this, SWT.SHADOW_IN);
-		group1.setText("Service Component Version");
-		group1.setLayout(createRowLayout());
+    //
+    GridLayout layout = new GridLayout(1, false);
+    setLayout(layout);
 
-		GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
-		group1.setLayoutData(data);
+    // Create the first group
+    Group group1 = new Group(this, SWT.SHADOW_IN);
+    group1.setText("Service Component Version");
+    group1.setLayout(createRowLayout());
 
-		_button_1_1 = new Button(group1, SWT.RADIO);
-		_button_1_1.setText("1.1 (OSGi Release 4.2)");
+    GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
+    group1.setLayoutData(data);
 
-		_button_1_2 = new Button(group1, SWT.RADIO);
-		_button_1_2.setText("1.2 (OSGi Release 4.3+)");
+    _button_1_0 = new Button(group1, SWT.RADIO);
+    _button_1_0.setText("1.1 (OSGi Release 4.0/4.1)");
 
-		_button_markAsDerived = new Button(this, SWT.CHECK);
-		_button_markAsDerived
-				.setText("Mark generated component descriptors as derived");
-	}
+    _button_1_1 = new Button(group1, SWT.RADIO);
+    _button_1_1.setText("1.1 (OSGi Release 4.2)");
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void initialize() {
+    _button_1_2 = new Button(group1, SWT.RADIO);
+    _button_1_2.setText("1.2 (OSGi Release 4.3+)");
 
-		//
-		switch (getDsAnnotationVersion(false)) {
-		case V_1_1: {
-			_button_1_1.setSelection(true);
-			break;
-		}
-		case V_1_2: {
-			_button_1_2.setSelection(true);
-			break;
-		}
-		default:
-			break;
-		}
+    _button_markAsDerived = new Button(this, SWT.CHECK);
+    _button_markAsDerived.setText("Mark generated component descriptors as derived");
+  }
 
-		_button_markAsDerived
-				.setSelection(getMarkGeneratedDescriptorsAsDerived(false));
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void initialize() {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void performDefaults() {
+    //
+    switch (getDsAnnotationVersion(false)) {
+    case V_1_0: {
+      _button_1_0.setSelection(true);
+      break;
+    }
+    case V_1_1: {
+      _button_1_1.setSelection(true);
+      break;
+    }
+    case V_1_2: {
+      _button_1_2.setSelection(true);
+      break;
+    }
+    default:
+      break;
+    }
 
-		//
-		switch (getDsAnnotationVersion(true)) {
-		case V_1_1: {
-			_button_1_1.setSelection(true);
-			break;
-		}
-		case V_1_2: {
-			_button_1_2.setSelection(true);
-			break;
-		}
-		default:
-			break;
-		}
+    _button_markAsDerived.setSelection(getMarkGeneratedDescriptorsAsDerived(false));
+  }
 
-		//
-		_button_markAsDerived
-				.setSelection(getMarkGeneratedDescriptorsAsDerived(true));
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void performDefaults() {
 
-	@Override
-	protected String[] getPreferenceKeys() {
-		return new String[] { Constants.PREF_DS_VERSION,
-				Constants.PREF_MARK_COMPONENT_DESCRIPTOR_AS_DERIVED };
-	}
+    //
+    switch (getDsAnnotationVersion(true)) {
+    case V_1_0: {
+      _button_1_0.setSelection(true);
+      break;
+    }
+    case V_1_1: {
+      _button_1_1.setSelection(true);
+      break;
+    }
+    case V_1_2: {
+      _button_1_2.setSelection(true);
+      break;
+    }
+    default:
+      break;
+    }
 
-	@Override
-	public boolean performOk() {
+    //
+    _button_markAsDerived.setSelection(getMarkGeneratedDescriptorsAsDerived(true));
+  }
 
-		//
-		DsAnnotationVersion dsAnnotationVersion = _button_1_1.getSelection() ? DsAnnotationVersion.V_1_1
-				: DsAnnotationVersion.V_1_2;
+  @Override
+  protected String[] getPreferenceKeys() {
+    return new String[] { Constants.PREF_DS_VERSION, Constants.PREF_MARK_COMPONENT_DESCRIPTOR_AS_DERIVED };
+  }
 
-		getPage().getPreferenceStore().putValue(Constants.PREF_DS_VERSION,
-				dsAnnotationVersion.name());
+  @Override
+  public boolean performOk() {
 
-		//
-		getPage().getPreferenceStore().putValue(
-				Constants.PREF_MARK_COMPONENT_DESCRIPTOR_AS_DERIVED,
-				Boolean.toString(_button_markAsDerived.getSelection()));
+    //
+    DsAnnotationVersion dsAnnotationVersion = DsAnnotationVersion.V_1_2;
 
-		//
-		return true;
-	}
+    if (_button_1_0.getSelection()) {
+      dsAnnotationVersion = DsAnnotationVersion.V_1_0;
+    } else if (_button_1_1.getSelection()) {
+      dsAnnotationVersion = DsAnnotationVersion.V_1_1;
+    } else if (_button_1_2.getSelection()) {
+      dsAnnotationVersion = DsAnnotationVersion.V_1_2;
+    }
 
-	private DsAnnotationVersion getDsAnnotationVersion(boolean getDefault) {
+    getPage().getPreferenceStore().putValue(Constants.PREF_DS_VERSION, dsAnnotationVersion.name());
 
-		String version = getDefault ? getPage().getPreferenceStore()
-				.getDefaultString(Constants.PREF_DS_VERSION) : getPage()
-				.getPreferenceStore().getString(Constants.PREF_DS_VERSION);
+    //
+    getPage().getPreferenceStore().putValue(Constants.PREF_MARK_COMPONENT_DESCRIPTOR_AS_DERIVED,
+        Boolean.toString(_button_markAsDerived.getSelection()));
 
-		DsAnnotationVersion annotationVersion = DsAnnotationVersion
-				.valueOf(version);
+    //
+    return true;
+  }
 
-		return annotationVersion;
-	}
+  private DsAnnotationVersion getDsAnnotationVersion(boolean getDefault) {
 
-	private boolean getMarkGeneratedDescriptorsAsDerived(boolean getDefault) {
+    String version = getDefault ? getPage().getPreferenceStore().getDefaultString(Constants.PREF_DS_VERSION)
+        : getPage().getPreferenceStore().getString(Constants.PREF_DS_VERSION);
 
-		return getDefault ? getPage().getPreferenceStore().getDefaultBoolean(
-				Constants.PREF_MARK_COMPONENT_DESCRIPTOR_AS_DERIVED)
-				: getPage().getPreferenceStore().getBoolean(
-						Constants.PREF_MARK_COMPONENT_DESCRIPTOR_AS_DERIVED);
-	}
+    DsAnnotationVersion annotationVersion = DsAnnotationVersion.valueOf(version);
 
-	private static RowLayout createRowLayout() {
-		RowLayout layout = new RowLayout(SWT.VERTICAL);
-		layout.spacing = 10;
-		layout.marginTop = 10;
-		layout.marginBottom = 10;
-		layout.fill = true;
-		return layout;
-	}
+    return annotationVersion;
+  }
+
+  private boolean getMarkGeneratedDescriptorsAsDerived(boolean getDefault) {
+
+    return getDefault ? getPage().getPreferenceStore().getDefaultBoolean(
+        Constants.PREF_MARK_COMPONENT_DESCRIPTOR_AS_DERIVED) : getPage().getPreferenceStore().getBoolean(
+        Constants.PREF_MARK_COMPONENT_DESCRIPTOR_AS_DERIVED);
+  }
+
+  private static RowLayout createRowLayout() {
+    RowLayout layout = new RowLayout(SWT.VERTICAL);
+    layout.spacing = 10;
+    layout.marginTop = 10;
+    layout.marginBottom = 10;
+    layout.fill = true;
+    return layout;
+  }
 }
