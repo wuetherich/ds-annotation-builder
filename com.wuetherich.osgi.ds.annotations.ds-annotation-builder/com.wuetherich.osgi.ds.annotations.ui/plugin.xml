@@ -20,13 +20,22 @@
         point="org.eclipse.ui.commands">
       <command
             name="Regenerate component descriptions"
-            description="Regenerates all component description of the selected projects."
-            id="com.wuetherich.osgi.ds.annotations.ui.regenerateComponentDesciptions">
+            description="Regenerates the component descriptions of all selected projects."
+            id="com.wuetherich.osgi.ds.annotations.ui.regenerateComponentDesciptionsForSelectedProjects">
       </command> 
+      <command
+            name="Regenerate component descriptions..."
+            description="Regenerates the component descriptions of the selected projects."
+            id="com.wuetherich.osgi.ds.annotations.ui.regenerateComponentDesciptions">
+      </command>       
    </extension>  
    
    <extension 
    		point="org.eclipse.ui.handlers">
+          <handler
+                class="com.wuetherich.osgi.ds.annotations.internal.handler.RegenerateComponentDesciptionForSelectedProjectsHandler"
+                commandId="com.wuetherich.osgi.ds.annotations.ui.regenerateComponentDesciptionsForSelectedProjects">
+          </handler>
           <handler
                 class="com.wuetherich.osgi.ds.annotations.internal.handler.RegenerateComponentDesciptionsHandler"
                 commandId="com.wuetherich.osgi.ds.annotations.ui.regenerateComponentDesciptions">
@@ -42,13 +51,7 @@
                    id="com.wuetherich.osgi.ds.annotations.ui.tools"
                    label="DS Annotations Tools">
                 <visibleWhen
-                      checkEnabled="false">
-                   <or>
-                      <reference
-                            definitionId="com.wuetherich.osgi.ds.annotations.ui.dsAnnotationProjectsSelected">
-                      </reference>
-                   </or>
-                </visibleWhen>
+                      checkEnabled="false" />
              </menu>
           </menuContribution>
            <menuContribution
@@ -60,6 +63,21 @@
              </separator>
              <command
                    commandId="com.wuetherich.osgi.ds.annotations.ui.regenerateComponentDesciptions"
+                   label="Regenerate component descriptions..."
+                   style="push">
+                <visibleWhen
+                      checkEnabled="false" />
+             </command>
+          </menuContribution>             
+           <!-- menuContribution
+                allPopups="false"
+                locationURI="popup:com.wuetherich.osgi.ds.annotations.ui.tools">
+             <separator
+                   name="group0"
+                   visible="false">
+             </separator>
+             <command
+                   commandId="com.wuetherich.osgi.ds.annotations.ui.regenerateComponentDesciptionsForSelectedProjects"
                    label="Regenerate component descriptions"
                    style="push">
                 <visibleWhen
@@ -69,7 +87,7 @@
                    </reference>
                 </visibleWhen>
              </command>
-          </menuContribution>             
+          </menuContribution -->             
    </extension>
    
    

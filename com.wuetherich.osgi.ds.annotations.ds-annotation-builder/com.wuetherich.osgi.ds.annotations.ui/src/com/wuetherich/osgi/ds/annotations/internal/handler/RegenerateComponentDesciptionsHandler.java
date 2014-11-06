@@ -1,50 +1,103 @@
 package com.wuetherich.osgi.ds.annotations.internal.handler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-public class RegenerateComponentDesciptionsHandler extends AbstractHandler implements IHandler {
+import com.wuetherich.osgi.ds.annotations.Constants;
 
-  @Override
-  public Object execute(ExecutionEvent event) throws ExecutionException {
+public class RegenerateComponentDesciptionsHandler extends AbstractHandler
+		implements IHandler {
 
-    if (isEnabled()) {
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-      ISelection selection = HandlerUtil.getCurrentSelection(event);
+		if (isEnabled()) {
 
-      if (selection instanceof IStructuredSelection) {
+			ListSelectionDialog dlg = new ListSelectionDialog(Display
+					.getCurrent().getActiveShell(), ResourcesPlugin
+					.getWorkspace().getRoot(), getContentProvider(),
+					new WorkbenchLabelProvider(), "Select the Project:");
 
-        for (Object object : ((IStructuredSelection) selection).toList()) {
+			dlg.setTitle("Project Selection");
 
-          IProject project = null;
+			if (dlg.open() == Window.OK) {
 
-          if (object instanceof IResource) {
-            IResource resource = (IResource) object;
-            project = resource.getProject();
-          } else if (object instanceof IAdaptable) {
-            IResource resource = (IResource) ((IAdaptable) object).getAdapter(IResource.class);
-            if (resource != null) {
-              project = resource.getProject();
-            }
-          }
+				for (Object object : dlg.getResult()) {
 
-          if (project != null) {
-            BuildSupport.rebuildProject(project);
-          }
-        }
-      }
-    }
+					IProject project = null;
 
-    //
-    return null;
-  }
+					if (object instanceof IResource) {
+						IResource resource = (IResource) object;
+						project = resource.getProject();
+					} else if (object instanceof IAdaptable) {
+						IResource resource = (IResource) ((IAdaptable) object)
+								.getAdapter(IResource.class);
+						if (resource != null) {
+							project = resource.getProject();
+						}
+					}
+
+					if (project != null) {
+						BuildSupport.rebuildProject(project);
+					}
+				}
+			}
+		}
+
+		//
+		return null;
+	}
+
+	protected IStructuredContentProvider getContentProvider() {
+
+		return new WorkbenchContentProvider() {
+			public Object[] getChildren(Object o) {
+
+				if (o instanceof IWorkspaceRoot) {
+
+					//
+					IWorkspaceRoot workspaceRoot = (IWorkspaceRoot) o;
+
+					// Collect all the projects in the workspace except the
+					// given project
+					IProject[] projects = workspaceRoot.getProjects();
+					List<IProject> result = new ArrayList<IProject>(
+							projects.length);
+					for (IProject project : projects) {
+						try {
+							if (project.hasNature(Constants.NATURE_ID)) {
+								result.add(project);
+							}
+						} catch (CoreException e) {
+							//
+						}
+					}
+
+					//
+					return result.toArray();
+
+				} else {
+					return new Object[0];
+				}
+
+			}
+		};
+	}
 }
