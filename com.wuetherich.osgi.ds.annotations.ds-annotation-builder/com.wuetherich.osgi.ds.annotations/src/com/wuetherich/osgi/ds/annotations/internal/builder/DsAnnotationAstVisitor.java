@@ -285,7 +285,7 @@ public class DsAnnotationAstVisitor extends AbstractDsAnnotationAstVisitor {
 
     //
     IComponentDescription componentDescription = ComponentDescriptionFactory.createComponentDescription(
-        getCurrentTypeDeclarationStack().peek(), getProject(),
+        new TypeDeclarationAccessor(getCurrentTypeDeclarationStack().peek()), getProject(),
         effectiveVersion.greaterThan(projectDsVersion) ? projectDsVersion : effectiveVersion);
 
     _descriptions.put(getCurrentTypeDeclarationStack().peek(), componentDescription);

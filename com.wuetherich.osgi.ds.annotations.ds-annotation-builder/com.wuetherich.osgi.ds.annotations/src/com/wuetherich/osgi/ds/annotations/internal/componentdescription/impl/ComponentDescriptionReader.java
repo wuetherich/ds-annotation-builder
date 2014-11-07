@@ -1,4 +1,4 @@
-package com.wuetherich.osgi.ds.annotations.internal.builder;
+package com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl;
 
 import java.io.InputStream;
 import java.util.LinkedList;
@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescriptionReader;
 import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
 
 /**
@@ -31,7 +32,7 @@ import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
  * 
  * @author Gerd W&uuml;therich (gerd@gerd-wuetherich.de)
  */
-public class ComponentDescriptionReader {
+public class ComponentDescriptionReader implements IComponentDescriptionReader {
 
   /** - */
   private static Pattern REGEXP_PATTERN = Pattern.compile(Constants.DS_ANNOTATION_BUILDER_GENERATED_COMMENT_REGEXP);
@@ -45,7 +46,7 @@ public class ComponentDescriptionReader {
    * @return
    * @throws CoreException
    */
-  public static Map<IPath, List<IPath>> loadGeneratedDescriptionsMap(IProject project) {
+  public Map<IPath, List<IPath>> loadGeneratedDescriptionsMap(IProject project) {
 
     //
     Assert.isNotNull(project);
@@ -76,7 +77,7 @@ public class ComponentDescriptionReader {
         for (IResource iResource : folder.members()) {
 
           if (iResource instanceof IFile && iResource.getName().endsWith(".xml")) {
-            String source = extractSource((IFile) iResource);
+            String source = extractSourceLocation((IFile) iResource);
             if (source != null) {
               genericCache.getOrCreate(new Path(source)).add(iResource.getProjectRelativePath());
             }
@@ -92,7 +93,7 @@ public class ComponentDescriptionReader {
     return genericCache;
   }
 
-  public static List<IPath> getAllComponentDescriptions(IProject project) {
+  public List<IPath> getAllComponentDescriptions(IProject project) {
 
     //
     Assert.isNotNull(project);
@@ -136,8 +137,8 @@ public class ComponentDescriptionReader {
    * @return
    * @throws Exception
    */
-  public static boolean containsDsAnnotationBuilderComment(IFile file) {
-    return extractSource(file) != null;
+  public boolean containsDsAnnotationBuilderComment(IFile file) {
+    return extractSourceLocation(file) != null;
   }
 
   /**
@@ -148,7 +149,7 @@ public class ComponentDescriptionReader {
    * @return
    * @throws Exception
    */
-  public static String extractSource(IFile file) {
+  public String extractSourceLocation(IFile file) {
 
     //
     String result = null;
@@ -195,7 +196,7 @@ public class ComponentDescriptionReader {
    * @param file
    * @return
    */
-  public static boolean isComponentDesciptor(IFile file) {
+  public boolean isComponentDesciptor(IFile file) {
 
     try {
       // get input stream

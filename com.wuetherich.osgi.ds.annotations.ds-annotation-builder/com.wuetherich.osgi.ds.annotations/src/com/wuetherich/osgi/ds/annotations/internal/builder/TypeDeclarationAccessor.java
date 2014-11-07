@@ -1,9 +1,11 @@
-package com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl;
+package com.wuetherich.osgi.ds.annotations.internal.builder;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -12,22 +14,33 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.osgi.service.component.annotations.Component;
 
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.ITypeAccessor;
 
-public class TypeDeclarationReader {
+public class TypeDeclarationAccessor implements ITypeAccessor {
 
   /** - */
   private TypeDeclaration _typeDeclaration;
 
   /**
    * <p>
-   * Creates a new instance of type {@link TypeDeclarationReader}.
+   * Creates a new instance of type {@link TypeDeclarationAccessor}.
    * </p>
    * 
-   * @param _typeDeclaration
+   * @param typeDeclaration
    */
-  public TypeDeclarationReader(TypeDeclaration _typeDeclaration) {
+  public TypeDeclarationAccessor(TypeDeclaration typeDeclaration) {
     super();
-    this._typeDeclaration = _typeDeclaration;
+    this._typeDeclaration = typeDeclaration;
+  }
+
+  @Override
+  public String getAssociatedSourceFile() {
+    try {
+      CompilationUnit compilationUnit = (CompilationUnit) _typeDeclaration.getParent();
+      return compilationUnit.getTypeRoot().getCorrespondingResource().getProjectRelativePath().toPortableString();
+    } catch (JavaModelException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public String getImplementationClassName() {
@@ -124,7 +137,7 @@ public class TypeDeclarationReader {
    * 
    * @return <code>true</code> if the specified annotation is a DS annotation, <code>false</code> otherwise.
    */
-  public static boolean isDsAnnotation(Annotation annotation) {
+  public boolean isDsAnnotation(Annotation annotation) {
 
     //
     ITypeBinding typeBinding = annotation.resolveTypeBinding();

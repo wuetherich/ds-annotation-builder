@@ -1,14 +1,69 @@
 package com.wuetherich.osgi.ds.annotations.internal.componentdescription;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import com.wuetherich.osgi.ds.annotations.DsAnnotationVersion;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.ComponentDescriptionReader;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.ComponentDescriptionWriter;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.ManifestAndBuildPropertiesUpdater;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.SCR_1_0_ComponentDescription;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.SCR_1_1_ComponentDescription;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.SCR_1_2_ComponentDescription;
 
 public class ComponentDescriptionFactory {
+
+  /** - */
+  private static IComponentDescriptionReader        _componentDescriptionReader;
+
+  private static IComponentDescriptionWriter        _componentDescriptionWriter;
+
+  private static IManifestAndBuildPropertiesUpdater _manifestAndBuildPropertiesUpdater;
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @return
+   */
+  public static IComponentDescriptionReader getComponentDescriptionReader() {
+
+    if (_componentDescriptionReader == null) {
+      _componentDescriptionReader = new ComponentDescriptionReader();
+    }
+
+    return _componentDescriptionReader;
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @return
+   */
+  public static IComponentDescriptionWriter getComponentDescriptionWriter() {
+
+    if (_componentDescriptionWriter == null) {
+      _componentDescriptionWriter = new ComponentDescriptionWriter(getComponentDescriptionReader(),
+          getManifestAndBuildPropertiesUpdater());
+    }
+
+    return _componentDescriptionWriter;
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @return
+   */
+  public static IManifestAndBuildPropertiesUpdater getManifestAndBuildPropertiesUpdater() {
+
+    if (_manifestAndBuildPropertiesUpdater == null) {
+      _manifestAndBuildPropertiesUpdater = new ManifestAndBuildPropertiesUpdater(getComponentDescriptionReader());
+    }
+
+    return _manifestAndBuildPropertiesUpdater;
+  }
 
   /**
    * <p>
@@ -17,7 +72,7 @@ public class ComponentDescriptionFactory {
    * @param typeDeclaration
    * @return
    */
-  public static IComponentDescription createComponentDescription(TypeDeclaration typeDeclaration, IProject project,
+  public static IComponentDescription createComponentDescription(ITypeAccessor typeDeclaration, IProject project,
       DsAnnotationVersion requestedversion) {
 
     //
@@ -32,7 +87,6 @@ public class ComponentDescriptionFactory {
       return new SCR_1_2_ComponentDescription(typeDeclaration);
     }
     default: {
-      // TODO
       throw new RuntimeException("Unsupported version");
     }
     }

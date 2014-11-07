@@ -30,6 +30,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.ComponentDescriptionFactory;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
 
 /**
@@ -80,8 +81,8 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
       // }
 
       //
-      ComponentDescriptionWriter.deleteGeneratedFiles(delta.getResource().getProject(), delta.getResource()
-          .getProjectRelativePath());
+      ComponentDescriptionFactory.getComponentDescriptionWriter().deleteGeneratedFiles(
+          delta.getResource().getProject(), delta.getResource().getProjectRelativePath());
 
     } else if (delta.getKind() == IResourceDelta.CHANGED) {
       return visit(delta.getResource());
@@ -101,7 +102,8 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
 
     //
     if (new Path(Constants.COMPONENT_DESCRIPTION_FOLDER).isPrefixOf(resource.getProjectRelativePath())) {
-      ManifestAndBuildPropertiesUpdater.updateManifestAndBuildProperties(resource.getProject());
+      ComponentDescriptionFactory.getManifestAndBuildPropertiesUpdater().updateManifestAndBuildProperties(
+          resource.getProject());
     }
 
     // Only handle Java source files here...
@@ -153,7 +155,8 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
     // bug: https://github.com/wuetherich/ds-annotation-builder/issues/11
     if (myAstVisitor.getComponentDescriptions().isEmpty() && myAstVisitor.hasTypes()) {
       // delete any component description that eventually have been generated before for this resource
-      ComponentDescriptionWriter.deleteGeneratedFiles(resource.getProject(), resource.getProjectRelativePath());
+      ComponentDescriptionFactory.getComponentDescriptionWriter().deleteGeneratedFiles(resource.getProject(),
+          resource.getProjectRelativePath());
     }
 
     // iterate over the component descriptions
@@ -174,7 +177,8 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
         } catch (CoreException e) {
 
           // delete
-          ComponentDescriptionWriter.deleteGeneratedFiles(resource.getProject(), resource.getFullPath());
+          ComponentDescriptionFactory.getComponentDescriptionWriter().deleteGeneratedFiles(resource.getProject(),
+              resource.getFullPath());
 
           // TODO
           e.printStackTrace();
@@ -183,7 +187,8 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
       } else {
 
         //
-        ComponentDescriptionWriter.writeComponentDescription(resource.getProject(), description);
+        ComponentDescriptionFactory.getComponentDescriptionWriter().writeComponentDescription(resource.getProject(),
+            description);
       }
     }
   }

@@ -12,7 +12,6 @@ package com.wuetherich.osgi.ds.annotations.internal.builder;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.dom.Annotation;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -20,7 +19,6 @@ import org.eclipse.jdt.core.dom.NormalAnnotation;
 
 import com.wuetherich.osgi.ds.annotations.DsAnnotationVersion;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
-import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.AbstractComponentDescription;
 
 /**
  * <p>

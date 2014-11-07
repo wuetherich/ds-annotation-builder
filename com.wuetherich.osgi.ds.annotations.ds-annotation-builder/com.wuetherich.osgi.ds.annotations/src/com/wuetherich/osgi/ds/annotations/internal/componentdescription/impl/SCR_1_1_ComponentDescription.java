@@ -23,7 +23,6 @@ import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.xmlns.scr.v1_1.ObjectFactory;
@@ -42,6 +41,7 @@ import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
 import com.wuetherich.osgi.ds.annotations.internal.builder.AbstractDsAnnotationAstVisitor;
 import com.wuetherich.osgi.ds.annotations.internal.builder.ComponentProperty;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.ITypeAccessor;
 
 /**
  * <p>
@@ -62,10 +62,10 @@ public class SCR_1_1_ComponentDescription extends AbstractComponentDescription {
    * Creates a new instance of type {@link SCR_1_1_ComponentDescription extends AbstractComponentDescription}.
    * </p>
    * 
-   * @param typeDeclaration
+   * @param typeAccessor
    */
-  public SCR_1_1_ComponentDescription(TypeDeclaration typeDeclaration) {
-    super(typeDeclaration);
+  public SCR_1_1_ComponentDescription(ITypeAccessor typeAccessor) {
+    super(typeAccessor);
 
     //
     try {
@@ -254,13 +254,13 @@ public class SCR_1_1_ComponentDescription extends AbstractComponentDescription {
 
       // set formatted output
       marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-      if (getSourceFile() != null) {
+      if (getAssociatedSourceFile() != null) {
         try {
           marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", //$NON-NLS-1$
-              String.format(Constants.DS_ANNOTATION_BUILDER_GENERATED_COMMENT, getSourceFile()));
+              String.format(Constants.DS_ANNOTATION_BUILDER_GENERATED_COMMENT, getAssociatedSourceFile()));
         } catch (PropertyException ex) {
           marshaller.setProperty("com.sun.xml.bind.xmlHeaders", //$NON-NLS-1$
-              String.format(Constants.DS_ANNOTATION_BUILDER_GENERATED_COMMENT, getSourceFile()));
+              String.format(Constants.DS_ANNOTATION_BUILDER_GENERATED_COMMENT, getAssociatedSourceFile()));
         }
       }
       //

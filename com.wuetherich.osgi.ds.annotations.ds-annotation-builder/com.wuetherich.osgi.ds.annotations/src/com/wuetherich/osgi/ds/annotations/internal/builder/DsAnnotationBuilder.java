@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.ComponentDescriptionFactory;
 
 public class DsAnnotationBuilder extends IncrementalProjectBuilder {
 
@@ -60,7 +61,7 @@ public class DsAnnotationBuilder extends IncrementalProjectBuilder {
     getProject().deleteMarkers(Constants.DS_ANNOTATION_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 
     //
-    ComponentDescriptionWriter.removeDanglingComponentDescriptions(getProject());
+    ComponentDescriptionFactory.getComponentDescriptionWriter().removeDanglingComponentDescriptions(getProject());
 
     //
     super.clean(monitor);

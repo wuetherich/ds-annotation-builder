@@ -15,14 +15,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
 import com.wuetherich.osgi.ds.annotations.internal.builder.ComponentProperty;
+import com.wuetherich.osgi.ds.annotations.internal.builder.TypeDeclarationAccessor;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.ITypeAccessor;
 import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
 
 /**
@@ -34,41 +34,29 @@ import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
 public abstract class AbstractComponentDescription implements IComponentDescription {
 
   /** - */
-  protected static final String     FIELD_NAME_SERVICE                = "service";
+  protected static final String     FIELD_NAME_SERVICE = "service";
 
   /** - */
-  protected static final String     FIELD_NAME_TARGET                 = "target";
+  protected static final String     FIELD_NAME_TARGET  = "target";
 
   /** - */
   private List<DsAnnotationProblem> _problems;
 
   /** - */
-  private TypeDeclarationReader     _typeDeclarationReader;
-
-  /** - */
-  private String                    _sourceFile;
+  private ITypeAccessor             _typeAccessor;
 
   /**
    * <p>
    * Creates a new instance of type {@link AbstractComponentDescription}.
    * </p>
    * 
-   * @param typeDeclaration
+   * @param typeAccessor
    */
-  public AbstractComponentDescription(TypeDeclaration typeDeclaration) {
-    Assert.isNotNull(typeDeclaration);
+  public AbstractComponentDescription(ITypeAccessor typeAccessor) {
+    Assert.isNotNull(typeAccessor);
 
     //
-    this._typeDeclarationReader = new TypeDeclarationReader(typeDeclaration);
-
-    //
-    try {
-      CompilationUnit compilationUnit = (CompilationUnit) typeDeclaration.getParent();
-      _sourceFile = compilationUnit.getTypeRoot().getCorrespondingResource().getProjectRelativePath()
-          .toPortableString();
-    } catch (JavaModelException e) {
-      //
-    }
+    this._typeAccessor = typeAccessor;
 
     _problems = new LinkedList<DsAnnotationProblem>();
   }
@@ -79,8 +67,8 @@ public abstract class AbstractComponentDescription implements IComponentDescript
    * 
    * @return
    */
-  public TypeDeclarationReader getTypeDeclarationReader() {
-    return _typeDeclarationReader;
+  public ITypeAccessor getTypeDeclarationReader() {
+    return _typeAccessor;
   }
 
   /**
@@ -90,12 +78,12 @@ public abstract class AbstractComponentDescription implements IComponentDescript
    * @return
    */
   public String getImplementationClassName() {
-    return _typeDeclarationReader.getImplementationClassName();
+    return _typeAccessor.getImplementationClassName();
   }
 
   @Override
-  public String getSourceFile() {
-    return _sourceFile;
+  public String getAssociatedSourceFile() {
+    return _typeAccessor.getAssociatedSourceFile();
   }
 
   /**
@@ -168,7 +156,7 @@ public abstract class AbstractComponentDescription implements IComponentDescript
   public final void setConfigurationPolicy(String configurationPolicy) {
     onSetConfigurationPolicy(configurationPolicy);
   }
-  
+
   @Override
   public final void setConfigurationPid(String configurationPid) {
     onSetConfigurationPid(configurationPid);
@@ -181,7 +169,7 @@ public abstract class AbstractComponentDescription implements IComponentDescript
 
   @Override
   public final void addProperty(Object[] properties) {
-    
+
     //
     GenericCache<String, List<ComponentProperty>> propertyMap = new GenericCache<String, List<ComponentProperty>>() {
       private static final long serialVersionUID = 1L;
@@ -197,13 +185,16 @@ public abstract class AbstractComponentDescription implements IComponentDescript
 
       //
       String[] strings = ((String) keyValue).split("=");
-      
+
       //
       if (strings.length < 2) {
-        throw new DsAnnotationException(String.format("Invalid property definition '%s'. Property definitions must follow the following syntax: name ( : type )? = value. ",
-            ((String) keyValue)));
+        throw new DsAnnotationException(
+            String
+                .format(
+                    "Invalid property definition '%s'. Property definitions must follow the following syntax: name ( : type )? = value. ",
+                    ((String) keyValue)));
       }
-      
+
       String[] nameTypePair = strings[0].split(":");
 
       //
@@ -220,8 +211,8 @@ public abstract class AbstractComponentDescription implements IComponentDescript
       //
       componentProperty.setValue(strings[1]);
     }
-    
-    // 
+
+    //
     onAddProperty(propertyMap);
   }
 
@@ -242,8 +233,9 @@ public abstract class AbstractComponentDescription implements IComponentDescript
     if (services != null) {
       for (String service : services) {
         Assert.isNotNull(service);
-        if (!_typeDeclarationReader.isInstanceOf(service)) {
-          throw new DsAnnotationException(String.format(Messages.ComponentDescription_INVALID_SERVICE_TYPE, service, FIELD_NAME_SERVICE));
+        if (!_typeAccessor.isInstanceOf(service)) {
+          throw new DsAnnotationException(String.format(Messages.ComponentDescription_INVALID_SERVICE_TYPE, service,
+              FIELD_NAME_SERVICE));
         }
       }
     }
@@ -280,7 +272,7 @@ public abstract class AbstractComponentDescription implements IComponentDescript
   public abstract void onAddProperty(Map<String, List<ComponentProperty>> properties);
 
   public abstract void onSetConfigurationPolicy(String configurationPolicy);
-  
+
   public abstract void onSetConfigurationPid(String configurationPid);
 
   public abstract void onSetServiceFactory(Boolean value);
