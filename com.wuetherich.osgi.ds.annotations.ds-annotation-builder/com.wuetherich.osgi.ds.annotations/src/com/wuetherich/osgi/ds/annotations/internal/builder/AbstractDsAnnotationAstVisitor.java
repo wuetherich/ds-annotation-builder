@@ -14,6 +14,7 @@ import java.util.Stack;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
@@ -267,7 +268,7 @@ public abstract class AbstractDsAnnotationAstVisitor extends ASTVisitor {
 
   protected abstract void handleComponentAnnotation(NormalAnnotation node);
 
-  protected abstract void handleException(Annotation node, Exception e);
+  protected abstract void handleException(ASTNode node, Exception e);
 
   /**
    * <p>

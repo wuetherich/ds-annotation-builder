@@ -11,6 +11,7 @@
 package com.wuetherich.osgi.ds.annotations.internal.builder;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MemberValuePair;
@@ -182,7 +183,7 @@ public class DetectDsAnnotationVersionAstVisitor extends AbstractDsAnnotationAst
   }
 
   @Override
-  protected void handleException(Annotation node, Exception e) {
+  protected void handleException(ASTNode node, Exception e) {
     //
   }
 

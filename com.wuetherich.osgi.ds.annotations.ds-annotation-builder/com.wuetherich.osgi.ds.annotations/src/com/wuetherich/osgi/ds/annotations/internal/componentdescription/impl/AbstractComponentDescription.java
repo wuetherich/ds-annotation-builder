@@ -15,14 +15,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
 import com.wuetherich.osgi.ds.annotations.internal.builder.ComponentProperty;
-import com.wuetherich.osgi.ds.annotations.internal.builder.TypeDeclarationAccessor;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.AbstractTypeAccessor;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
-import com.wuetherich.osgi.ds.annotations.internal.componentdescription.ITypeAccessor;
 import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
 
 /**
@@ -34,16 +32,13 @@ import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
 public abstract class AbstractComponentDescription implements IComponentDescription {
 
   /** - */
-  protected static final String     FIELD_NAME_SERVICE = "service";
+  protected static final String FIELD_NAME_SERVICE = "service";
 
   /** - */
-  protected static final String     FIELD_NAME_TARGET  = "target";
+  protected static final String FIELD_NAME_TARGET  = "target";
 
   /** - */
-  private List<DsAnnotationProblem> _problems;
-
-  /** - */
-  private ITypeAccessor             _typeAccessor;
+  private AbstractTypeAccessor  _typeAccessor;
 
   /**
    * <p>
@@ -52,13 +47,98 @@ public abstract class AbstractComponentDescription implements IComponentDescript
    * 
    * @param typeAccessor
    */
-  public AbstractComponentDescription(ITypeAccessor typeAccessor) {
+  public AbstractComponentDescription(AbstractTypeAccessor typeAccessor) {
     Assert.isNotNull(typeAccessor);
 
     //
     this._typeAccessor = typeAccessor;
+  }
 
-    _problems = new LinkedList<DsAnnotationProblem>();
+  public void execute() {
+
+    // *******
+    // check activate and deactive names
+    if (_typeAccessor.getDeactivateMethodName() != null
+        && _typeAccessor.getDeactivateMethodName().equals(_typeAccessor.getActivateMethodName())) {
+      throw new DsAnnotationException(String.format("Activate and deactivate method have the same name '%s'.",
+          _typeAccessor.getActivateMethodName()));
+    }
+
+    // check service implementation
+    if (_typeAccessor.getService() != null) {
+      for (String service : _typeAccessor.getService()) {
+        Assert.isNotNull(service);
+        if (!_typeAccessor.isInstanceOf(service)) {
+          throw new DsAnnotationException(String.format(Messages.ComponentDescription_INVALID_SERVICE_TYPE, service,
+              FIELD_NAME_SERVICE));
+        }
+      }
+    }
+
+    // ***************
+
+    // name
+    if (_typeAccessor.getName() != null) {
+      onSetName(_typeAccessor.getName());
+    }
+
+    // enabled
+    if (_typeAccessor.isEnabled() != null) {
+      onSetEnabled(_typeAccessor.isEnabled());
+    }
+
+    // immediate
+    if (_typeAccessor.isImmediate() != null) {
+      onSetImmediate(_typeAccessor.isImmediate());
+    }
+
+    // factory
+    if (_typeAccessor.getFactory() != null) {
+      onSetFactory(_typeAccessor.getFactory());
+    }
+
+    // service factory
+    if (_typeAccessor.getServiceFactory() != null) {
+      onSetServiceFactory(_typeAccessor.getServiceFactory());
+    }
+
+    // configuration pid
+    if (_typeAccessor.getConfigurationPid() != null) {
+      onSetConfigurationPid(_typeAccessor.getConfigurationPid());
+    }
+
+    // configuration policy
+    if (_typeAccessor.getConfigurationPolicy() != null) {
+      onSetConfigurationPolicy(_typeAccessor.getConfigurationPolicy());
+    }
+
+    // activate
+    if (_typeAccessor.getActivateMethodName() != null) {
+      onSetActivate(_typeAccessor.getActivateMethodName());
+    }
+
+    // deactivate
+    if (_typeAccessor.getDeactivateMethodName() != null) {
+      onSetDeactivate(_typeAccessor.getDeactivateMethodName());
+    }
+
+    // modified
+    if (_typeAccessor.getModifiedMethodName() != null) {
+      onSetModified(_typeAccessor.getModifiedMethodName());
+    }
+
+    // property
+    if (_typeAccessor.getProperty() != null) {
+      processPropertyAttribute(_typeAccessor.getProperty());
+    }
+
+    // properties
+    if (_typeAccessor.getProperties() != null) {
+      for (Object keyValue : _typeAccessor.getProperties()) {
+        onAddProperties((String) keyValue);
+      }
+    }
+
   }
 
   /**
@@ -67,7 +147,7 @@ public abstract class AbstractComponentDescription implements IComponentDescript
    * 
    * @return
    */
-  public ITypeAccessor getTypeDeclarationReader() {
+  public AbstractTypeAccessor getTypeAccessor() {
     return _typeAccessor;
   }
 
@@ -81,6 +161,9 @@ public abstract class AbstractComponentDescription implements IComponentDescript
     return _typeAccessor.getImplementationClassName();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String getAssociatedSourceFile() {
     return _typeAccessor.getAssociatedSourceFile();
@@ -90,135 +173,14 @@ public abstract class AbstractComponentDescription implements IComponentDescript
    * {@inheritDoc}
    */
   public final boolean hasProblems() {
-    return !_problems.isEmpty();
+    return _typeAccessor.hasProblems();
   }
 
   /**
    * {@inheritDoc}
    */
   public final List<DsAnnotationProblem> getProblems() {
-    return _problems;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public final void setDeactivateMethod(String methodName) {
-
-    //
-    if (getActivate() != null && getActivate().equals(methodName)) {
-      throw new DsAnnotationException(String.format("Activate and deactivate method have the same name '%s'.",
-          methodName));
-    }
-
-    //
-    onSetDeactivate(methodName);
-  }
-
-  public final void setActivateMethod(String methodName) {
-
-    //
-    if (getDeactivate() != null && getDeactivate().equals(methodName)) {
-      throw new DsAnnotationException(String.format("Activate and deactivate method have the same name '%s'.",
-          methodName));
-    }
-
-    //
-    onSetActivate(methodName);
-  }
-
-  @Override
-  public final void setModified(String methodName) {
-    onSetModified(methodName);
-  }
-
-  @Override
-  public final void setName(String value) {
-    onSetName(value);
-  }
-
-  @Override
-  public final void setEnabled(Boolean value) {
-    onSetEnabled(value);
-  }
-
-  @Override
-  public final void setImmediate(Boolean value) {
-    onSetImmediate(value);
-  }
-
-  @Override
-  public final void setFactory(String value) {
-    onSetFactory(value);
-  }
-
-  @Override
-  public final void setConfigurationPolicy(String configurationPolicy) {
-    onSetConfigurationPolicy(configurationPolicy);
-  }
-
-  @Override
-  public final void setConfigurationPid(String configurationPid) {
-    onSetConfigurationPid(configurationPid);
-  }
-
-  @Override
-  public final void setServiceFactory(Boolean value) {
-    onSetServiceFactory(value);
-  }
-
-  @Override
-  public final void addProperty(Object[] properties) {
-
-    //
-    GenericCache<String, List<ComponentProperty>> propertyMap = new GenericCache<String, List<ComponentProperty>>() {
-      private static final long serialVersionUID = 1L;
-
-      @Override
-      protected List<ComponentProperty> create(String key) {
-        return new LinkedList<ComponentProperty>();
-      }
-    };
-
-    // process the property entries
-    for (Object keyValue : properties) {
-
-      //
-      String[] strings = ((String) keyValue).split("=");
-
-      //
-      if (strings.length < 2) {
-        throw new DsAnnotationException(
-            String
-                .format(
-                    "Invalid property definition '%s'. Property definitions must follow the following syntax: name ( : type )? = value. ",
-                    ((String) keyValue)));
-      }
-
-      String[] nameTypePair = strings[0].split(":");
-
-      //
-      ComponentProperty componentProperty = new ComponentProperty();
-      if (nameTypePair.length > 1) {
-        propertyMap.getOrCreate(nameTypePair[0]).add(componentProperty);
-        componentProperty.setName(nameTypePair[0]);
-        componentProperty.setType(nameTypePair[1]);
-      } else {
-        propertyMap.getOrCreate(strings[0]).add(componentProperty);
-        componentProperty.setName(strings[0]);
-      }
-
-      //
-      componentProperty.setValue(strings[1]);
-    }
-
-    //
-    onAddProperty(propertyMap);
-  }
-
-  @Override
-  public final void addProperties(String value) {
-    onAddProperties(value);
+    return _typeAccessor.getProblems();
   }
 
   /**
@@ -229,17 +191,6 @@ public abstract class AbstractComponentDescription implements IComponentDescript
    */
   public final void setService(String[] services) {
 
-    //
-    if (services != null) {
-      for (String service : services) {
-        Assert.isNotNull(service);
-        if (!_typeAccessor.isInstanceOf(service)) {
-          throw new DsAnnotationException(String.format(Messages.ComponentDescription_INVALID_SERVICE_TYPE, service,
-              FIELD_NAME_SERVICE));
-        }
-      }
-    }
-
     onSetService(services);
   }
 
@@ -248,10 +199,6 @@ public abstract class AbstractComponentDescription implements IComponentDescript
 
     onAddReference(service, bind, name, cardinality, policy, policyOption, unbind, updated, target);
   }
-
-  public abstract String getActivate();
-
-  public abstract String getDeactivate();
 
   public abstract void onSetActivate(String methodName);
 
@@ -289,7 +236,60 @@ public abstract class AbstractComponentDescription implements IComponentDescript
    * @param name
    * @return
    */
-  public boolean isNotEmpty(String name) {
+  protected boolean isNotEmpty(String name) {
     return name != null && name.trim().length() > 0;
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @param propertyArray
+   */
+  private void processPropertyAttribute(Object[] propertyArray) {
+    //
+    GenericCache<String, List<ComponentProperty>> propertyMap = new GenericCache<String, List<ComponentProperty>>() {
+      private static final long serialVersionUID = 1L;
+
+      @Override
+      protected List<ComponentProperty> create(String key) {
+        return new LinkedList<ComponentProperty>();
+      }
+    };
+
+    // process the property entries
+    for (Object keyValue : propertyArray) {
+
+      //
+      String[] strings = ((String) keyValue).split("=");
+
+      //
+      if (strings.length < 2) {
+        throw new DsAnnotationException(
+            String
+                .format(
+                    "Invalid property definition '%s'. Property definitions must follow the following syntax: name ( : type )? = value. ",
+                    ((String) keyValue)));
+      }
+
+      String[] nameTypePair = strings[0].split(":");
+
+      //
+      ComponentProperty componentProperty = new ComponentProperty();
+      if (nameTypePair.length > 1) {
+        propertyMap.getOrCreate(nameTypePair[0]).add(componentProperty);
+        componentProperty.setName(nameTypePair[0]);
+        componentProperty.setType(nameTypePair[1]);
+      } else {
+        propertyMap.getOrCreate(strings[0]).add(componentProperty);
+        componentProperty.setName(strings[0]);
+      }
+
+      //
+      componentProperty.setValue(strings[1]);
+    }
+
+    //
+    onAddProperty(propertyMap);
   }
 }

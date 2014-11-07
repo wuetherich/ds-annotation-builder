@@ -42,7 +42,7 @@ import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
 import com.wuetherich.osgi.ds.annotations.internal.builder.AbstractDsAnnotationAstVisitor;
 import com.wuetherich.osgi.ds.annotations.internal.builder.ComponentProperty;
-import com.wuetherich.osgi.ds.annotations.internal.componentdescription.ITypeAccessor;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.AbstractTypeAccessor;
 
 /**
  * <p>
@@ -65,7 +65,7 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
    * 
    * @param typeAccessor
    */
-  public SCR_1_2_ComponentDescription(ITypeAccessor typeAccessor) {
+  public SCR_1_2_ComponentDescription(AbstractTypeAccessor typeAccessor) {
     super(typeAccessor);
 
     //
@@ -91,7 +91,7 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
     _tcomponent.setImplementation(timplementation);
 
     // set the default services
-    List<String> stypes = getTypeDeclarationReader().getAllDirectlyImplementedSuperInterfaces();
+    List<String> stypes = getTypeAccessor().getAllDirectlyImplementedSuperInterfaces();
     setService(stypes.toArray(new String[0]));
   }
 
@@ -106,18 +106,8 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
   }
 
   @Override
-  public String getActivate() {
-    return _tcomponent.getActivate();
-  }
-
-  @Override
   public void onSetActivate(String methodName) {
     _tcomponent.setActivate(methodName);
-  }
-
-  @Override
-  public String getDeactivate() {
-    return _tcomponent.getDeactivate();
   }
 
   @Override
@@ -379,11 +369,11 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
       } else {
 
         //
-        if (!getTypeDeclarationReader().checkMethodExists(unbind)) {
+        if (!getTypeAccessor().checkMethodExists(unbind)) {
           throw new DsAnnotationException(String.format(Messages.ComponentDescription_NON_EXISTING_UNBIND_METHOD,
               unbind));
         }
-        getTypeDeclarationReader().assertNoDsAnnotation(unbind);
+        getTypeAccessor().assertNoDsAnnotation(unbind);
 
         //
         reference.setUnbind(unbind);
@@ -395,8 +385,8 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
 
       // osgi.cmpn-5.0.0.pdf, 112.13.7.6, p. 322
       // The unbind method is only set if the component type contains a method with the derived name.
-      if (getTypeDeclarationReader().checkMethodExists(computedUnbindMethodName)) {
-        getTypeDeclarationReader().assertNoDsAnnotation(computedUnbindMethodName);
+      if (getTypeAccessor().checkMethodExists(computedUnbindMethodName)) {
+        getTypeAccessor().assertNoDsAnnotation(computedUnbindMethodName);
         reference.setUnbind(computedUnbindMethodName);
       }
     }
@@ -407,7 +397,7 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
         reference.setUpdated(null);
       } else {
         //
-        if (!getTypeDeclarationReader().checkMethodExists(updated)) {
+        if (!getTypeAccessor().checkMethodExists(updated)) {
           throw new DsAnnotationException(String.format(Messages.ComponentDescription_NON_EXISTING_UPDATED_METHOD,
               unbind));
         }
@@ -420,7 +410,7 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
 
       // osgi.cmpn-5.0.0.pdf, 112.13.7.8, p. 322
       // The updated method is only set if the component type contains a method with the derived name.
-      if (getTypeDeclarationReader().checkMethodExists(computedUpdatedMethodName)) {
+      if (getTypeAccessor().checkMethodExists(computedUpdatedMethodName)) {
         reference.setUpdated(computedUpdatedMethodName);
       }
     }

@@ -14,9 +14,9 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.osgi.service.component.annotations.Component;
 
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
-import com.wuetherich.osgi.ds.annotations.internal.componentdescription.ITypeAccessor;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.AbstractTypeAccessor;
 
-public class TypeDeclarationAccessor implements ITypeAccessor {
+public class TypeDeclarationAccessor extends  AbstractTypeAccessor {
 
   /** - */
   private TypeDeclaration _typeDeclaration;

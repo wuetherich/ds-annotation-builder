@@ -72,7 +72,7 @@ public class ComponentDescriptionFactory {
    * @param typeDeclaration
    * @return
    */
-  public static IComponentDescription createComponentDescription(ITypeAccessor typeDeclaration, IProject project,
+  public static IComponentDescription createComponentDescription(AbstractTypeAccessor typeDeclaration, IProject project,
       DsAnnotationVersion requestedversion) {
 
     //
