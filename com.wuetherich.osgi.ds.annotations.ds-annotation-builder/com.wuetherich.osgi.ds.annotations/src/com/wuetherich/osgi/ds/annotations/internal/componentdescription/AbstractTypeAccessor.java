@@ -48,6 +48,7 @@ public abstract class AbstractTypeAccessor {
    */
   public AbstractTypeAccessor() {
     _problems = new LinkedList<DsAnnotationProblem>();
+    _references = new LinkedList<Reference>();
   }
 
   /**

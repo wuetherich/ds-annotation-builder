@@ -55,27 +55,8 @@ public interface IComponentDescription {
   /**
    * <p>
    * </p>
-   * 
-   * @param services
+   *
+   * @return
    */
-  void setService(String[] services);
-
-  /**
-   * <p>
-   * </p>
-   * 
-   * @param service
-   * @param bind
-   * @param name
-   * @param cardinality
-   * @param policy
-   * @param policyOption
-   * @param unbind
-   * @param updated
-   * @param target
-   */
-  void addReference(String service, String bind, String name, String cardinality, String policy, String policyOption,
-      String unbind, String updated, String target);
-
   AbstractTypeAccessor getTypeAccessor();
 }

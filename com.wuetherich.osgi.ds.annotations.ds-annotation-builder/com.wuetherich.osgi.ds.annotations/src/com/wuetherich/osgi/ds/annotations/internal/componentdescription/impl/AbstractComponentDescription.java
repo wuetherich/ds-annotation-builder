@@ -21,6 +21,7 @@ import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
 import com.wuetherich.osgi.ds.annotations.internal.builder.ComponentProperty;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.AbstractTypeAccessor;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.Reference;
 import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
 
 /**
@@ -33,6 +34,8 @@ public abstract class AbstractComponentDescription implements IComponentDescript
 
   /** - */
   protected static final String FIELD_NAME_SERVICE = "service";
+  
+  protected static final String FIELD_NAME_SERVICEFACTORY = "servicefactory";
 
   /** - */
   protected static final String FIELD_NAME_TARGET  = "target";
@@ -56,7 +59,6 @@ public abstract class AbstractComponentDescription implements IComponentDescript
 
   public void execute() {
 
-    // *******
     // check activate and deactive names
     if (_typeAccessor.getDeactivateMethodName() != null
         && _typeAccessor.getDeactivateMethodName().equals(_typeAccessor.getActivateMethodName())) {
@@ -75,12 +77,15 @@ public abstract class AbstractComponentDescription implements IComponentDescript
       }
     }
 
-    // ***************
+    // check service factory / services
+    if (_typeAccessor.getService() == null && getTypeAccessor().getAllDirectlyImplementedSuperInterfaces().isEmpty()
+        && _typeAccessor.getServiceFactory() != null) {
+          throw new DsAnnotationException(String.format(Messages.ComponentDescription_INVALID_SERVICEFACTORY_DECLARATION, 
+              FIELD_NAME_SERVICEFACTORY));
+    }
 
     // name
-    if (_typeAccessor.getName() != null) {
-      onSetName(_typeAccessor.getName());
-    }
+    onSetName(_typeAccessor.getName() != null ? _typeAccessor.getName() : _typeAccessor.getImplementationClassName());
 
     // enabled
     if (_typeAccessor.isEnabled() != null) {
@@ -101,6 +106,10 @@ public abstract class AbstractComponentDescription implements IComponentDescript
     if (_typeAccessor.getServiceFactory() != null) {
       onSetServiceFactory(_typeAccessor.getServiceFactory());
     }
+
+    // services
+    onSetService(_typeAccessor.getService() != null ? _typeAccessor.getService() : getTypeAccessor()
+        .getAllDirectlyImplementedSuperInterfaces().toArray(new String[0]));
 
     // configuration pid
     if (_typeAccessor.getConfigurationPid() != null) {
@@ -139,6 +148,11 @@ public abstract class AbstractComponentDescription implements IComponentDescript
       }
     }
 
+    // references
+    for (Reference ref : _typeAccessor.getReferences()) {
+      onAddReference(ref.getService(), ref.getBind(), ref.getName(), ref.getCardinality(), ref.getPolicy(),
+          ref.getPolicyOption(), ref.getUnbind(), ref.getUpdated(), ref.getTarget());
+    }
   }
 
   /**
@@ -149,16 +163,6 @@ public abstract class AbstractComponentDescription implements IComponentDescript
    */
   public AbstractTypeAccessor getTypeAccessor() {
     return _typeAccessor;
-  }
-
-  /**
-   * <p>
-   * </p>
-   * 
-   * @return
-   */
-  public String getImplementationClassName() {
-    return _typeAccessor.getImplementationClassName();
   }
 
   /**
@@ -181,23 +185,6 @@ public abstract class AbstractComponentDescription implements IComponentDescript
    */
   public final List<DsAnnotationProblem> getProblems() {
     return _typeAccessor.getProblems();
-  }
-
-  /**
-   * <p>
-   * </p>
-   * 
-   * @param services
-   */
-  public final void setService(String[] services) {
-
-    onSetService(services);
-  }
-
-  public final void addReference(String service, String bind, String name, String cardinality, String policy,
-      String policyOption, String unbind, String updated, String target) {
-
-    onAddReference(service, bind, name, cardinality, policy, policyOption, unbind, updated, target);
   }
 
   public abstract void onSetActivate(String methodName);

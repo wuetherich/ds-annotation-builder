@@ -82,16 +82,10 @@ public class SCR_1_1_ComponentDescription extends AbstractComponentDescription {
     // create the component...
     _tcomponent = new Tcomponent();
 
-    // ...and set the defaults (name, implementation class, service)
-    _tcomponent.setName(getImplementationClassName());
-
+    //
     Timplementation timplementation = new Timplementation();
-    timplementation.setClazz(getImplementationClassName());
+    timplementation.setClazz(typeAccessor.getImplementationClassName());
     _tcomponent.setImplementation(timplementation);
-
-    // set the default services
-    List<String> stypes = getTypeAccessor().getAllDirectlyImplementedSuperInterfaces();
-    setService(stypes.toArray(new String[0]));
   }
 
   @Override
@@ -136,13 +130,9 @@ public class SCR_1_1_ComponentDescription extends AbstractComponentDescription {
 
   @Override
   public void onSetServiceFactory(Boolean value) {
-
-    //
     if (_tcomponent.getService() == null) {
       _tcomponent.setService(new Tservice());
     }
-
-    //
     _tcomponent.getService().setServicefactory(value);
   }
 
@@ -275,14 +265,10 @@ public class SCR_1_1_ComponentDescription extends AbstractComponentDescription {
    * @throws JAXBException
    */
   public boolean equals(InputStream inputStream) throws JAXBException {
-
     Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
-
-    //
     @SuppressWarnings("unchecked")
     JAXBElement<Tcomponent> jaxbElement = (JAXBElement<Tcomponent>) unmarshaller.unmarshal(inputStream);
     Tcomponent tcomponent = jaxbElement.getValue();
-
     return equals(tcomponent, _tcomponent);
   }
 

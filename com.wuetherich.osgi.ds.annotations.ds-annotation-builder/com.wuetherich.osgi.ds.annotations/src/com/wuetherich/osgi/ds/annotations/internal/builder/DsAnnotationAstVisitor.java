@@ -31,6 +31,7 @@ import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationProblem;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.ComponentDescriptionFactory;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
+import com.wuetherich.osgi.ds.annotations.internal.componentdescription.Reference;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.AbstractComponentDescription;
 import com.wuetherich.osgi.ds.annotations.internal.prefs.DsAnnotationsPreferences;
 
@@ -87,7 +88,9 @@ public class DsAnnotationAstVisitor extends AbstractDsAnnotationAstVisitor {
   protected void handleReferenceAnnotation(MarkerAnnotation node) {
     String service = getCurrentMethodDeclaration().resolveBinding().getParameterTypes()[0].getBinaryName();
     String bind = getCurrentMethodDeclaration().getName().getFullyQualifiedName();
-    getCurrentComponentDescription().addReference(service, bind, null, null, null, null, null, null, null);
+
+    Reference reference = new Reference(service, bind, null, null, null, null, null, null, null);
+    getCurrentComponentDescription().getTypeAccessor().getReferences().add(reference);
   }
 
   @Override
@@ -146,8 +149,8 @@ public class DsAnnotationAstVisitor extends AbstractDsAnnotationAstVisitor {
     }
 
     //
-    getCurrentComponentDescription().addReference(service, bind, name, cardinality, policy, policyOption, unbind,
-        updated, target);
+    Reference reference = new Reference(service, bind, name, cardinality, policy, policyOption, unbind, updated, target);
+    getCurrentComponentDescription().getTypeAccessor().getReferences().add(reference);
   }
 
   @Override
