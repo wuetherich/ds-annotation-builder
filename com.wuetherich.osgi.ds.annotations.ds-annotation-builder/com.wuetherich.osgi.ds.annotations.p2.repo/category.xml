@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
 
-   <feature id="com.wuetherich.osgi.ds.annotations.feature" version="1.1.5.qualifier">
+   <feature id="com.wuetherich.osgi.ds.annotations.feature" version="1.1.6.qualifier">
       <category name="DS.Annotation.Builder"/>
    </feature>
-   <feature id="com.wuetherich.osgi.ds.annotations.feature.source" version="1.1.5.qualifier">
+   <feature id="com.wuetherich.osgi.ds.annotations.feature.source" version="1.1.6.qualifier">
       <category name="DS.Annotation.Builder.Source"/>
    </feature>
    
