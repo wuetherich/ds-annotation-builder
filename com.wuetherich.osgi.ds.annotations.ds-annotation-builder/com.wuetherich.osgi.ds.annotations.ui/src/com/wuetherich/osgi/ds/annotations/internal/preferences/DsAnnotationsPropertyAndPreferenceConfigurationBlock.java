@@ -58,13 +58,13 @@ public class DsAnnotationsPropertyAndPreferenceConfigurationBlock extends Config
     group1.setLayoutData(data);
 
     _button_1_0 = new Button(group1, SWT.RADIO);
-    _button_1_0.setText("1.1 (OSGi Release 4.0/4.1)");
+    _button_1_0.setText(DsAnnotationVersion.V_1_0.getDescription());
 
     _button_1_1 = new Button(group1, SWT.RADIO);
-    _button_1_1.setText("1.1 (OSGi Release 4.2)");
+    _button_1_1.setText(DsAnnotationVersion.V_1_1.getDescription());
 
     _button_1_2 = new Button(group1, SWT.RADIO);
-    _button_1_2.setText("1.2 (OSGi Release 4.3+)");
+    _button_1_2.setText(DsAnnotationVersion.V_1_2.getDescription());
 
     _button_markAsDerived = new Button(this, SWT.CHECK);
     _button_markAsDerived.setText("Mark generated component descriptors as derived");

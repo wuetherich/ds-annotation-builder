@@ -8,11 +8,15 @@ package com.wuetherich.osgi.ds.annotations;
  */
 public enum DsAnnotationVersion {
 
-  V_1_0("http://www.osgi.org/xmlns/scr/v1.0.0"), V_1_1("http://www.osgi.org/xmlns/scr/v1.1.0"), V_1_2(
-      "http://www.osgi.org/xmlns/scr/v1.2.0");
+  V_1_0("http://www.osgi.org/xmlns/scr/v1.0.0", "1.0 (OSGi Release 4.0/4.1)"), V_1_1(
+      "http://www.osgi.org/xmlns/scr/v1.1.0", "1.1 (OSGi Release 4.2)"), V_1_2("http://www.osgi.org/xmlns/scr/v1.2.0",
+      "1.2 (OSGi Release 4.3+)");
 
   /** - */
   private String _xmlns;
+
+  /** - */
+  private String _description;
 
   /**
    * <p>
@@ -21,8 +25,9 @@ public enum DsAnnotationVersion {
    * 
    * @param xmlns
    */
-  private DsAnnotationVersion(String xmlns) {
+  private DsAnnotationVersion(String xmlns, String description) {
     this._xmlns = xmlns;
+    this._description = description;
   }
 
   /**
@@ -35,6 +40,23 @@ public enum DsAnnotationVersion {
     return _xmlns;
   }
 
+  /**
+   * <p>
+   * </p>
+   * 
+   * @return
+   */
+  public String getDescription() {
+    return _description;
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @param other
+   * @return
+   */
   public boolean greaterThan(DsAnnotationVersion other) {
     return this.getXmlns().compareTo(other.getXmlns()) > 0;
   }
