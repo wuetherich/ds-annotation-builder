@@ -33,12 +33,12 @@ import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
 public abstract class AbstractComponentDescription implements IComponentDescription {
 
   /** - */
-  protected static final String FIELD_NAME_SERVICE = "service";
-  
+  protected static final String FIELD_NAME_SERVICE        = "service";
+
   protected static final String FIELD_NAME_SERVICEFACTORY = "servicefactory";
 
   /** - */
-  protected static final String FIELD_NAME_TARGET  = "target";
+  protected static final String FIELD_NAME_TARGET         = "target";
 
   /** - */
   private AbstractTypeAccessor  _typeAccessor;
@@ -80,8 +80,8 @@ public abstract class AbstractComponentDescription implements IComponentDescript
     // check service factory / services
     if (_typeAccessor.getService() == null && getTypeAccessor().getAllDirectlyImplementedSuperInterfaces().isEmpty()
         && _typeAccessor.getServiceFactory() != null) {
-          throw new DsAnnotationException(String.format(Messages.ComponentDescription_INVALID_SERVICEFACTORY_DECLARATION, 
-              FIELD_NAME_SERVICEFACTORY));
+      throw new DsAnnotationException(String.format(Messages.ComponentDescription_INVALID_SERVICEFACTORY_DECLARATION,
+          FIELD_NAME_SERVICEFACTORY));
     }
 
     // name
@@ -150,7 +150,12 @@ public abstract class AbstractComponentDescription implements IComponentDescript
 
     // references
     for (Reference ref : _typeAccessor.getReferences()) {
-      onAddReference(ref.getService(), ref.getBind(), ref.getName(), ref.getCardinality(), ref.getPolicy(),
+      
+      // check bind method name
+      checkReferenceBindMethod(ref.getBind());
+      
+      //
+      onAddReference(ref.getService(), ref.getBind(), computeReferenceName(ref.getName(), ref.getBind()), ref.getCardinality(), ref.getPolicy(),
           ref.getPolicyOption(), ref.getUnbind(), ref.getUpdated(), ref.getTarget());
     }
   }
@@ -227,6 +232,67 @@ public abstract class AbstractComponentDescription implements IComponentDescript
     return name != null && name.trim().length() > 0;
   }
 
+  /**
+   * <p>
+   * </p>
+   *
+   * @param name
+   * @param bindMethodName
+   * @return
+   */
+  protected String computeReferenceName(String name, String bindMethodName) {
+
+    //
+    if (name != null) {
+      if (name.length() == 0) {
+        throw new DsAnnotationException(String.format(Messages.ComponentDescription_INVALID_REFERENCE_NAME, name));
+      } else {
+        return name;
+      }
+    }
+
+    checkReferenceBindMethod(bindMethodName);
+
+    if (bindMethodName.startsWith("add")) { //$NON-NLS-1$
+      return bindMethodName.substring("add".length()); //$NON-NLS-1$
+    } else if (bindMethodName.startsWith("set")) { //$NON-NLS-1$
+      return bindMethodName.substring("set".length()); //$NON-NLS-1$
+    } else if (bindMethodName.startsWith("bind")) { //$NON-NLS-1$
+      return bindMethodName.substring("bind".length()); //$NON-NLS-1$
+    }
+
+    //
+    return bindMethodName;
+  }
+ 
+  /**
+   * <p>
+   * </p>
+   *
+   * @param bindMethodName
+   * @return
+   */
+  private String checkReferenceBindMethod(String bindMethodName) {
+
+    //
+    if (bindMethodName.equals("add")) {
+      throw new DsAnnotationException(String.format(Messages.ComponentDescription_INVALID_BIND_METHOD_NAME, "add",
+          "addMyService"));
+    }
+
+    if (bindMethodName.equals("set")) {
+      throw new DsAnnotationException(String.format(Messages.ComponentDescription_INVALID_BIND_METHOD_NAME, "set",
+          "setMyService"));
+    }
+
+    if (bindMethodName.equals("bind")) {
+      throw new DsAnnotationException(String.format(Messages.ComponentDescription_INVALID_BIND_METHOD_NAME, "bind",
+          "bindMyService"));
+    }
+
+    return bindMethodName;
+  }
+  
   /**
    * <p>
    * </p>

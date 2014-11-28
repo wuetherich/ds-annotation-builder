@@ -1,1 +1,1 @@
-Invalid reference name 'null' (derived from bind method name 'set').
+Invalid bind method name 'set'. You should choose a more specific name instead (e.g. 'setMyService').

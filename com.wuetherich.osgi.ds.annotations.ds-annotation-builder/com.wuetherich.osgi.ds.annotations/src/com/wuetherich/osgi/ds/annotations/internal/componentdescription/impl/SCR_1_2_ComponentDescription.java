@@ -315,29 +315,7 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
 
     // step 2: set the bind method name
     reference.setBind(bind);
-
-    // step 3: set the name of the bind method
-    if (isNotEmpty(name)) {
-      if (name == null || name.isEmpty()) {
-        throw new DsAnnotationException(String.format(Messages.ComponentDescription_INVALID_REFERENCE_NAME,
-            reference.getName()));
-      }
-      reference.setName(name);
-    } else {
-      name = bind;
-      if (name.startsWith("add")) { //$NON-NLS-1$
-        name = name.substring("add".length()); //$NON-NLS-1$
-      } else if (name.startsWith("set")) { //$NON-NLS-1$
-        name = name.substring("set".length()); //$NON-NLS-1$
-      } else if (name.startsWith("bind")) { //$NON-NLS-1$
-        name = name.substring("bind".length()); //$NON-NLS-1$
-      }
-      if (name == null || name.isEmpty()) {
-        throw new DsAnnotationException(String.format(Messages.ComponentDescription_INVALID_DERIVED_REFERENCE_NAME,
-            reference.getName(), bind));
-      }
-      reference.setName(name);
-    }
+    reference.setName(name);
 
     // [https://github.com/wuetherich/ds-annotation-builder/issues/21]
     // check if reference name is unique

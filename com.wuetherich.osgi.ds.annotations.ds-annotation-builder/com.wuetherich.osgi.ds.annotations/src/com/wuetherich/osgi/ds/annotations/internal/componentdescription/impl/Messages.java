@@ -6,6 +6,8 @@ public class Messages extends NLS {
 
   private static final String BUNDLE_NAME = "com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.messages"; //$NON-NLS-1$
 
+  public static String        ComponentDescription_INVALID_BIND_METHOD_NAME;
+
   public static String        ComponentDescription_INVALID_SERVICEFACTORY_DECLARATION;
 
   public static String        ComponentDescription_INVALID_DERIVED_REFERENCE_NAME;
