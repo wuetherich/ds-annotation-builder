@@ -82,7 +82,8 @@
 										<ftp server="${ftp.host}" userid="${user}" password="${password}"
 											remotedir="${ftp.toDir}" action="del">
 											<fileset>
-												<include name="**/*" />
+												<include name="plugins/*" />
+												<include name="features/*" />
 											</fileset>
 										</ftp>
 									</target>
