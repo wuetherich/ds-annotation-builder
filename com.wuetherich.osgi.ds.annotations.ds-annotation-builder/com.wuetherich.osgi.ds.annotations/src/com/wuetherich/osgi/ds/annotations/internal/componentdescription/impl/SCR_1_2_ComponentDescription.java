@@ -159,10 +159,10 @@ public class SCR_1_2_ComponentDescription extends AbstractComponentDescription {
    * {@inheritDoc}
    */
   @Override
-  public void onAddProperty(Map<String, List<ComponentProperty>> properties) {
+  public void onAddProperty(List<String> orderedProperties, Map<String, List<ComponentProperty>> properties) {
 
     //
-    for (String name : properties.keySet()) {
+    for (String name : orderedProperties) {
 
       Tproperty tproperty = new Tproperty();
       _tcomponent.getPropertyOrProperties().add(tproperty);

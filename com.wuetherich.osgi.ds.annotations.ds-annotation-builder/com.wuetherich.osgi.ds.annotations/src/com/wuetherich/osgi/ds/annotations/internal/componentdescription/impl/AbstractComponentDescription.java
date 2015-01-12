@@ -208,7 +208,7 @@ public abstract class AbstractComponentDescription implements IComponentDescript
 
   public abstract void onAddProperties(String value);
 
-  public abstract void onAddProperty(Map<String, List<ComponentProperty>> properties);
+  public abstract void onAddProperty(List<String> orderedProperties, Map<String, List<ComponentProperty>> properties);
 
   public abstract void onSetConfigurationPolicy(String configurationPolicy);
 
@@ -300,12 +300,17 @@ public abstract class AbstractComponentDescription implements IComponentDescript
    * @param propertyArray
    */
   private void processPropertyAttribute(Object[] propertyArray) {
-    //
+    
+    // ordered properties
+    final List<String> orderedProperties = new LinkedList<String>();
+    
+    // the property map
     GenericCache<String, List<ComponentProperty>> propertyMap = new GenericCache<String, List<ComponentProperty>>() {
       private static final long serialVersionUID = 1L;
 
       @Override
       protected List<ComponentProperty> create(String key) {
+        orderedProperties.add(key);
         return new LinkedList<ComponentProperty>();
       }
     };
@@ -343,6 +348,6 @@ public abstract class AbstractComponentDescription implements IComponentDescript
     }
 
     //
-    onAddProperty(propertyMap);
+    onAddProperty(orderedProperties, propertyMap);
   }
 }
