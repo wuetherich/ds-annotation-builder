@@ -5,4 +5,4 @@ env:
   - secure: "K2fORMsb3PnbjRKocdha7Qbzy+OKRqyKydy1cxAeRGNZyltPiGSRAMgpSjvMbziU1H+krLVpqIIgE3s+K12YGNIq+IRCdNZ3bQoV3+MVcdhD3pYOg287VPE3qmnstIx66ODiJcJkUNPLhJdmOiAJujAmXCR6iuzfdePjTFnJQYI="
   - secure: "caHsCi/jlvR7KdwO6MdgHvVKlTHvx8yA3Rn13I7pnjS8dUje8+f6IoYBNMsamIS7y1UtO95SXVpOxDFVO01bd6FyN85dRd972kO8Ad/X/WoAPdYX5NpgzyJ9qUq0ffvkFvrZFUPratImvnAUgGh2h+YR3+k/76na6PZMXKAqIio="
 
-script: "mvn clean install -f com.wuetherich.osgi.ds.annotations.ds-annotation-builder/pom.xml"
+script: "mvn clean install -PuploadRepo -s travis-mvn-settings.xml -f com.wuetherich.osgi.ds.annotations.ds-annotation-builder/pom.xml"
