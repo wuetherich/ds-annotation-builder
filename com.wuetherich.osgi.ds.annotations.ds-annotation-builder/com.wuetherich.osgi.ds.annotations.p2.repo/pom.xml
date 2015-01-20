@@ -80,10 +80,11 @@
 								<configuration>
 									<target>
 										<ftp server="${ftp.host}" userid="${user}" password="${password}"
-											remotedir="${ftp.toDir}" action="del">
+											remotedir="${ftp.toDir}" action="del"
+											passive="yes"
+											verbose="true">
 											<fileset>
-												<include name="plugins/*" />
-												<include name="features/*" />
+												<include name="**/*" />
 											</fileset>
 										</ftp>
 									</target>
