@@ -221,15 +221,11 @@ public class DsAnnotationBuildVisitor implements IResourceVisitor, IResourceDelt
    * @return
    */
   private CompilationUnit createAst(ICompilationUnit icompilationUnit) {
-    ASTParser parser = ASTParser.newParser(AST.JLS4); // handles JDK 1.0,
-    // 1.1, 1.2, 1.3,
-    // 1.4, 1.5, 1.6
+    ASTParser parser = ASTParser.newParser(JDTAdapter.getApiLevel());
     parser.setSource(icompilationUnit);
 
-    // In order to parse 1.5 code, some compiler options need to be set to
-    // 1.5
     Map options = JavaCore.getOptions();
-    JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, options);
+    JavaCore.setComplianceOptions(JDTAdapter.getJavaVersion(), options);
     parser.setCompilerOptions(options);
     parser.setResolveBindings(true);
     CompilationUnit result = (CompilationUnit) parser.createAST(null);
