@@ -10,13 +10,15 @@
  ******************************************************************************/
 package com.wuetherich.osgi.ds.annotations.internal.builder;
 
+import java.util.Map;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MemberValuePair;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
 import com.wuetherich.osgi.ds.annotations.DsAnnotationVersion;
 import com.wuetherich.osgi.ds.annotations.internal.DsAnnotationException;
@@ -138,15 +140,17 @@ public class DetectDsAnnotationVersionAstVisitor extends AbstractDsAnnotationAst
 
   @Override
   protected void handleReferenceAnnotation(MarkerAnnotation node) {
-    
+
+    //
+    checkSignature();
+
     //
     checkReferenceForUpdateMethod();
   }
 
-
   @Override
   protected void handleReferenceAnnotation(NormalAnnotation node) {
-   
+
     for (Object object : node.values()) {
       MemberValuePair pair = (MemberValuePair) object;
       String valueName = pair.getName().toString();
@@ -162,7 +166,10 @@ public class DetectDsAnnotationVersionAstVisitor extends AbstractDsAnnotationAst
         return;
       }
     }
-    
+
+    //
+    checkSignature();
+
     //
     checkReferenceForUpdateMethod();
   }
@@ -198,7 +205,7 @@ public class DetectDsAnnotationVersionAstVisitor extends AbstractDsAnnotationAst
       _xmlns = version;
     }
   }
-  
+
   private void checkReferenceForUpdateMethod() {
     String methodName = getCurrentMethodDeclaration().getName().getFullyQualifiedName();
     String updatedMethodName = computeUpdatedMethodName(methodName);
@@ -207,5 +214,44 @@ public class DetectDsAnnotationVersionAstVisitor extends AbstractDsAnnotationAst
         setUpTo(DsAnnotationVersion.V_1_2);
       }
     }
+  }
+
+  private void checkSignature() {
+
+    // check bind method
+    if (isSecondParameterOfTypeMap(getCurrentMethodDeclaration())) {
+      setUpTo(DsAnnotationVersion.V_1_1);
+      return;
+    }
+
+    //
+    String unbindName = computeUnbindMethodName(getCurrentMethodDeclaration().getName().getFullyQualifiedName());
+    for (MethodDeclaration methodDeclaration : getCurrentTypeDeclarationStack().peek().getMethods()) {
+      if (unbindName.equals(methodDeclaration.getName().getFullyQualifiedName())) {
+        if (isSecondParameterOfTypeMap(methodDeclaration)) {
+          setUpTo(DsAnnotationVersion.V_1_1);
+          return;
+        }
+      }
+    }
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @param methodDeclaration
+   * @return
+   */
+  private boolean isSecondParameterOfTypeMap(MethodDeclaration methodDeclaration) {
+
+    //
+    if (methodDeclaration.parameters().size() == 2) {
+      SingleVariableDeclaration declaration = (SingleVariableDeclaration) methodDeclaration.parameters().get(1);
+      return declaration.getType().resolveBinding().getName().contains(Map.class.getSimpleName());
+    }
+
+    //
+    return false;
   }
 }
