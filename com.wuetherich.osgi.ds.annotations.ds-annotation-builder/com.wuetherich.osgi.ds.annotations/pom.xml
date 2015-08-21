@@ -55,6 +55,18 @@
 							<bindingDirectory>${project.basedir}/src-xsd/scr_1_2</bindingDirectory>
 						</configuration>
 					</execution>
+					<execution>
+						<id>generate-scr_1_3</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/xjc-scr_1_3</generateDirectory>
+							<generatePackage>org.osgi.xmlns.scr.v1_3</generatePackage>
+							<schemaDirectory>${project.basedir}/src-xsd/scr_1_3</schemaDirectory>
+							<bindingDirectory>${project.basedir}/src-xsd/scr_1_3</bindingDirectory>
+						</configuration>
+					</execution>					
 				</executions>
 				<configuration>
 					<extension>true</extension>

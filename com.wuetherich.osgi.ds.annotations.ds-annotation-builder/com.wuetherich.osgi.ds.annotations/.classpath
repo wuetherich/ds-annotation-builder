@@ -6,6 +6,7 @@
 	<classpathentry kind="src" path="target/generated-sources/xjc-scr_1_1"/>
 	<classpathentry kind="src" path="target/generated-sources/xjc-scr_1_2"/>
 	<classpathentry kind="src" path="target/generated-sources/xjc-scr_1_0"/>
-	<classpathentry exported="true" kind="lib" path="libs/jaxb2-basics-runtime-0.9.0.jar"/>
+	<classpathentry kind="src" path="target/generated-sources/xjc-scr_1_3"/>
+	<classpathentry exported="true" kind="lib" path="libs/jaxb2-basics-runtime-0.9.4.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
