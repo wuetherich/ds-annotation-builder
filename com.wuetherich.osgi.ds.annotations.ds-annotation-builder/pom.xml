@@ -12,7 +12,6 @@
 		<module>com.wuetherich.osgi.ds.annotations.ui</module>
 		<module>com.wuetherich.osgi.ds.annotations.test</module>
 		<module>com.wuetherich.osgi.ds.annotations.feature</module>
-		<module>com.wuetherich.osgi.ds.annotations.target</module>
 		<module>com.wuetherich.osgi.ds.annotations.p2.repo</module>
 	</modules>
 
@@ -22,26 +21,24 @@
 	</prerequisites>
 
 	<properties>
-		<tycho-version>0.18.1</tycho-version>
+		<tycho-version>0.23.0</tycho-version>
 	</properties>
+
+	<repositories>
+		<repository>
+			<id>eclipse-indigo</id>
+			<url>http://download.eclipse.org/releases/mars</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>
 
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-				<version>${tycho-version}</version>
-				<configuration>
-					<target>
-						<artifact>
-							<groupId>com.wuetherich.osgi.ds</groupId>
-							<artifactId>com.wuetherich.osgi.ds.annotations.target</artifactId>
-							<version>${project.version}</version>
-						</artifact>
-					</target>
-				</configuration>
-			</plugin>
+			<!-- plugin> <groupId>org.eclipse.tycho</groupId> <artifactId>target-platform-configuration</artifactId> 
+				<version>${tycho-version}</version> <configuration> <target> <artifact> <groupId>com.wuetherich.osgi.ds</groupId> 
+				<artifactId>com.wuetherich.osgi.ds.annotations.target</artifactId> <version>${project.version}</version> 
+				</artifact> </target> </configuration> </plugin -->
 
 			<plugin>
 				<!-- enable tycho build extension -->

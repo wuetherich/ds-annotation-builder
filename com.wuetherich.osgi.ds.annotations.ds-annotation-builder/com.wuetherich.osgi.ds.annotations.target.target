@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="Target Definition" sequenceNumber="86">
+<?pde version="3.8"?><target name="Target Definition" sequenceNumber="87">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.sdk.ide" version="4.4.2.M20150204-1700"/>
-<repository location="http://download.eclipse.org/releases/luna/"/>
+<unit id="org.eclipse.sdk.ide" version="4.5.0.I20150603-2000"/>
+<repository location="http://download.eclipse.org/releases/mars/"/>
 </location>
 </locations>
 <environment>
