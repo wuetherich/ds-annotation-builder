@@ -13,7 +13,7 @@ import com.wuetherich.osgi.ds.annotations.internal.componentdescription.impl.SCR
 public class ComponentDescriptionFactory {
 
   /** - */
-  private static IComponentDescriptionReader        _componentDescriptionReader;
+  private static ComponentDescriptionReader         _componentDescriptionReader;
 
   private static IComponentDescriptionWriter        _componentDescriptionWriter;
 
@@ -25,25 +25,10 @@ public class ComponentDescriptionFactory {
    * 
    * @return
    */
-  public static IComponentDescriptionReader getComponentDescriptionReader() {
-
-    if (_componentDescriptionReader == null) {
-      _componentDescriptionReader = new ComponentDescriptionReader();
-    }
-
-    return _componentDescriptionReader;
-  }
-
-  /**
-   * <p>
-   * </p>
-   * 
-   * @return
-   */
   public static IComponentDescriptionWriter getComponentDescriptionWriter() {
 
     if (_componentDescriptionWriter == null) {
-      _componentDescriptionWriter = new ComponentDescriptionWriter(getComponentDescriptionReader(),
+      _componentDescriptionWriter = new ComponentDescriptionWriter(componentDescriptionReader(),
           getManifestAndBuildPropertiesUpdater());
     }
 
@@ -59,7 +44,7 @@ public class ComponentDescriptionFactory {
   public static IManifestAndBuildPropertiesUpdater getManifestAndBuildPropertiesUpdater() {
 
     if (_manifestAndBuildPropertiesUpdater == null) {
-      _manifestAndBuildPropertiesUpdater = new ManifestAndBuildPropertiesUpdater(getComponentDescriptionReader());
+      _manifestAndBuildPropertiesUpdater = new ManifestAndBuildPropertiesUpdater(componentDescriptionReader());
     }
 
     return _manifestAndBuildPropertiesUpdater;
@@ -72,8 +57,8 @@ public class ComponentDescriptionFactory {
    * @param typeDeclaration
    * @return
    */
-  public static IComponentDescription createComponentDescription(AbstractTypeAccessor typeDeclaration, IProject project,
-      DsAnnotationVersion requestedversion) {
+  public static IComponentDescription createComponentDescription(AbstractTypeAccessor typeDeclaration,
+      IProject project, DsAnnotationVersion requestedversion) {
 
     //
     switch (requestedversion) {
@@ -90,5 +75,20 @@ public class ComponentDescriptionFactory {
       throw new RuntimeException("Unsupported version");
     }
     }
+  }
+
+  /**
+   * <p>
+   * </p>
+   * 
+   * @return
+   */
+  private static ComponentDescriptionReader componentDescriptionReader() {
+
+    if (_componentDescriptionReader == null) {
+      _componentDescriptionReader = new ComponentDescriptionReader();
+    }
+
+    return _componentDescriptionReader;
   }
 }

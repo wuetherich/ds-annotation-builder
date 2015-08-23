@@ -21,8 +21,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
-import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescriptionReader;
-import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
+import com.wuetherich.osgi.ds.annotations.internal.util.Cache;
 
 /**
  * <p>
@@ -32,7 +31,7 @@ import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
  * 
  * @author Gerd W&uuml;therich (gerd@gerd-wuetherich.de)
  */
-public class ComponentDescriptionReader implements IComponentDescriptionReader {
+public class ComponentDescriptionReader {
 
   /** - */
   private static Pattern REGEXP_PATTERN = Pattern.compile(Constants.DS_ANNOTATION_BUILDER_GENERATED_COMMENT_REGEXP);
@@ -62,7 +61,7 @@ public class ComponentDescriptionReader implements IComponentDescriptionReader {
     }
 
     //
-    GenericCache<IPath, List<IPath>> genericCache = new GenericCache<IPath, List<IPath>>() {
+    Cache<IPath, List<IPath>> genericCache = new Cache<IPath, List<IPath>>() {
       private static final long serialVersionUID = 1L;
 
       @Override

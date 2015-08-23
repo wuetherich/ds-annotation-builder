@@ -2,8 +2,10 @@ package com.wuetherich.osgi.ds.annotations.test.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
@@ -49,7 +51,12 @@ public class EclipseProjectUtils {
 
 		//
 		IJavaProject javaProject = JavaCore.create(project);
-
+		Hashtable<String, String> options = JavaCore.getDefaultOptions();
+		options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_7);
+		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_7);
+		options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_7);
+		javaProject.setOptions(options);
+		
 		final IProjectDescription projectDescription = ResourcesPlugin
 				.getWorkspace().newProjectDescription(project.getName());
 		projectDescription.setLocation(null);
@@ -90,6 +97,7 @@ public class EclipseProjectUtils {
 		for (IExecutionEnvironment iExecutionEnvironment : executionEnvironments) {
 			// We will look for JavaSE-1.6 as the JRE container to add to our
 			// classpath
+			System.out.println(iExecutionEnvironment.getId());
 			if ("JavaSE-1.6".equals(iExecutionEnvironment.getId())) {
 				entries.add(JavaCore.newContainerEntry(JavaRuntime
 						.newJREContainerPath(iExecutionEnvironment)));

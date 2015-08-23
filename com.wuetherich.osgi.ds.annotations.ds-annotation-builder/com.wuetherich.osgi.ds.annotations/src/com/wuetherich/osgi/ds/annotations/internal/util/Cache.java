@@ -25,51 +25,51 @@ import org.eclipse.core.runtime.Assert;
  * @param <K>
  * @param <V>
  */
-public abstract class GenericCache<K, V> extends HashMap<K, V> {
+public abstract class Cache<K, V> extends HashMap<K, V> {
 
   /** - */
   private static final long serialVersionUID = 1L;
 
   /**
    * <p>
-   * Creates a new instance of type {@link GenericCache}.
+   * Creates a new instance of type {@link Cache}.
    * </p>
    */
-  public GenericCache() {
+  public Cache() {
     super();
   }
 
   /**
    * <p>
-   * Creates a new instance of type {@link GenericCache}.
+   * Creates a new instance of type {@link Cache}.
    * </p>
    * 
    * @param initialCapacity
    * @param loadFactor
    */
-  public GenericCache(int initialCapacity, float loadFactor) {
+  public Cache(int initialCapacity, float loadFactor) {
     super(initialCapacity, loadFactor);
   }
 
   /**
    * <p>
-   * Creates a new instance of type {@link GenericCache}.
+   * Creates a new instance of type {@link Cache}.
    * </p>
    * 
    * @param initialCapacity
    */
-  public GenericCache(int initialCapacity) {
+  public Cache(int initialCapacity) {
     super(initialCapacity);
   }
 
   /**
    * <p>
-   * Creates a new instance of type {@link GenericCache}.
+   * Creates a new instance of type {@link Cache}.
    * </p>
    * 
    * @param m
    */
-  public GenericCache(Map<? extends K, ? extends V> m) {
+  public Cache(Map<? extends K, ? extends V> m) {
     super(m);
   }
 

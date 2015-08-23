@@ -22,7 +22,7 @@ import com.wuetherich.osgi.ds.annotations.internal.builder.ComponentProperty;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.AbstractTypeAccessor;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.Reference;
-import com.wuetherich.osgi.ds.annotations.internal.util.GenericCache;
+import com.wuetherich.osgi.ds.annotations.internal.util.Cache;
 
 /**
  * <p>
@@ -305,7 +305,7 @@ public abstract class AbstractComponentDescription implements IComponentDescript
     final List<String> orderedProperties = new LinkedList<String>();
     
     // the property map
-    GenericCache<String, List<ComponentProperty>> propertyMap = new GenericCache<String, List<ComponentProperty>>() {
+    Cache<String, List<ComponentProperty>> propertyMap = new Cache<String, List<ComponentProperty>>() {
       private static final long serialVersionUID = 1L;
 
       @Override

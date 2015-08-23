@@ -27,7 +27,7 @@ public class TargetPlatformUtil {
 
 		// create new target definition
 		File directory = createTargetDirectory();
-		
+
 		if (directory.exists()) {
 			return;
 		} else {
@@ -48,8 +48,10 @@ public class TargetPlatformUtil {
 		}
 
 		//
-		BundleContext.class.getProtectionDomain().getCodeSource().getLocation();
-		Component.class.getProtectionDomain().getCodeSource().getLocation();
+		System.out.println(BundleContext.class.getProtectionDomain()
+				.getCodeSource().getLocation());
+		System.out.println(Component.class.getProtectionDomain()
+				.getCodeSource().getLocation());
 
 		//
 		copyCodeSource(BundleContext.class, directory);

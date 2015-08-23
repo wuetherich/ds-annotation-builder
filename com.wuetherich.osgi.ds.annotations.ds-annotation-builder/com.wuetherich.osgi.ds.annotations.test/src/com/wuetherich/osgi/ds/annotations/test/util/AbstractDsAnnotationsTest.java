@@ -64,7 +64,7 @@ public abstract class AbstractDsAnnotationsTest {
 	@Before
 	public void setup() throws JavaModelException, CoreException {
 
-	    System.out.println("Setup test project...");
+	    System.out.println("Setup test project: " + ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString());
 		
 		//
 		_project = ResourcesPlugin.getWorkspace().getRoot()
@@ -90,8 +90,13 @@ public abstract class AbstractDsAnnotationsTest {
 		}
 
 		// refresh and build
-		_project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
-		_project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+		try {
+			_project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+			_project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		//
 		if (failOnErrors()) {

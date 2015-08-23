@@ -10,7 +10,7 @@ public enum DsAnnotationVersion {
 
   V_1_0("http://www.osgi.org/xmlns/scr/v1.0.0", "1.0 (OSGi Release 4.0/4.1)"), V_1_1(
       "http://www.osgi.org/xmlns/scr/v1.1.0", "1.1 (OSGi Release 4.2)"), V_1_2("http://www.osgi.org/xmlns/scr/v1.2.0",
-      "1.2 (OSGi Release 4.3+)");
+      "1.2 (OSGi Release 4.3/5.0)"), V_1_3("http://www.osgi.org/xmlns/scr/v1.3.0", "1.3 (OSGi Release 6.0)");
 
   /** - */
   private String _xmlns;

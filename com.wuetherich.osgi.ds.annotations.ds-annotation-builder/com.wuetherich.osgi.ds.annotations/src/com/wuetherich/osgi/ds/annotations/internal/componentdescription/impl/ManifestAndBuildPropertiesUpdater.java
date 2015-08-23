@@ -29,7 +29,6 @@ import org.eclipse.pde.core.project.IBundleProjectDescription;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.internal.Activator;
-import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescriptionReader;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IManifestAndBuildPropertiesUpdater;
 import com.wuetherich.osgi.ds.annotations.internal.util.PathUtils;
 
@@ -43,7 +42,7 @@ import com.wuetherich.osgi.ds.annotations.internal.util.PathUtils;
 public class ManifestAndBuildPropertiesUpdater implements IManifestAndBuildPropertiesUpdater {
 
   /** - */
-  private IComponentDescriptionReader _componentDescriptionReader;
+  private ComponentDescriptionReader _componentDescriptionReader;
 
   /**
    * <p>
@@ -52,7 +51,7 @@ public class ManifestAndBuildPropertiesUpdater implements IManifestAndBuildPrope
    * 
    * @param componentDescriptionReader
    */
-  public ManifestAndBuildPropertiesUpdater(IComponentDescriptionReader componentDescriptionReader) {
+  public ManifestAndBuildPropertiesUpdater(ComponentDescriptionReader componentDescriptionReader) {
     Assert.isNotNull(componentDescriptionReader);
 
     this._componentDescriptionReader = componentDescriptionReader;

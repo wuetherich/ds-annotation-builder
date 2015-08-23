@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescription;
-import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescriptionReader;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IComponentDescriptionWriter;
 import com.wuetherich.osgi.ds.annotations.internal.componentdescription.IManifestAndBuildPropertiesUpdater;
 import com.wuetherich.osgi.ds.annotations.internal.prefs.DsAnnotationsPreferences;
@@ -43,7 +42,7 @@ import com.wuetherich.osgi.ds.annotations.internal.prefs.DsAnnotationsPreference
 public class ComponentDescriptionWriter implements IComponentDescriptionWriter {
 
   /** - */
-  private IComponentDescriptionReader        _componentDescriptionReader;
+  private ComponentDescriptionReader        _componentDescriptionReader;
 
   /** - */
   private IManifestAndBuildPropertiesUpdater _manifestAndBuildPropertiesUpdater;
@@ -55,7 +54,7 @@ public class ComponentDescriptionWriter implements IComponentDescriptionWriter {
    * 
    * @param componentDescriptionReader
    */
-  public ComponentDescriptionWriter(IComponentDescriptionReader componentDescriptionReader,
+  public ComponentDescriptionWriter(ComponentDescriptionReader componentDescriptionReader,
       IManifestAndBuildPropertiesUpdater manifestAndBuildPropertiesUpdater) {
     Assert.isNotNull(componentDescriptionReader);
     Assert.isNotNull(manifestAndBuildPropertiesUpdater);

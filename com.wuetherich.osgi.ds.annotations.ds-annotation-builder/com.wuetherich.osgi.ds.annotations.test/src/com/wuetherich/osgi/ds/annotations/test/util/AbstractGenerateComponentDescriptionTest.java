@@ -46,6 +46,9 @@ public abstract class AbstractGenerateComponentDescriptionTest extends
 	 */
 	@Override
 	protected SourceFile createSourceFile() {
+		
+		System.out.println("Using testfile '" + _testCase + ".input'");
+		
 		return new SourceFile.Default(JAVA_TEST_FILE, fromStream(getClass()
 				.getResourceAsStream(_testCase + ".input")));
 	}
