@@ -206,8 +206,8 @@ public class DsAnnotationAstVisitor extends AbstractDsAnnotationAstVisitor {
       }
       //
       else if ("configurationPid".equals(pair.getName().toString())) {
-        getCurrentComponentDescription().getTypeAccessor().setConfigurationPid(
-            (String) pair.resolveMemberValuePairBinding().getValue());
+        Object[] pids = (Object[]) pair.resolveMemberValuePairBinding().getValue();
+        getCurrentComponentDescription().getTypeAccessor().setConfigurationPid(pids);
       }
       //
       else if ("configurationPolicy".equals(pair.getName().toString())) {

@@ -113,7 +113,9 @@ public abstract class AbstractComponentDescription implements IComponentDescript
 
     // configuration pid
     if (_typeAccessor.getConfigurationPid() != null) {
-      onSetConfigurationPid(_typeAccessor.getConfigurationPid());
+      for (Object keyValue : _typeAccessor.getConfigurationPid()) {
+        onSetConfigurationPid((String) keyValue);
+      }
     }
 
     // configuration policy

@@ -64,8 +64,10 @@ public abstract class AbstractDsAnnotationsTest {
 	@Before
 	public void setup() throws JavaModelException, CoreException {
 
-	    System.out.println("Setup test project: " + ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString());
-		
+		System.out.println("Setup test project: "
+				+ ResourcesPlugin.getWorkspace().getRoot().getLocation()
+						.toOSString());
+
 		//
 		_project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(DEFAULT_JDT_TEST_PROJECT_NAME);
@@ -90,6 +92,7 @@ public abstract class AbstractDsAnnotationsTest {
 		}
 
 		// refresh and build
+		_project.refreshLocal(IResource.DEPTH_INFINITE, null);
 		try {
 			_project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
 			_project.build(IncrementalProjectBuilder.FULL_BUILD, null);
@@ -231,6 +234,7 @@ public abstract class AbstractDsAnnotationsTest {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				out.append(line);
+				out.append(System.getProperty("line.separator"));
 			}
 			in.close();
 			return out.toString();

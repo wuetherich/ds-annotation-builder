@@ -23,7 +23,7 @@ public abstract class AbstractTypeAccessor {
 
   private String                    _configurationPolicy;
 
-  private String                    _configurationPid;
+  private Object[]                  _configurationPid;
 
   private Object[]                  _property;
 
@@ -97,7 +97,7 @@ public abstract class AbstractTypeAccessor {
     _configurationPolicy = configurationPolicy;
   }
 
-  public void setConfigurationPid(String configurationPid) {
+  public void setConfigurationPid(Object[] configurationPid) {
     _configurationPid = configurationPid;
   }
 
@@ -157,7 +157,7 @@ public abstract class AbstractTypeAccessor {
     return _configurationPolicy;
   }
 
-  public String getConfigurationPid() {
+  public Object[] getConfigurationPid() {
     return _configurationPid;
   }
 

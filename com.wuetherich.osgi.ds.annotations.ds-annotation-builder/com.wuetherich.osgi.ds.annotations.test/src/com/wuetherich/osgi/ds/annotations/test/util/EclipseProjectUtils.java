@@ -62,6 +62,7 @@ public class EclipseProjectUtils {
 		projectDescription.setLocation(null);
 		project.create(projectDescription, null);
 
+		//
 		projectDescription.setNatureIds(new String[] { JavaCore.NATURE_ID,
 				"org.eclipse.pde.PluginNature" });
 
@@ -95,10 +96,9 @@ public class EclipseProjectUtils {
 		IExecutionEnvironment[] executionEnvironments = executionEnvironmentsManager
 				.getExecutionEnvironments();
 		for (IExecutionEnvironment iExecutionEnvironment : executionEnvironments) {
-			// We will look for JavaSE-1.6 as the JRE container to add to our
+			// We will look for JavaSE-1.7 as the JRE container to add to our
 			// classpath
-			System.out.println(iExecutionEnvironment.getId());
-			if ("JavaSE-1.6".equals(iExecutionEnvironment.getId())) {
+			if ("JavaSE-1.7".equals(iExecutionEnvironment.getId())) {
 				entries.add(JavaCore.newContainerEntry(JavaRuntime
 						.newJREContainerPath(iExecutionEnvironment)));
 				break;
@@ -117,6 +117,7 @@ public class EclipseProjectUtils {
 		EclipseProjectUtils.createManifest(project, importedPackages);
 		EclipseProjectUtils.createBuildProperties(project);
 
+		//
 		javaProject.open(null);
 
 		//
@@ -148,7 +149,9 @@ public class EclipseProjectUtils {
 
 			//
 			for (IMarker iMarker : errors) {
-				builder.append(" - " + iMarker.getAttribute(IMarker.MESSAGE));
+				builder.append(" - " + iMarker.getAttribute(IMarker.MESSAGE)
+						+ "(" + iMarker.getAttribute(IMarker.CHAR_START) + ", "
+						+ iMarker.getAttribute(IMarker.CHAR_START) + ")");
 				builder.append("\n");
 			}
 
@@ -242,7 +245,7 @@ public class EclipseProjectUtils {
 			maniContent.append("\n");
 		}
 
-		maniContent.append("Bundle-RequiredExecutionEnvironment: J2SE-1.5\r\n");
+		maniContent.append("Bundle-RequiredExecutionEnvironment: JavaSE-1.7\r\n");
 
 		final IFolder metaInf = project.getFolder("META-INF");
 		metaInf.create(false, true, null);

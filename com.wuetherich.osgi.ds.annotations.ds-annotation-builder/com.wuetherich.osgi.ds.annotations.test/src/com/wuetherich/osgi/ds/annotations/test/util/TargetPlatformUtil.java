@@ -48,12 +48,6 @@ public class TargetPlatformUtil {
 		}
 
 		//
-		System.out.println(BundleContext.class.getProtectionDomain()
-				.getCodeSource().getLocation());
-		System.out.println(Component.class.getProtectionDomain()
-				.getCodeSource().getLocation());
-
-		//
 		copyCodeSource(BundleContext.class, directory);
 		copyCodeSource(Component.class, directory);
 
