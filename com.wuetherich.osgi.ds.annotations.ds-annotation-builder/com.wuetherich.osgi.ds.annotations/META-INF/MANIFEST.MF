@@ -15,8 +15,4 @@ Bundle-ClassPath: .,
  libs/jaxb2-basics-runtime-0.9.4.jar
 Import-Package: org.osgi.service.component.annotations;version="1.3.0"
 Export-Package: com.wuetherich.osgi.ds.annotations,
- org.osgi.service.component.annotations;version="1.3.0",
- org.osgi.xmlns.scr.v1_0,
- org.osgi.xmlns.scr.v1_1,
- org.osgi.xmlns.scr.v1_2,
- org.osgi.xmlns.scr.v1_3
+ org.osgi.service.component.annotations;version="1.3.0"
