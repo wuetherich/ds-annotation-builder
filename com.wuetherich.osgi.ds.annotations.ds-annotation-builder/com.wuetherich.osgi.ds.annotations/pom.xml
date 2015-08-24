@@ -27,8 +27,8 @@
 						<configuration>
 							<generateDirectory>${project.build.directory}/generated-sources/xjc-scr_1_0</generateDirectory>
 							<generatePackage>org.osgi.xmlns.scr.v1_0</generatePackage>
-							<schemaDirectory>${project.basedir}/src-xsd/scr_1_0</schemaDirectory>
-							<bindingDirectory>${project.basedir}/src-xsd/scr_1_0</bindingDirectory>
+							<schemaDirectory>${project.basedir}/xsd/scr/v1.0.0</schemaDirectory>
+							<bindingDirectory>${project.basedir}/xsd/scr/v1.0.0</bindingDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -39,8 +39,8 @@
 						<configuration>
 							<generateDirectory>${project.build.directory}/generated-sources/xjc-scr_1_1</generateDirectory>
 							<generatePackage>org.osgi.xmlns.scr.v1_1</generatePackage>
-							<schemaDirectory>${project.basedir}/src-xsd/scr_1_1</schemaDirectory>
-							<bindingDirectory>${project.basedir}/src-xsd/scr_1_1</bindingDirectory>
+							<schemaDirectory>${project.basedir}/xsd/scr/v1.1.0</schemaDirectory>
+							<bindingDirectory>${project.basedir}/xsd/scr/v1.1.0</bindingDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -51,8 +51,8 @@
 						<configuration>
 							<generateDirectory>${project.build.directory}/generated-sources/xjc-scr_1_2</generateDirectory>
 							<generatePackage>org.osgi.xmlns.scr.v1_2</generatePackage>
-							<schemaDirectory>${project.basedir}/src-xsd/scr_1_2</schemaDirectory>
-							<bindingDirectory>${project.basedir}/src-xsd/scr_1_2</bindingDirectory>
+							<schemaDirectory>${project.basedir}/xsd/scr/v1.2.0</schemaDirectory>
+							<bindingDirectory>${project.basedir}/xsd/scr/v1.2.0</bindingDirectory>
 						</configuration>
 					</execution>
 					<execution>
@@ -63,8 +63,19 @@
 						<configuration>
 							<generateDirectory>${project.build.directory}/generated-sources/xjc-scr_1_3</generateDirectory>
 							<generatePackage>org.osgi.xmlns.scr.v1_3</generatePackage>
-							<schemaDirectory>${project.basedir}/src-xsd/scr_1_3</schemaDirectory>
-							<bindingDirectory>${project.basedir}/src-xsd/scr_1_3</bindingDirectory>
+							<schemaDirectory>${project.basedir}/xsd/scr/v1.3.0</schemaDirectory>
+							<bindingDirectory>${project.basedir}/xsd/scr/v1.3.0</bindingDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-metatype_1_3_0</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated-sources/xjc-metatype_1_3</generateDirectory>
+							<generatePackage>org.osgi.xmlns.metatype.v1_3</generatePackage>
+							<schemaDirectory>${project.basedir}/xsd/metatype/v1.3.0</schemaDirectory>
 						</configuration>
 					</execution>
 				</executions>
