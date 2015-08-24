@@ -20,4 +20,3 @@ Export-Package: com.wuetherich.osgi.ds.annotations,
  org.osgi.xmlns.scr.v1_1,
  org.osgi.xmlns.scr.v1_2,
  org.osgi.xmlns.scr.v1_3
-
