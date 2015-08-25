@@ -13,4 +13,5 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
 Bundle-Activator: com.wuetherich.osgi.ds.annotations.internal.Activator
 Bundle-ClassPath: .,
  libs/jaxb2-basics-runtime-0.9.4.jar
-Export-Package: com.wuetherich.osgi.ds.annotations
+Export-Package: com.wuetherich.osgi.ds.annotations,
+ org.osgi.service.component.annotations
