@@ -4,13 +4,11 @@ import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.wuetherich.osgi.ds.annotations.Constants;
 import com.wuetherich.osgi.ds.annotations.test.util.AbstractGenerateComponentDescriptionTest;
 
 @RunWith(value = Parameterized.class)
@@ -46,7 +44,7 @@ public class GenerateComponentDescriptionTest extends
 		}
 	}
 
-	@Parameters
+	@Parameters(name = "{0}")
 	public static List<String[]> testCases() {
 		return testCases("src/com/wuetherich/osgi/ds/annotations/test/generation");
 	}
