@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   
+   <!-- the expression definitions --> 
+	<extension point="org.eclipse.core.expressions.definitions">
+		<definition id="org.eclipse.pde.ds.annotations.ui.dsAnnotationProjectsSelected">
+			<with variable="selection">
+				<iterate ifEmpty="false" operator="and">
+						<adapt type="org.eclipse.core.resources.IResource">
+							<test property="org.eclipse.core.resources.projectNature"
+								value="org.eclipse.pde.ds.annotations.dsAnnotationNature"/>
+						</adapt>
+				</iterate>
+			</with>
+		</definition>		              
+	</extension>
+   
+   <extension
+        point="org.eclipse.ui.commands">
+      <command
+            name="Regenerate component descriptions"
+            description="Regenerates the component descriptions of all selected projects."
+            id="org.eclipse.pde.ds.annotations.ui.regenerateComponentDesciptionsForSelectedProjects">
+      </command> 
+      <command
+            name="Regenerate component descriptions..."
+            description="Regenerates the component descriptions of the selected projects."
+            id="org.eclipse.pde.ds.annotations.ui.regenerateComponentDesciptions">
+      </command>       
+   </extension>  
+   
+   <extension 
+   		point="org.eclipse.ui.handlers">
+          <handler
+                class="org.eclipse.pde.ds.annotations.ui.internal.handler.RegenerateComponentDesciptionForSelectedProjectsHandler"
+                commandId="org.eclipse.pde.ds.annotations.ui.regenerateComponentDesciptionsForSelectedProjects">
+          </handler>
+          <handler
+                class="org.eclipse.pde.ds.annotations.ui.internal.handler.RegenerateComponentDesciptionsHandler"
+                commandId="org.eclipse.pde.ds.annotations.ui.regenerateComponentDesciptions">
+          </handler>
+   </extension>
+   
+    <extension
+             point="org.eclipse.ui.menus">
+             
+              <menuContribution
+                locationURI="popup:org.eclipse.ui.popup.any">
+             <menu
+                   id="org.eclipse.pde.ds.annotations.ui.tools"
+                   label="DS Annotations Tools">
+                <visibleWhen
+                      checkEnabled="false" />
+             </menu>
+          </menuContribution>
+           <menuContribution
+                allPopups="false"
+                locationURI="popup:org.eclipse.pde.ds.annotations.ui.tools">
+             <separator
+                   name="group0"
+                   visible="false">
+             </separator>
+             <command
+                   commandId="org.eclipse.pde.ds.annotations.ui.regenerateComponentDesciptions"
+                   label="Regenerate component descriptions..."
+                   style="push">
+                <visibleWhen
+                      checkEnabled="false" />
+             </command>
+          </menuContribution>             
+           <!-- menuContribution
+                allPopups="false"
+                locationURI="popup:org.eclipse.pde.ds.annotations.ui.tools">
+             <separator
+                   name="group0"
+                   visible="false">
+             </separator>
+             <command
+                   commandId="org.eclipse.pde.ds.annotations.ui.regenerateComponentDesciptionsForSelectedProjects"
+                   label="Regenerate component descriptions"
+                   style="push">
+                <visibleWhen
+                      checkEnabled="false">
+                   <reference
+                         definitionId="org.eclipse.pde.ds.annotations.ui.dsAnnotationProjectsSelected">
+                   </reference>
+                </visibleWhen>
+             </command>
+          </menuContribution -->             
+   </extension>
+   
+   
+   <extension point="org.eclipse.ui.popupMenus">
+
+      <objectContribution id="enableNatureAction"
+                          objectClass="org.eclipse.core.resources.IProject"
+                          adaptable="true">
+         <action id="org.eclipse.pde.ds.annotations.enableNatureAction"
+                 class="org.eclipse.pde.ds.annotations.ui.internal.actions.EnableNatureAction"
+                 label="Enable DS Annotations"
+                 style="push"
+	             menubarPath="org.eclipse.ui.projectConfigure/additions"
+                 enablesFor="+"/>
+         <visibility>
+           <and>
+             <objectState name="open" value="true"/>
+             <not>
+               <objectState name="nature" value="org.eclipse.pde.ds.annotations.dsAnnotationNature"/>
+             </not>
+           </and>
+         </visibility>
+      </objectContribution>
+   </extension>
+   
+      <extension point="org.eclipse.ui.popupMenus">
+
+      <objectContribution id="disableNatureAction"
+                          objectClass="org.eclipse.core.resources.IProject"
+                          adaptable="true">
+         <action id="org.eclipse.pde.ds.annotations.disableNatureAction"
+                 class="org.eclipse.pde.ds.annotations.ui.internal.actions.DisableNatureAction"
+                 label="Disable DS Annotations"
+                 style="push"
+	             menubarPath="org.eclipse.ui.projectConfigure/additions"
+                 enablesFor="+"/>
+         <visibility>
+           <and>
+             <objectState name="open" value="true"/>
+             <objectState name="nature" value="org.eclipse.pde.ds.annotations.dsAnnotationNature"/>
+           </and>
+         </visibility>
+      </objectContribution>
+   </extension>
+   
+   <!-- define the preferences page -->
+   <extension
+       point="org.eclipse.ui.preferencePages">
+     <page
+          class="org.eclipse.pde.ds.annotations.ui.internal.preferences.DsAnnotationsPropertyAndPreferencePage"
+          id="org.eclipse.pde.ds.annotations.ui.preferences"
+          name="DS Annotations" 
+          category="org.eclipse.pde.ui.MainPreferencePage"/>
+   </extension>
+ 
+  <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+          class="org.eclipse.pde.ds.annotations.ui.internal.preferences.DsAnnotationsPropertyAndPreferencePage"
+          id="org.eclipse.pde.ds.annotations.ui.properties"
+          category="org.eclipse.pde.internal.ui.properties.pluginDevelopmentPage"
+          name="DS Annotations" >
+        <enabledWhen>
+          <and>
+            <adapt type="org.eclipse.core.resources.IProject">
+              <test property="org.eclipse.core.resources.projectNature"
+                    value="org.eclipse.pde.ds.annotations.dsAnnotationNature"/>
+            </adapt>
+          </and>
+        </enabledWhen>
+      </page>
+  </extension>
+   
+</plugin>

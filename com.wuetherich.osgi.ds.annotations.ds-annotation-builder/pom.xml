@@ -2,17 +2,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.wuetherich.osgi.ds</groupId>
-	<artifactId>com.wuetherich.osgi.ds.annotations.ds-annotation-builder</artifactId>
+	<groupId>org.eclipse.pde.ds.annotations</groupId>
+	<artifactId>org.eclipse.pde.ds.annotations.parent</artifactId>
 	<version>1.1.6-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>com.wuetherich.osgi.ds.annotations</module>
-		<module>com.wuetherich.osgi.ds.annotations.ui</module>
-		<module>com.wuetherich.osgi.ds.annotations.test</module>
-		<module>com.wuetherich.osgi.ds.annotations.feature</module>
-		<module>com.wuetherich.osgi.ds.annotations.p2.repo</module>
+		<module>org.eclipse.pde.ds.annotations</module>
+		<module>org.eclipse.pde.ds.annotations.ui</module>
+		<module>org.eclipse.pde.ds.annotations.test</module>
 	</modules>
 
 	<!-- tycho requires maven >= 3.0 -->
@@ -34,11 +32,6 @@
 
 	<build>
 		<plugins>
-
-			<!-- plugin> <groupId>org.eclipse.tycho</groupId> <artifactId>target-platform-configuration</artifactId> 
-				<version>${tycho-version}</version> <configuration> <target> <artifact> <groupId>com.wuetherich.osgi.ds</groupId> 
-				<artifactId>com.wuetherich.osgi.ds.annotations.target</artifactId> <version>${project.version}</version> 
-				</artifact> </target> </configuration> </plugin -->
 
 			<plugin>
 				<!-- enable tycho build extension -->
